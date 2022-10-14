@@ -86,7 +86,7 @@ class APIViewSet(viewsets.ModelViewSet):
         id = self.get_project()
         if self.request.user:
             query_dict = {
-                'openid': self.request.auth.openid
+                'openid': self.request.auth.openid,
                 'is_delete': False
             }
             if id is not None:
