@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import ListModel
 from utils import datasolve
+from userprofile.models import Users
 
 
 class WarehouseGetSerializer(serializers.ModelSerializer):
@@ -10,13 +11,17 @@ class WarehouseGetSerializer(serializers.ModelSerializer):
     warehouse_contact = serializers.CharField(read_only=True, required=False)
     warehouse_manager = serializers.CharField(read_only=True, required=False)
     creater = serializers.CharField(read_only=True, required=False)
+    staff_name = serializers.SerializerMethodField(read_only=True)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
     update_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
 
     class Meta:
         model = ListModel
-        exclude = ['openid', 'is_delete', ]
+        exclude = ['is_delete', ]
         read_only_fields = ['id', ]
+
+    def get_staff_name(self, obj):
+        return Users.objects.filter(openid=obj.openid).first().name
 
 
 class WarehousePostSerializer(serializers.ModelSerializer):

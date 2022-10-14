@@ -8,6 +8,8 @@ def list_file_headers():
         'total_volume',
         'total_cost',
         'supplier',
+        'patch_number',
+        'warehouse_id',
         'creater',
         'create_time',
         'update_time'
@@ -21,6 +23,8 @@ def list_cn_data_header():
         ('total_volume', u'总体积'),
         ('total_cost', u'总成本'),
         ('supplier', u'供应商'),
+        ('patch_number', u'批次号'),
+        ('warehouse_id', u'仓库ID'),
         ('creater', u'创建人'),
         ('create_time', u'创建时间'),
         ('update_time', u'更新时间')
@@ -34,6 +38,8 @@ def list_en_data_header():
         ('total_volume', u'Total Volume'),
         ('total_cost', u'Total Cost'),
         ('supplier', u'Supplier'),
+        ('patch_number', u'Patch Number'),
+        ('warehouse_id', u'Warehouse ID'),
         ('creater', u'Creater'),
         ('create_time', u'Create Time'),
         ('update_time', u'Update Time')
@@ -55,6 +61,8 @@ def detail_file_headers():
         'goods_weight',
         'goods_volume',
         'goods_cost',
+        'patch_number',
+        'warehouse_id',
         'creater',
         'create_time',
         'update_time'
@@ -76,6 +84,8 @@ def detail_cn_data_header():
         ('goods_weight', u'商品重量'),
         ('goods_volume', u'商品体积'),
         ('goods_cost', u'商品成本'),
+        ('patch_number', u'批次号'),
+        ('warehouse_id', u'仓库ID'),
         ('creater', u'创建人'),
         ('create_time', u'创建时间'),
         ('update_time', u'更新时间')
@@ -97,6 +107,8 @@ def detail_en_data_header():
         ('goods_weight', u'Goods Weight'),
         ('goods_volume', u'Goods Volume'),
         ('goods_cost', u'Goods Cost'),
+        ('patch_number', u'Patch Number'),
+        ('warehouse_id', u'Warehouse ID'),
         ('creater', u'Creater'),
         ('create_time', u'Create Time'),
         ('update_time', u'Update Time')

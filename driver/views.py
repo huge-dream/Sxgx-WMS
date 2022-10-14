@@ -11,6 +11,8 @@ from .serializers import FileRenderSerializer
 from django.http import StreamingHttpResponse
 from .files import FileRenderCN, FileRenderEN
 from rest_framework.settings import api_settings
+from userprofile.models import Users
+
 
 class APIViewSet(viewsets.ModelViewSet):
     """
@@ -47,10 +49,13 @@ class APIViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return ListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
-            else:
-                return ListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return ListModel.objects.filter(**query_dict)
         else:
             return ListModel.objects.none()
 
@@ -136,10 +141,13 @@ class DispatchListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return DispatchListModel.objects.filter(openid=self.request.auth.openid)
-            else:
-                return DispatchListModel.objects.filter(openid=self.request.auth.openid, id=id)
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DispatchListModel.objects.filter(**query_dict)
         else:
             return DispatchListModel.objects.none()
 
@@ -165,10 +173,13 @@ class FileDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return ListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
-            else:
-                return ListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return ListModel.objects.filter(**query_dict)
         else:
             return ListModel.objects.none()
 

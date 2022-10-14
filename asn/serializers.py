@@ -6,6 +6,8 @@ class ASNListGetSerializer(serializers.ModelSerializer):
     asn_code = serializers.CharField(read_only=True, required=False)
     asn_status = serializers.IntegerField(read_only=True, required=False)
     supplier = serializers.CharField(read_only=True, required=False)
+    patch_number = serializers.CharField(read_only=True, required=False)
+    warehouse_id = serializers.IntegerField(read_only=True, required=False)
     bar_code = serializers.CharField(read_only=True, required=False)
     creater = serializers.CharField(read_only=True, required=False)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
@@ -19,6 +21,8 @@ class ASNListPostSerializer(serializers.ModelSerializer):
     openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])
     asn_code = serializers.CharField(read_only=False,  required=True, validators=[datasolve.asn_data_validate])
     supplier = serializers.CharField(read_only=False, required=False)
+    patch_number = serializers.CharField(read_only=False, required=False)
+    warehouse_id = serializers.IntegerField(read_only=False, required=False, validators=[datasolve.warehouse_validate])
     bar_code = serializers.CharField(read_only=False, required=True)
     creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     class Meta:
@@ -53,6 +57,8 @@ class ASNDetailGetSerializer(serializers.ModelSerializer):
     goods_shortage_qty = serializers.IntegerField(read_only=True, required=False)
     goods_more_qty = serializers.IntegerField(read_only=True, required=False)
     goods_damage_qty = serializers.IntegerField(read_only=True, required=False)
+    goods_qty = serializers.IntegerField(read_only=True, required=False)
+    patch_number = serializers.CharField(read_only=True, required=False)
     creater = serializers.CharField(read_only=True, required=False)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
     update_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
@@ -68,6 +74,8 @@ class ASNDetailPostSerializer(serializers.ModelSerializer):
     goods_code = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     goods_desc = serializers.CharField(read_only=False, required=False)
     goods_qty = serializers.IntegerField(read_only=False, required=True, validators=[datasolve.qty_0_data_validate])
+    patch_number = serializers.CharField(read_only=False, required=True)
+    warehouse_id = serializers.IntegerField(read_only=False, required=True, validators=[datasolve.warehouse_validate])
     creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     class Meta:
         model = AsnDetailModel
@@ -93,6 +101,8 @@ class ASNDetailUpdateSerializer(serializers.ModelSerializer):
     goods_code = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     goods_desc = serializers.CharField(read_only=False, required=False)
     goods_qty = serializers.IntegerField(read_only=False, required=True, validators=[datasolve.qty_0_data_validate])
+    patch_number = serializers.CharField(read_only=False, required=True)
+    warehouse_id = serializers.IntegerField(read_only=False, required=True, validators=[datasolve.warehouse_validate])
     creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     class Meta:
         model = AsnDetailModel
@@ -105,6 +115,8 @@ class ASNDetailPartialUpdateSerializer(serializers.ModelSerializer):
     goods_code = serializers.CharField(read_only=False, required=False, validators=[datasolve.data_validate])
     goods_desc = serializers.CharField(read_only=False, required=False)
     goods_qty = serializers.IntegerField(read_only=False, required=False, validators=[datasolve.qty_0_data_validate])
+    patch_number = serializers.CharField(read_only=False, required=True)
+    warehouse_id = serializers.IntegerField(read_only=False, required=True, validators=[datasolve.warehouse_validate])
     creater = serializers.CharField(read_only=False, required=False, validators=[datasolve.data_validate])
     class Meta:
         model = AsnDetailModel
@@ -127,6 +139,8 @@ class FileListRenderSerializer(serializers.ModelSerializer):
     total_volume = serializers.FloatField(read_only=False, required=False)
     total_cost = serializers.FloatField(read_only=False, required=False)
     supplier = serializers.CharField(read_only=False, required=False)
+    patch_number = serializers.CharField(read_only=False, required=False)
+    warehouse_id = serializers.IntegerField(read_only=False, required=False)
     creater = serializers.CharField(read_only=False, required=False)
     transportation_fee = serializers.JSONField(read_only=False, required=False)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
@@ -152,6 +166,8 @@ class FileDetailRenderSerializer(serializers.ModelSerializer):
     goods_volume = serializers.FloatField(read_only=False, required=False)
     goods_cost = serializers.FloatField(read_only=False, required=False)
     supplier = serializers.CharField(read_only=False, required=False)
+    patch_number = serializers.CharField(read_only=False, required=False)
+    warehouse_id = serializers.IntegerField(read_only=False, required=False)
     creater = serializers.CharField(read_only=False, required=False)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
     update_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')

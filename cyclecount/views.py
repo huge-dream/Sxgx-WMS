@@ -7,16 +7,22 @@ from .files import FileRenderCN, FileRenderEN
 from .models import CyclecountModeDayModel
 from . import serializers
 from utils.page import MyPageNumberPagination
-from .page import CycleCountPageNumberPagination
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from .filter import Filter
+from .filter import ManualFilter
 from .filter import QTYRecorderListFilter
 from rest_framework.exceptions import APIException
 from .serializers import FileRenderSerializer, FileRenderAllSerializer
 from .models import QTYRecorder
+from .models import ManualCyclecountModeModel
 import datetime
+from userprofile.models import Users
+from stock.views import StockBinViewSet
+from stock.models import StockBinModel
+from utils.md5 import Md5
+from staff.models import ListModel as staff
 
 class QTYRecorderViewSet(viewsets.ModelViewSet):
     """
@@ -32,7 +38,11 @@ class QTYRecorderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user:
-            return QTYRecorder.objects.filter(openid=self.request.auth.openid)
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            return QTYRecorder.objects.filter(**query_dict)
         else:
             return QTYRecorder.objects.none()
 
@@ -79,14 +89,17 @@ class CyclecountModeDayViewSet(viewsets.ModelViewSet):
         if self.request.user:
             cur_date = timezone.now()
             delt_date = relativedelta(days=1)
-            if id is None:
-                return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=0,
-                                                             update_time__gte=str((cur_date -delt_date).date()) + ' 00:00:00',
-                                                             update_time__lte=str((cur_date + delt_date).date()) + ' 00:00:00')
-            else:
-                return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=0,
-                                                             update_time__gte=str((cur_date - delt_date).date()) + ' 00:00:00',
-                                                             update_time__lte=str((cur_date + delt_date).date()) + ' 00:00:00', id=id)
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {
+                'cyclecount_status': 0,
+                'update_time__gte': str((cur_date - delt_date).date()) + ' 00:00:00',
+                'update_time__lte': str((cur_date + delt_date).date()) + ' 00:00:00'
+            }
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return CyclecountModeDayModel.objects.filter(**query_dict)
         else:
             return CyclecountModeDayModel.objects.none()
 
@@ -142,26 +155,21 @@ class CyclecountModeAllViewSet(viewsets.ModelViewSet):
         if self.request.user:
             date_choice = self.request.GET.get('create_time', '')
             cur_time = timezone.now().date()
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {
+                'cyclecount_status': 1
+            }
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
             if date_choice:
-                if id is None:
-                    return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=1,
-                                                                 update_time__gte=str(date_choice) + ' 00:00:00',
-                                                                 update_time__lte=str(date_choice) + ' 23:59:59')
-                else:
-                    return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=1,
-                                                                 update_time__gte=str(date_choice) + ' 00:00:00',
-                                                                 update_time__lte=str(date_choice) + ' 23:59:59',
-                                                                 id=id)
+                query_dict['update_time__gte'] = str(date_choice) + ' 00:00:00'
+                query_dict['update_time__lte'] = str(date_choice) + ' 23:59:59'
             else:
-                if id is None:
-                    return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=1,
-                                                                 update_time__gte=str(cur_time) + ' 00:00:00',
-                                                                 update_time__lte=str(cur_time) + ' 23:59:59')
-                else:
-                    return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=1,
-                                                                 update_time__gte=str(cur_time) + ' 00:00:00',
-                                                                 update_time__lte=str(cur_time) + ' 23:59:59',
-                                                                 id=id)
+                query_dict['update_time__gte'] = str(cur_time) + ' 00:00:00'
+                query_dict['update_time__lte'] = str(cur_time) + ' 23:59:59'
+            if id is not None:
+                query_dict['id'] = id
+            return CyclecountModeDayModel.objects.filter(**query_dict)
         else:
             return CyclecountModeDayModel.objects.none()
 
@@ -190,12 +198,16 @@ class FileDownloadView(viewsets.ModelViewSet):
         if self.request.user:
             cur_date = timezone.now()
             delt_date = relativedelta(days=1)
-            if id is None:
-                return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=0,
-                                                             update_time__gte=str((cur_date -delt_date).date()) + ' 00:00:00')
-            else:
-                return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=0,
-                                                             update_time__gte=str((cur_date -delt_date).date()) + ' 00:00:00', id=id)
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {
+                'cyclecount_status': 0,
+                'update_time__gte': str((cur_date - delt_date).date()) + ' 00:00:00'
+            }
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return CyclecountModeDayModel.objects.filter(**query_dict)
         else:
             return CyclecountModeDayModel.objects.none()
 
@@ -244,20 +256,23 @@ class FileDownloadAllView(viewsets.ModelViewSet):
             return None
 
     def get_queryset(self):
-            id = self.get_project()
-            if self.request.user:
-                cur_date = timezone.now()
-                delt_date = relativedelta(days=1)
-                if id is None:
-                    return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=1,
-                                                                 update_time__gte=str((cur_date -delt_date).date()) + ' 00:00:00',
-                                                                 update_time__lte=str((cur_date + delt_date).date()) + ' 23:59:59')
-                else:
-                    return CyclecountModeDayModel.objects.filter(openid=self.request.auth.openid, cyclecount_status=1,
-                                                                 update_time__gte=str((cur_date - delt_date).date()) + ' 00:00:00',
-                                                                 update_time__lte=str((cur_date + delt_date).date()) + ' 23:59:59', id=id)
-            else:
-                return CyclecountModeDayModel.objects.none()
+        id = self.get_project()
+        if self.request.user:
+            cur_date = timezone.now()
+            delt_date = relativedelta(days=1)
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {
+                'cyclecount_status': 1,
+                'update_time__gte': str((cur_date - delt_date).date()) + ' 00:00:00',
+                'update_time__lte': str((cur_date + delt_date).date()) + ' 23:59:59'
+            }
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return ListModel.objects.filter(**query_dict)
+        else:
+            return CyclecountModeDayModel.objects.none()
 
     def get_serializer_class(self):
         if self.action in ['list']:
@@ -289,3 +304,171 @@ class FileDownloadAllView(viewsets.ModelViewSet):
         )
         response['Content-Disposition'] = "attachment; filename='cyclecountall_{}.csv'".format(str(dt.strftime('%Y%m%d%H%M%S%f')))
         return response
+
+
+class GetGoodsCyclecountViewSet(StockBinViewSet):
+    """
+        list:
+            Response a data list（get）
+    """
+    pagination_class = None
+
+    def list(self, request, *args, **kwargs):
+        staff_name = staff.objects.filter(openid=self.request.auth.openid, id=self.request.META.get('HTTP_OPERATOR')).first().staff_name
+        queryset = self.filter_queryset(self.get_queryset())
+        goods_code = self.request.GET.get('goods_code', '')
+        return_data = []
+        for i in queryset:
+            bins = StockBinModel.objects.filter(goods_code=i.goods_code)
+            for j in bins:
+                data = {
+                    'openid': self.request.auth.openid,
+                    'creater': staff_name,
+                    'cyclecount_status': 0,
+                    'bin_name': j.bin_name,
+                    'goods_code': i.goods_code,
+                    'goods_qty': j.goods_qty,
+                    'physical_inventory': 0,
+                    'difference': 0,
+                    't_code': Md5.md5(i.goods_code)
+                }
+                serializer = serializers.ManualCyclecountPostSerializer(data=data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return_data.append(serializer.data)
+        queryset = ManualCyclecountModeModel.objects.filter(
+            goods_code=goods_code,
+            cyclecount_status=0)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = serializers.ManualCyclecountGetSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = serializers.ManualCyclecountGetSerializer(instance=queryset, many=True)
+        return Response(serializer.data)
+
+class ManualCyclecountViewSet(viewsets.ModelViewSet):
+    """
+        retrieve:
+            Response a data list（get）
+
+        list:
+            Response a data list（all）
+
+        create:
+            Create a data line（post）
+
+        delete:
+            Delete a data line（delete)
+
+        partial_update:
+            Partial_update a data（patch：partial_update）
+
+        update:
+            Update a data（put：update）
+    """
+    pagination_class = None
+    filter_backends = [DjangoFilterBackend, OrderingFilter, ]
+    ordering_fields = ['id', "create_time", "update_time", ]
+    filter_class = ManualFilter
+
+    def get_project(self):
+        try:
+            id = self.kwargs.get('pk')
+            return id
+        except:
+            return None
+
+    def get_queryset(self):
+        id = self.get_project()
+        if self.request.user:
+            cur_date = timezone.now()
+            delt_date = relativedelta(days=1)
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {
+                'cyclecount_status': 0,
+                'update_time__gte': str((cur_date - delt_date).date()) + ' 00:00:00',
+                'update_time__lte': str((cur_date + delt_date).date()) + ' 00:00:00'
+            }
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return ManualCyclecountModeModel.objects.filter(**query_dict)
+        else:
+            return ManualCyclecountModeModel.objects.none()
+
+    def get_serializer_class(self):
+        if self.action in ['list']:
+            return serializers.ManualCyclecountGetSerializer
+        elif self.action in ['create']:
+            return serializers.ManualCyclecountModeModel
+        elif self.action in ['update']:
+            return serializers.ManualCyclecountUpdateSerializer
+        else:
+            return self.http_method_not_allowed(request=self.request)
+
+    def create(self, request, *args, **kwargs):
+        data = self.request.data
+        for i in range(len(data)):
+            ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid,
+                                                  t_code=data[i]['t_code']).update(
+                physical_inventory=data[i]['physical_inventory'], cyclecount_status=1,
+                difference=data[i]['physical_inventory'] - data[i]['goods_qty'])
+        return Response({"detail": "success"}, status=200)
+
+    def update(self, request, *args, **kwargs):
+        data = self.request.data
+        for i in range(len(data)):
+            scan_count_data = self.get_queryset().filter(openid=self.request.auth.openid,
+                                                  t_code=data[i]['t_code']).first()
+            scan_count_data.physical_inventory = scan_count_data.physical_inventory + data[i]['physical_inventory']
+            scan_count_data.difference = data[i]['physical_inventory'] - data[i]['goods_qty']
+            scan_count_data.cyclecount_status = 1
+            scan_count_data.save()
+        return Response({"detail": "success"}, status=200)
+
+class ManualCyclecountRecorderViewSet(viewsets.ModelViewSet):
+    """
+        list:
+            Response a data list（get）
+    """
+    pagination_class = MyPageNumberPagination
+    filter_backends = [DjangoFilterBackend, OrderingFilter, ]
+    ordering_fields = ['id', "create_time", "update_time", ]
+    filter_class = ManualFilter
+
+    def get_project(self):
+        try:
+            id = self.kwargs.get('pk')
+            return id
+        except:
+            return None
+
+    def get_queryset(self):
+        id = self.get_project()
+        if self.request.user:
+            date_choice = self.request.GET.get('create_time', '')
+            cur_time = timezone.now().date()
+            superopenid = Users.objects.filter(vip=9).first().openid
+            query_dict = {
+                'cyclecount_status': 1
+            }
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if date_choice:
+                query_dict['update_time__gte'] = str(date_choice) + ' 00:00:00'
+                query_dict['update_time__lte'] = str(date_choice) + ' 23:59:59'
+            else:
+                query_dict['update_time__gte'] = str(cur_time) + ' 00:00:00'
+                query_dict['update_time__lte'] = str(cur_time) + ' 23:59:59'
+            if id is not None:
+                query_dict['id'] = id
+            return ManualCyclecountModeModel.objects.filter(**query_dict)
+        else:
+            return ManualCyclecountModeModel.objects.none()
+
+    def get_serializer_class(self):
+        if self.action in ['list']:
+            return serializers.ManualCyclecountGetSerializer
+        else:
+            return self.http_method_not_allowed(request=self.request)

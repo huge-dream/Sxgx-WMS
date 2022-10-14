@@ -7,6 +7,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from .filter import Filter
 from rest_framework.exceptions import APIException
+from userprofile.models import Users
+from .page import MyPageNumberPaginationWarehouse
 
 
 class APIViewSet(viewsets.ModelViewSet):
@@ -29,7 +31,7 @@ class APIViewSet(viewsets.ModelViewSet):
         update:
             Update a data（put：update）
     """
-    pagination_class = MyPageNumberPagination
+    pagination_class = MyPageNumberPaginationWarehouse
     filter_backends = [DjangoFilterBackend, OrderingFilter, ]
     ordering_fields = ['id', "create_time", "update_time", ]
     filter_class = Filter
@@ -45,9 +47,9 @@ class APIViewSet(viewsets.ModelViewSet):
         id = self.get_project()
         if self.request.user:
             if id is None:
-                return ListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
+                return ListModel.objects.filter(is_delete=False)
             else:
-                return ListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+                return ListModel.objects.filter(id=id, is_delete=False)
         else:
             return ListModel.objects.none()
 
