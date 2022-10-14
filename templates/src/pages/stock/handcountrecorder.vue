@@ -145,7 +145,7 @@ export default {
       openid: "",
       login_name: "",
       authin: "0",
-      pathname: "cyclecount/cyclecountrecorder/",
+      pathname: "cyclecount/manualcyclecountrecorder/",
       pathname_previous: "",
       pathname_next: "",
       separator: "cell",

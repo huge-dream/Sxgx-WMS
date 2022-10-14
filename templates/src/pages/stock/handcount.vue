@@ -202,9 +202,7 @@
               @click="(handcountVisible = false), (handcountVal = '')"
               >{{ $t("cancel") }}</q-btn
             >
-            <q-btn color="primary" @click="handleHandcountSubmit">{{
-              $t("submit")
-            }}</q-btn>
+            <q-btn color="primary" @click="getList">{{ $t("submit") }}</q-btn>
           </div>
         </q-card-section>
       </q-card>
@@ -223,7 +221,7 @@ export default {
       openid: "",
       login_name: "",
       authin: "0",
-      pathname: "cyclecount/",
+      pathname: "cyclecount/getgoodscyclecount/",
       separator: "cell",
       loading: false,
       height: "",
@@ -301,7 +299,9 @@ export default {
     },
     getList() {
       var _this = this;
-      getauth(_this.pathname)
+      getauth(
+        "cyclecount/getgoodscyclecount/" + `?goods_code=${this.handcountVal}`
+      )
         .then((res) => {
           _this.table_list = res;
           _this.handcountVisible = false;
@@ -328,7 +328,7 @@ export default {
           color: "negative",
         });
       } else {
-        postauth(_this.pathname, _this.table_list)
+        postauth("cyclecount/manualcyclecount/", _this.table_list)
           .then((res) => {
             _this.CountFrom = false;
             _this.$q.notify({
@@ -388,11 +388,11 @@ export default {
       val = val.toString().replace(/^(0+)|[^\d]+/g, "");
     },
     handleHandcountSubmit() {
-      getauth(`goods/cyclecount?goods_code=${this.handcountVal}`).then(
+      /* getauth(`goods/cyclecount?goods_code=${this.handcountVal}`).then(
         (res) => {
           console.log(res, "--11---");
         }
-      );
+      ); */
     },
   },
   created() {
