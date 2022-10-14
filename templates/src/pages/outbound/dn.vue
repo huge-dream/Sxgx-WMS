@@ -22,35 +22,85 @@
             <q-btn
               v-show="
                 $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                  $q.localStorage.getItem('staff_type') !== 'StockControl'
+                $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                $q.localStorage.getItem('staff_type') !== 'StockControl'
               "
               :label="$t('new')"
               icon="add"
               @click="newFormOpen()"
             >
-              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('newtip') }}</q-tooltip>
+              <q-tooltip
+                content-class="bg-amber text-black shadow-4"
+                :offset="[10, 10]"
+                content-style="font-size: 12px"
+                >{{ $t("newtip") }}</q-tooltip
+              >
             </q-btn>
             <q-btn :label="$t('refresh')" icon="refresh" @click="reFresh()">
-              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('refreshtip') }}</q-tooltip>
+              <q-tooltip
+                content-class="bg-amber text-black shadow-4"
+                :offset="[10, 10]"
+                content-style="font-size: 12px"
+                >{{ $t("refreshtip") }}</q-tooltip
+              >
             </q-btn>
             <q-btn
               v-show="
                 $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                  $q.localStorage.getItem('staff_type') !== 'StockControl'
+                $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                $q.localStorage.getItem('staff_type') !== 'StockControl'
               "
               :label="$t('release')"
               icon="img:statics/outbound/orderrelease.png"
               @click="orderreleaseAllData()"
             >
-              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('releaseallorder') }}</q-tooltip>
+              <q-tooltip
+                content-class="bg-amber text-black shadow-4"
+                :offset="[10, 10]"
+                content-style="font-size: 12px"
+                >{{ $t("releaseallorder") }}</q-tooltip
+              >
             </q-btn>
+
+            <q-btn
+              v-if="isVip9 === 9"
+              @click="uploadVisible = true"
+              :label="$t('upload_center.upload')"
+              icon="file_upload"
+            >
+              <q-tooltip
+                content-class="bg-amber text-black shadow-4"
+                :offset="[10, 10]"
+                content-style="font-size: 12px"
+              >
+                {{ $t("upload_center.uploadfiles") }}
+              </q-tooltip>
+            </q-btn>
+
+            <!-- <q-btn :label="$t('download')" icon="file_download">
+              <q-tooltip
+                content-class="bg-amber text-black shadow-4"
+                :offset="[10, 10]"
+                content-style="font-size: 12px"
+              >
+                {{ $t("twoKai.downloadjianhuodantip") }}
+              </q-tooltip>
+            </q-btn> -->
           </q-btn-group>
           <q-space />
-          <q-input outlined rounded dense debounce="300" color="primary" v-model="filter" :placeholder="$t('search')" @blur="getSearchList()" @keyup.enter="getSearchList()">
+          <q-input
+            outlined
+            rounded
+            dense
+            debounce="300"
+            color="primary"
+            v-model="filter"
+            :placeholder="$t('search')"
+            @blur="getSearchList()"
+            @keyup.enter="getSearchList()"
+          >
             <template v-slot:append>
               <q-icon name="search" @click="getSearchList()" />
             </template>
@@ -59,20 +109,33 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="dn_code" :props="props">{{ props.row.dn_code }}</q-td>
-            <q-td key="dn_status" :props="props">{{ props.row.dn_status }}</q-td>
-            <q-td key="total_weight" :props="props">{{ props.row.total_weight.toFixed(4) }}</q-td>
-            <q-td key="total_volume" :props="props">{{ props.row.total_volume.toFixed(4) }}</q-td>
+            <q-td key="dn_status" :props="props">{{
+              props.row.dn_status
+            }}</q-td>
+            <q-td key="warehouse_id" :props="props">{{
+              switchWarehouse(props.row)
+            }}</q-td>
+            <q-td key="total_weight" :props="props">{{
+              props.row.total_weight.toFixed(4)
+            }}</q-td>
+            <q-td key="total_volume" :props="props">{{
+              props.row.total_volume.toFixed(4)
+            }}</q-td>
             <q-td key="customer" :props="props">{{ props.row.customer }}</q-td>
             <q-td key="creater" :props="props">{{ props.row.creater }}</q-td>
-            <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
-            <q-td key="update_time" :props="props">{{ props.row.update_time }}</q-td>
+            <q-td key="create_time" :props="props">{{
+              props.row.create_time
+            }}</q-td>
+            <q-td key="update_time" :props="props">{{
+              props.row.update_time
+            }}</q-td>
             <q-td key="action" :props="props" style="width: 100px">
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
+                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                  $q.localStorage.getItem('staff_type') !== 'StockControl'
                 "
                 round
                 flat
@@ -81,14 +144,19 @@
                 icon="visibility"
                 @click="viewData(props.row)"
               >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('printthisdn') }}</q-tooltip>
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("printthisdn") }}</q-tooltip
+                >
               </q-btn>
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
+                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                  $q.localStorage.getItem('staff_type') !== 'StockControl'
                 "
                 round
                 flat
@@ -97,14 +165,19 @@
                 icon="img:statics/outbound/order.png"
                 @click="neworderData(props.row)"
               >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('confirmorder') }}</q-tooltip>
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("confirmorder") }}</q-tooltip
+                >
               </q-btn>
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
+                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                  $q.localStorage.getItem('staff_type') !== 'StockControl'
                 "
                 round
                 flat
@@ -113,14 +186,35 @@
                 icon="img:statics/outbound/orderrelease.png"
                 @click="orderreleaseData(props.row)"
               >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('releaseorder') }}</q-tooltip>
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("releaseorder") }}</q-tooltip
+                >
               </q-btn>
+
               <q-btn
+                round
+                flat
+                push
+                color="secondary"
+                icon="file_download"
+                @click="handleRecordDownload(props.row)"
+              >
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("print") }}</q-tooltip
+                >
+              </q-btn>
+              <!-- <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
+                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                  $q.localStorage.getItem('staff_type') !== 'StockControl'
                 "
                 round
                 flat
@@ -129,14 +223,19 @@
                 icon="print"
                 @click="PrintPickingList(props.row)"
               >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('print') }}</q-tooltip>
-              </q-btn>
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("print") }}</q-tooltip
+                >
+              </q-btn> -->
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
+                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                  $q.localStorage.getItem('staff_type') !== 'StockControl'
                 "
                 round
                 flat
@@ -145,14 +244,19 @@
                 icon="img:statics/outbound/picked.png"
                 @click="pickedData(props.row)"
               >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('confirmpicked') }}</q-tooltip>
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("confirmpicked") }}</q-tooltip
+                >
               </q-btn>
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
+                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                  $q.localStorage.getItem('staff_type') !== 'StockControl'
                 "
                 round
                 flat
@@ -161,14 +265,19 @@
                 icon="rv_hookup"
                 @click="DispatchDN(props.row)"
               >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('dispatch') }}</q-tooltip>
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("dispatch") }}</q-tooltip
+                >
               </q-btn>
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
+                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                  $q.localStorage.getItem('staff_type') !== 'StockControl'
                 "
                 round
                 flat
@@ -177,14 +286,19 @@
                 icon="img:statics/outbound/receiving.png"
                 @click="PODData(props.row)"
               >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('outbound.pod') }}</q-tooltip>
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("outbound.pod") }}</q-tooltip
+                >
               </q-btn>
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
+                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                  $q.localStorage.getItem('staff_type') !== 'StockControl'
                 "
                 round
                 flat
@@ -193,14 +307,19 @@
                 icon="edit"
                 @click="editData(props.row)"
               >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('edit') }}</q-tooltip>
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("edit") }}</q-tooltip
+                >
               </q-btn>
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
+                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
+                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
+                  $q.localStorage.getItem('staff_type') !== 'StockControl'
                 "
                 round
                 flat
@@ -209,17 +328,37 @@
                 icon="delete"
                 @click="deleteData(props.row)"
               >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('delete') }}</q-tooltip>
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("delete") }}</q-tooltip
+                >
               </q-btn>
             </q-td>
             <template v-if="props.row.transportation_fee.detail !== []">
-              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">
+              <q-tooltip
+                content-class="bg-amber text-black shadow-4"
+                :offset="[10, 10]"
+                content-style="font-size: 12px"
+              >
                 <q-list>
-                  <div v-for="(transportation_fee, index) in props.row.transportation_fee.detail" :key="index">
+                  <div
+                    v-for="(transportation_fee, index) in props.row
+                      .transportation_fee.detail"
+                    :key="index"
+                  >
                     <q-item v-ripple>
                       <q-item-section>
-                        <q-item-label>{{ transportation_fee.transportation_supplier }}</q-item-label>
-                        <q-item-label>{{ $t('estimate') }}: {{ transportation_fee.transportation_cost }}</q-item-label>
+                        <q-item-label>{{
+                          transportation_fee.transportation_supplier
+                        }}</q-item-label>
+                        <q-item-label
+                          >{{ $t("estimate") }}:
+                          {{
+                            transportation_fee.transportation_cost
+                          }}</q-item-label
+                        >
                       </q-item-section>
                     </q-item>
                   </div>
@@ -232,22 +371,59 @@
     </transition>
     <template>
       <div class="q-pa-lg flex flex-center">
-        <q-btn v-show="pathname_previous" flat push color="purple" :label="$t('previous')" icon="navigate_before" @click="getListPrevious()">
-          <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('previous') }}</q-tooltip>
+        <q-btn
+          v-show="pathname_previous"
+          flat
+          push
+          color="purple"
+          :label="$t('previous')"
+          icon="navigate_before"
+          @click="getListPrevious()"
+        >
+          <q-tooltip
+            content-class="bg-amber text-black shadow-4"
+            :offset="[10, 10]"
+            content-style="font-size: 12px"
+            >{{ $t("previous") }}</q-tooltip
+          >
         </q-btn>
-        <q-btn v-show="pathname_next" flat push color="purple" :label="$t('next')" icon-right="navigate_next" @click="getListNext()">
-          <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('next') }}</q-tooltip>
+        <q-btn
+          v-show="pathname_next"
+          flat
+          push
+          color="purple"
+          :label="$t('next')"
+          icon-right="navigate_next"
+          @click="getListNext()"
+        >
+          <q-tooltip
+            content-class="bg-amber text-black shadow-4"
+            :offset="[10, 10]"
+            content-style="font-size: 12px"
+            >{{ $t("next") }}</q-tooltip
+          >
         </q-btn>
-        <q-btn v-show="!pathname_previous && !pathname_next" flat push color="dark" :label="$t('no_data')"></q-btn>
+        <q-btn
+          v-show="!pathname_previous && !pathname_next"
+          flat
+          push
+          color="dark"
+          :label="$t('no_data')"
+        ></q-btn>
       </div>
     </template>
     <q-dialog v-model="newForm">
       <q-card class="shadow-24">
-        <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
           <div>{{ newFormData.dn_code }}</div>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip content-class="bg-amber text-black shadow-4">{{ $t('index.close') }}</q-tooltip>
+            <q-tooltip content-class="bg-amber text-black shadow-4">{{
+              $t("index.close")
+            }}</q-tooltip>
           </q-btn>
         </q-bar>
         <q-card-section style="max-height: 325px; width: 400px" class="scroll">
@@ -266,17 +442,30 @@
             @input-value="setModel"
             :label="$t('baseinfo.view_customer.customer_name')"
             style="margin-bottom: 5px"
-            :rules="[val => (val && val.length > 0) || error1]"
+            :rules="[(val) => (val && val.length > 0) || error1]"
             @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:Sno-option>
               <q-item>
-                <q-item-section class="text-grey">
-                  No Result
-                </q-item-section>
+                <q-item-section class="text-grey"> No Result </q-item-section>
               </q-item>
             </template>
           </q-select>
+
+          <q-select
+            dense
+            outlined
+            square
+            emit-value
+            map-options
+            v-model="warehouseId"
+            option-value="id"
+            option-label="warehosue_name"
+            :options="warehouse_list"
+            :label="$t('twoKai.view_warehouse.warehouse_name')"
+            :rules="[(val) => val || $t('twoKai.view_warehouse.error1')]"
+          />
+
           <q-input
             dense
             outlined
@@ -306,10 +495,18 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData1.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData1.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData1.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
@@ -342,10 +539,18 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData2.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData2.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData2.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
@@ -378,10 +583,18 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData3.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData3.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData3.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
@@ -414,10 +627,18 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData4.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData4.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData4.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
@@ -450,10 +671,18 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData5.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData5.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData5.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
@@ -486,10 +715,18 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData6.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData6.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData6.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
@@ -522,10 +759,18 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData7.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData7.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData7.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
@@ -558,10 +803,18 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData8.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData8.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData8.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
@@ -594,10 +847,18 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData9.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData9.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData9.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
@@ -630,96 +891,192 @@
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                  <q-item
+                    ><q-item-section class="text-grey"
+                      >No results</q-item-section
+                    ></q-item
+                  >
                 </template>
                 <template v-if="goodsData10.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData10.code = ''" class="cursor-pointer" />
+                  <q-icon
+                    name="cancel"
+                    @click.stop="goodsData10.code = ''"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-select>
             </template>
           </q-input>
         </q-card-section>
         <div style="float: right; padding: 15px 15px 15px 0">
-          <q-btn color="white" text-color="black" style="margin-right: 25px" @click="isEdit ? editDataCancel() : newDataCancel()">{{ $t('cancel') }}</q-btn>
-          <q-btn color="primary" @click="isEdit ? editDataSubmit() : newDataSubmit()">{{ $t('submit') }}</q-btn>
+          <q-btn
+            color="white"
+            text-color="black"
+            style="margin-right: 25px"
+            @click="isEdit ? editDataCancel() : newDataCancel()"
+            >{{ $t("cancel") }}</q-btn
+          >
+          <q-btn
+            color="primary"
+            @click="isEdit ? editDataSubmit() : newDataSubmit()"
+            >{{ $t("submit") }}</q-btn
+          >
         </div>
       </q-card>
     </q-dialog>
     <q-dialog v-model="deleteForm">
       <q-card class="shadow-24">
-        <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
-          <div>{{ $t('delete') }}</div>
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
+          <div>{{ $t("delete") }}</div>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip content-class="bg-amber text-black shadow-4">{{ $t('index.close') }}</q-tooltip>
+            <q-tooltip content-class="bg-amber text-black shadow-4">{{
+              $t("index.close")
+            }}</q-tooltip>
           </q-btn>
         </q-bar>
-        <q-card-section style="max-height: 325px; width: 400px" class="scroll">{{ $t('deletetip') }}</q-card-section>
+        <q-card-section
+          style="max-height: 325px; width: 400px"
+          class="scroll"
+          >{{ $t("deletetip") }}</q-card-section
+        >
         <div style="float: right; padding: 15px 15px 15px 0">
-          <q-btn color="white" text-color="black" style="margin-right: 25px" @click="deleteDataCancel()">{{ $t('cancel') }}</q-btn>
-          <q-btn color="primary" @click="deleteDataSubmit()">{{ $t('submit') }}</q-btn>
+          <q-btn
+            color="white"
+            text-color="black"
+            style="margin-right: 25px"
+            @click="deleteDataCancel()"
+            >{{ $t("cancel") }}</q-btn
+          >
+          <q-btn color="primary" @click="deleteDataSubmit()">{{
+            $t("submit")
+          }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
     <q-dialog v-model="neworderForm">
       <q-card class="shadow-24">
-        <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
-          <div>{{ $t('confirmorder') }}</div>
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
+          <div>{{ $t("confirmorder") }}</div>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip content-class="bg-amber text-black shadow-4">{{ $t('index.close') }}</q-tooltip>
+            <q-tooltip content-class="bg-amber text-black shadow-4">{{
+              $t("index.close")
+            }}</q-tooltip>
           </q-btn>
         </q-bar>
-        <q-card-section style="max-height: 325px; width: 400px" class="scroll">{{ $t('deletetip') }}</q-card-section>
+        <q-card-section
+          style="max-height: 325px; width: 400px"
+          class="scroll"
+          >{{ $t("deletetip") }}</q-card-section
+        >
         <div style="float: right; padding: 15px 15px 15px 0">
-          <q-btn color="white" text-color="black" style="margin-right: 25px" @click="neworderDataCancel()">{{ $t('cancel') }}</q-btn>
-          <q-btn color="primary" @click="neworderDataSubmit()">{{ $t('submit') }}</q-btn>
+          <q-btn
+            color="white"
+            text-color="black"
+            style="margin-right: 25px"
+            @click="neworderDataCancel()"
+            >{{ $t("cancel") }}</q-btn
+          >
+          <q-btn color="primary" @click="neworderDataSubmit()">{{
+            $t("submit")
+          }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
     <q-dialog v-model="orderreleaseForm">
       <q-card class="shadow-24">
-        <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
-          <div>{{ $t('releaseorder') }}</div>
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
+          <div>{{ $t("releaseorder") }}</div>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip content-class="bg-amber text-black shadow-4">{{ $t('index.close') }}</q-tooltip>
+            <q-tooltip content-class="bg-amber text-black shadow-4">{{
+              $t("index.close")
+            }}</q-tooltip>
           </q-btn>
         </q-bar>
-        <q-card-section style="max-height: 325px; width: 400px" class="scroll">{{ $t('deletetip') }}</q-card-section>
+        <q-card-section
+          style="max-height: 325px; width: 400px"
+          class="scroll"
+          >{{ $t("deletetip") }}</q-card-section
+        >
         <div style="float: right; padding: 15px 15px 15px 0">
-          <q-btn color="white" text-color="black" style="margin-right: 25px" @click="orderreleaseDataCancel()">{{ $t('cancel') }}</q-btn>
-          <q-btn color="primary" @click="orderreleaseDataSubmit()">{{ $t('submit') }}</q-btn>
+          <q-btn
+            color="white"
+            text-color="black"
+            style="margin-right: 25px"
+            @click="orderreleaseDataCancel()"
+            >{{ $t("cancel") }}</q-btn
+          >
+          <q-btn color="primary" @click="orderreleaseDataSubmit()">{{
+            $t("submit")
+          }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
     <q-dialog v-model="viewForm">
       <q-card id="printMe">
-        <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
           <div>{{ viewdn }}</div>
           <q-space />
-          {{ $t('outbound.dn') }}
+          {{ $t("outbound.dn") }}
         </q-bar>
         <q-card-section>
           <div class="row">
             <div class="col-8">
-              <div class="text-h6">Sender: {{ warehouse_detail.warehouse_name }}</div>
-              <div class="text-subtitle2">Address: {{ warehouse_detail.warehouse_city }}{{ warehouse_detail.warehouse_address }}</div>
-              <div class="text-subtitle2">Tel: {{ warehouse_detail.warehouse_contact }}</div>
-              <div class="text-h6">Receiver: {{ customer_detail.customer_name }}</div>
-              <div class="text-subtitle2">Address: {{ customer_detail.customer_city }}{{ customer_detail.customer_address }}</div>
-              <div class="text-subtitle2">Tel: {{ customer_detail.customer_contact }}</div>
+              <div class="text-h6">
+                Sender: {{ warehouse_detail.warehouse_name }}
+              </div>
+              <div class="text-subtitle2">
+                Address: {{ warehouse_detail.warehouse_city
+                }}{{ warehouse_detail.warehouse_address }}
+              </div>
+              <div class="text-subtitle2">
+                Tel: {{ warehouse_detail.warehouse_contact }}
+              </div>
+              <div class="text-h6">
+                Receiver: {{ customer_detail.customer_name }}
+              </div>
+              <div class="text-subtitle2">
+                Address: {{ customer_detail.customer_city
+                }}{{ customer_detail.customer_address }}
+              </div>
+              <div class="text-subtitle2">
+                Tel: {{ customer_detail.customer_contact }}
+              </div>
             </div>
-            <div class="col-4"><img :src="bar_code" style="width: 70%; margin-left: 15%" /></div>
+            <div class="col-4">
+              <img :src="bar_code" style="width: 70%; margin-left: 15%" />
+            </div>
           </div>
         </q-card-section>
         <q-markup-table>
           <thead>
             <tr>
-              <th class="text-left">{{ $t('goods.view_goodslist.goods_code') }}</th>
-              <th class="text-right">{{ $t('outbound.view_dn.total_weight') }}</th>
-              <th class="text-right">{{ $t('outbound.view_dn.total_volume') }}</th>
-              <th class="text-right">{{ $t('outbound.view_dn.intransit_qty') }}</th>
+              <th class="text-left">
+                {{ $t("goods.view_goodslist.goods_code") }}
+              </th>
+              <th class="text-right">
+                {{ $t("outbound.view_dn.total_weight") }}
+              </th>
+              <th class="text-right">
+                {{ $t("outbound.view_dn.total_volume") }}
+              </th>
+              <th class="text-right">
+                {{ $t("outbound.view_dn.intransit_qty") }}
+              </th>
               <th class="text-right">Comments</th>
             </tr>
           </thead>
@@ -734,23 +1091,32 @@
           </tbody>
         </q-markup-table>
       </q-card>
-      <div style="float: right; padding: 15px 15px 15px 0"><q-btn color="primary" icon="print" v-print="printObj">print</q-btn></div>
+      <div style="float: right; padding: 15px 15px 15px 0">
+        <q-btn color="primary" icon="print" v-print="printObj">print</q-btn>
+      </div>
     </q-dialog>
     <q-dialog v-model="viewPLForm">
       <q-card id="printPL">
-        <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
-          <div>{{ $t('print') }}</div>
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
+          <div>{{ $t("print") }}</div>
           <q-space />
         </q-bar>
-        <div class="col-4" style="margin-top: 5%;"><img :src="bar_code" style="width: 21%;margin-left: 70%" /></div>
+        <div class="col-4" style="margin-top: 5%">
+          <img :src="bar_code" style="width: 21%; margin-left: 70%" />
+        </div>
         <q-markup-table>
           <thead>
             <tr>
-              <th class="text-left">{{ $t('outbound.view_dn.dn_code') }}</th>
-              <th class="text-right">{{ $t('warehouse.view_binset.bin_name') }}</th>
-              <th class="text-right">{{ $t('outbound.view_dn.goods_qty') }}</th>
-              <th class="text-right">{{ $t('outbound.pickstock') }}</th>
-              <th class="text-right">{{ $t('outbound.pickedstock') }}</th>
+              <th class="text-left">{{ $t("outbound.view_dn.dn_code") }}</th>
+              <th class="text-right">
+                {{ $t("warehouse.view_binset.bin_name") }}
+              </th>
+              <th class="text-right">{{ $t("outbound.view_dn.goods_qty") }}</th>
+              <th class="text-right">{{ $t("outbound.pickstock") }}</th>
+              <th class="text-right">{{ $t("outbound.pickedstock") }}</th>
               <th class="text-right">Comments</th>
             </tr>
           </thead>
@@ -761,21 +1127,30 @@
               <td class="text-right">{{ view.goods_code }}</td>
               <td class="text-right">{{ view.pick_qty }}</td>
               <td class="text-right" v-show="picklist_check === 0"></td>
-              <td class="text-right" v-show="picklist_check > 0">{{ view.picked_qty }}</td>
+              <td class="text-right" v-show="picklist_check > 0">
+                {{ view.picked_qty }}
+              </td>
               <td class="text-right"></td>
             </tr>
           </tbody>
         </q-markup-table>
       </q-card>
-      <div style="float: right; padding: 15px 15px 15px 0"><q-btn color="primary" icon="print" v-print="printPL">print</q-btn></div>
+      <div style="float: right; padding: 15px 15px 15px 0">
+        <q-btn color="primary" icon="print" v-print="printPL">print</q-btn>
+      </div>
     </q-dialog>
     <q-dialog v-model="pickedForm">
       <q-card class="shadow-24">
-        <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
           <div>{{ pickFormData.dn_code }}</div>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip content-class="bg-amber text-black shadow-4">{{ $t('index.close') }}</q-tooltip>
+            <q-tooltip content-class="bg-amber text-black shadow-4">{{
+              $t("index.close")
+            }}</q-tooltip>
           </q-btn>
         </q-bar>
         <q-card-section style="max-height: 325px; width: 400px" class="scroll">
@@ -791,7 +1166,15 @@
             style="margin-bottom: 5px"
           />
           <div v-for="(item, index) in pickFormData.goodsData" :key="index">
-            <q-input dense outlined square bottom-slots type="number" v-model="item.pick_qty" :label="item.goods_code">
+            <q-input
+              dense
+              outlined
+              square
+              bottom-slots
+              type="number"
+              v-model="item.pick_qty"
+              :label="item.goods_code"
+            >
               <template v-slot:append>
                 {{ item.bin_name }}
               </template>
@@ -799,18 +1182,31 @@
           </div>
         </q-card-section>
         <div style="float: right; padding: 15px 15px 15px 0">
-          <q-btn color="white" text-color="black" style="margin-right: 25px" @click="pickedDataCancel()">{{ $t('cancel') }}</q-btn>
-          <q-btn color="primary" @click="pickedDataSubmit()">{{ $t('submit') }}</q-btn>
+          <q-btn
+            color="white"
+            text-color="black"
+            style="margin-right: 25px"
+            @click="pickedDataCancel()"
+            >{{ $t("cancel") }}</q-btn
+          >
+          <q-btn color="primary" @click="pickedDataSubmit()">{{
+            $t("submit")
+          }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
     <q-dialog v-model="dispatchForm">
       <q-card class="shadow-24">
-        <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
           <div>{{ dispatchFormData.dn_code }}</div>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip content-class="bg-amber text-black shadow-4">{{ $t('index.close') }}</q-tooltip>
+            <q-tooltip content-class="bg-amber text-black shadow-4">{{
+              $t("index.close")
+            }}</q-tooltip>
           </q-btn>
         </q-bar>
         <q-card-section style="max-height: 325px; width: 400px" class="scroll">
@@ -829,30 +1225,51 @@
             @keyup.enter="dispatchDataSubmit()"
           >
             <template v-slot:no-option>
-              <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+              <q-item
+                ><q-item-section class="text-grey"
+                  >No results</q-item-section
+                ></q-item
+              >
             </template>
             <template v-if="dispatchFormData.driver" v-slot:append>
-              <q-icon name="cancel" @click.stop="dispatchFormData.driver = ''" class="cursor-pointer" />
+              <q-icon
+                name="cancel"
+                @click.stop="dispatchFormData.driver = ''"
+                class="cursor-pointer"
+              />
             </template>
           </q-select>
         </q-card-section>
         <div style="float: right; padding: 15px 15px 15px 0">
-          <q-btn color="white" text-color="black" style="margin-right: 25px" @click="dispatchDataCancel()">{{ $t('cancel') }}</q-btn>
-          <q-btn color="primary" @click="dispatchDataSubmit()">{{ $t('submit') }}</q-btn>
+          <q-btn
+            color="white"
+            text-color="black"
+            style="margin-right: 25px"
+            @click="dispatchDataCancel()"
+            >{{ $t("cancel") }}</q-btn
+          >
+          <q-btn color="primary" @click="dispatchDataSubmit()">{{
+            $t("submit")
+          }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
     <q-dialog v-model="podForm">
       <q-card class="shadow-24">
-        <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
-          <div>{{ $t('outbound.dn') }}: {{ podFormData.dn_code }}</div>
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
+          <div>{{ $t("outbound.dn") }}: {{ podFormData.dn_code }}</div>
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip content-class="bg-amber text-black shadow-4">{{ $t('index.close') }}</q-tooltip>
+            <q-tooltip content-class="bg-amber text-black shadow-4">{{
+              $t("index.close")
+            }}</q-tooltip>
           </q-btn>
         </q-bar>
         <q-card-section style="max-height: 325px; width: 400px" class="scroll">
-          {{ $t('baseinfo.customer') }}: {{ podFormData.customer }}
+          {{ $t("baseinfo.customer") }}: {{ podFormData.customer }}
           <div v-for="(item, index) in podFormData.goodsData" :key="index">
             <q-input
               dense
@@ -879,16 +1296,86 @@
                   style="margin-top: 11%"
                   :error-message="error2"
                   :error="isError2"
-                  :rules="[validate2(item.delivery_damage_qty, item.intransit_qty)]"
+                  :rules="[
+                    validate2(item.delivery_damage_qty, item.intransit_qty),
+                  ]"
                 ></q-input>
               </template>
             </q-input>
           </div>
         </q-card-section>
         <div style="float: right; padding: 15px 15px 15px 0">
-          <q-btn color="white" text-color="black" style="margin-right: 25px" @click="PODDataCancel()">{{ $t('cancel') }}</q-btn>
-          <q-btn color="primary" @click="PODDataSubmit()">{{ $t('submit') }}</q-btn>
+          <q-btn
+            color="white"
+            text-color="black"
+            style="margin-right: 25px"
+            @click="PODDataCancel()"
+            >{{ $t("cancel") }}</q-btn
+          >
+          <q-btn color="primary" @click="PODDataSubmit()">{{
+            $t("submit")
+          }}</q-btn>
         </div>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="uploadVisible">
+      <q-card class="shadow-24">
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
+          <div>{{ $t("twoKai.upload_asn.title") }}</div>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup>
+            <q-tooltip content-class="bg-amber text-black shadow-4">{{
+              $t("index.close")
+            }}</q-tooltip>
+          </q-btn>
+        </q-bar>
+        <q-card-section style="max-height: 325px; width: 400px" class="scroll">
+          <q-uploader
+            :url="goodslistfile_pathname"
+            method="post"
+            :headers="[
+              { name: 'token', value: token },
+              { name: 'language', value: lang },
+              { name: 'operator', value: login_id },
+            ]"
+            :field-name="(file) => 'file'"
+            @rejected="onRejected"
+            @added="getfileinfo"
+            @finish="handleUploadFinish"
+            class="custom-uploader"
+            auto-upload
+          >
+            <template v-slot:header="scope">
+              <q-btn
+                type="a"
+                :label="$t('upload_center.upload')"
+                icon="file_upload"
+                @click="scope.pickFiles"
+                round
+                dense
+                flat
+              >
+                <q-uploader-add-trigger />
+                <q-tooltip
+                  content-class="bg-amber text-black shadow-4"
+                  :offset="[10, 10]"
+                  content-style="font-size: 12px"
+                  >{{ $t("upload_center.uploadfiles") }}</q-tooltip
+                >
+              </q-btn>
+            </template>
+          </q-uploader>
+
+          <p class="custom-download">
+            <span @click="handleDownloadTemplate">
+              {{ $t("twoKai.upload_asn.template") }}</span
+            >
+          </p>
+        </q-card-section>
       </q-card>
     </q-dialog>
   </div>
@@ -896,25 +1383,37 @@
 <router-view />
 
 <script>
-import { getauth, postauth, putauth, deleteauth, ViewPrintAuth } from 'boot/axios_request'
-import { LocalStorage } from 'quasar'
+import {
+  getauth,
+  postauth,
+  putauth,
+  deleteauth,
+  ViewPrintAuth,
+} from "boot/axios_request";
+import { date, exportFile, LocalStorage, openURL } from "quasar";
 
 export default {
-  name: 'Pagednlist',
-  data () {
+  name: "Pagednlist",
+  data() {
     return {
-      openid: '',
-      login_name: '',
-      authin: '0',
-      pathname: 'dn/',
-      pathname_previous: '',
-      pathname_next: '',
-      separator: 'cell',
+      uploadVisible: false,
+      token: LocalStorage.getItem("openid"),
+      lang: LocalStorage.getItem("lang"),
+      login_id: LocalStorage.getItem("login_id"),
+      isVip9: LocalStorage.getItem("is_vip") || "",
+      goodslistfile_pathname: baseurl + "uploadfile/dnlistfileadd/",
+      openid: "",
+      login_name: "",
+      authin: "0",
+      pathname: "dn/",
+      pathname_previous: "",
+      pathname_next: "",
+      separator: "cell",
       loading: false,
-      height: '',
+      height: "",
       table_list: [],
       viewprint_table: [],
-      bar_code: '',
+      bar_code: "",
       pickinglist_print_table: [],
       pickinglist_check: 0,
       warehouse_detail: {},
@@ -923,51 +1422,100 @@ export default {
       driver_list: [],
       customer_detail: {},
       columns: [
-        { name: 'dn_code', required: true, label: this.$t('outbound.view_dn.dn_code'), align: 'left', field: 'dn_code' },
-        { name: 'dn_status', label: this.$t('outbound.view_dn.dn_status'), field: 'dn_status', align: 'center' },
-        { name: 'total_weight', label: this.$t('outbound.view_dn.total_weight'), field: 'total_weight', align: 'center' },
-        { name: 'total_volume', label: this.$t('outbound.view_dn.total_volume'), field: 'total_volume', align: 'center' },
-        { name: 'customer', label: this.$t('outbound.view_dn.customer'), field: 'customer', align: 'center' },
-        { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },
-        { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
-        { name: 'update_time', label: this.$t('updatetime'), field: 'update_time', align: 'center' },
-        { name: 'action', label: this.$t('action'), align: 'right' }
+        {
+          name: "dn_code",
+          required: true,
+          label: this.$t("outbound.view_dn.dn_code"),
+          align: "left",
+          field: "dn_code",
+        },
+        {
+          name: "dn_status",
+          label: this.$t("outbound.view_dn.dn_status"),
+          field: "dn_status",
+          align: "center",
+        },
+        {
+          name: "warehouse_id",
+          label: this.$t("twoKai.warehouse_id"),
+          field: "warehouse_id",
+          align: "center",
+        },
+        {
+          name: "total_weight",
+          label: this.$t("outbound.view_dn.total_weight"),
+          field: "total_weight",
+          align: "center",
+        },
+        {
+          name: "total_volume",
+          label: this.$t("outbound.view_dn.total_volume"),
+          field: "total_volume",
+          align: "center",
+        },
+        {
+          name: "customer",
+          label: this.$t("outbound.view_dn.customer"),
+          field: "customer",
+          align: "center",
+        },
+        {
+          name: "creater",
+          label: this.$t("creater"),
+          field: "creater",
+          align: "center",
+        },
+        {
+          name: "create_time",
+          label: this.$t("createtime"),
+          field: "create_time",
+          align: "center",
+        },
+        {
+          name: "update_time",
+          label: this.$t("updatetime"),
+          field: "update_time",
+          align: "center",
+        },
+        { name: "action", label: this.$t("action"), align: "right" },
       ],
-      filter: '',
+      filter: "",
       pagination: {
         page: 1,
-        rowsPerPage: '30'
+        rowsPerPage: "30",
       },
       newForm: false,
       options1: [],
       isEdit: false,
-      listNumber: '',
-      options: LocalStorage.getItem('goods_code_list'),
-      driver_options: LocalStorage.getItem('driver_name_list'),
-      newdn: { creater: '' },
+      listNumber: "",
+      options: LocalStorage.getItem("goods_code_list"),
+      driver_options: LocalStorage.getItem("driver_name_list"),
+      newdn: { creater: "" },
+      warehouseId: "",
+      warehouse_list: [],
       newFormData: {
-        dn_code: '',
-        customer: '',
+        dn_code: "",
+        customer: "",
         goods_code: [],
         goods_qty: [],
-        creater: ''
+        creater: "",
       },
       pickFormData: {
-        dn_code: '',
-        customer: '',
+        dn_code: "",
+        customer: "",
         goodsData: [],
-        creater: ''
+        creater: "",
       },
-      goodsData1: { bin: '', code: '', qty: '' },
-      goodsData2: { bin: '', code: '', qty: '' },
-      goodsData3: { bin: '', code: '', qty: '' },
-      goodsData4: { bin: '', code: '', qty: '' },
-      goodsData5: { bin: '', code: '', qty: '' },
-      goodsData6: { bin: '', code: '', qty: '' },
-      goodsData7: { bin: '', code: '', qty: '' },
-      goodsData8: { bin: '', code: '', qty: '' },
-      goodsData9: { bin: '', code: '', qty: '' },
-      goodsData10: { bin: '', code: '', qty: '' },
+      goodsData1: { bin: "", code: "", qty: "" },
+      goodsData2: { bin: "", code: "", qty: "" },
+      goodsData3: { bin: "", code: "", qty: "" },
+      goodsData4: { bin: "", code: "", qty: "" },
+      goodsData5: { bin: "", code: "", qty: "" },
+      goodsData6: { bin: "", code: "", qty: "" },
+      goodsData7: { bin: "", code: "", qty: "" },
+      goodsData8: { bin: "", code: "", qty: "" },
+      goodsData9: { bin: "", code: "", qty: "" },
+      goodsData10: { bin: "", code: "", qty: "" },
       editid: 0,
       editFormData: {},
       pickedForm: false,
@@ -980,885 +1528,1018 @@ export default {
       orderreleaseid: 0,
       viewForm: false,
       viewPLForm: false,
-      viewdn: '',
+      viewdn: "",
       viewid: 0,
       dispatchid: 0,
       dispatchForm: false,
       dispatchFormData: {
-        dn_code: '',
-        driver: ''
+        dn_code: "",
+        driver: "",
       },
       podid: 0,
       podForm: false,
       podFormData: {
-        dn_code: '',
-        customer: '',
-        goodsData: []
+        dn_code: "",
+        customer: "",
+        goodsData: [],
       },
       printObj: {
-        id: 'printMe',
-        popTitle: this.$t('outbound.dn')
+        id: "printMe",
+        popTitle: this.$t("outbound.dn"),
       },
       printPL: {
-        id: 'printPL',
-        popTitle: this.$t('outbound.pickinglist')
+        id: "printPL",
+        popTitle: this.$t("outbound.pickinglist"),
       },
-      error1: this.$t('baseinfo.view_customer.error1'),
-      error2: this.$t('notice.valerror'),
+      error1: this.$t("baseinfo.view_customer.error1"),
+      error2: this.$t("notice.valerror"),
       isError1: false,
-      isError2: false
-    }
+      isError2: false,
+    };
   },
   methods: {
-    validate1 (val) {
-      const reg = /^[1-9]\d*$/g
-      const check = reg.test(val)
+    handleRecordDownload(record) {
+      console.log(record);
+    },
+    handleDownload() {
+      let _this = this;
+      getfile(
+        _this.pathname + "filelist/?lang=" + LocalStorage.getItem("lang")
+      ).then((res) => {
+        var timeStamp = Date.now();
+        var formattedString = date.formatDate(timeStamp, "YYYYMMDDHHmmssSSS");
+        const status = exportFile(
+          _this.pathname + formattedString + ".csv",
+          "\uFEFF" + res.data,
+          "text/csv"
+        );
+        if (status !== true) {
+          _this.$q.notify({
+            message: "Browser denied file download...",
+            color: "negative",
+            icon: "warning",
+          });
+        }
+      });
+    },
+    onRejected(rejectedEntries) {
+      this.$q.notify({
+        type: "negative",
+        message: `${rejectedEntries.length} file(s) did not pass validation constraints`,
+      });
+    },
+    getfileinfo(file) {
+      console.log(file, "------");
+    },
+    handleUploadFinish() {
+      this.$q.notify({
+        message: "Success upload",
+        icon: "check",
+        color: "green",
+      });
+      this.getList();
+      this.uploadVisible = false;
+    },
+    handleDownloadTemplate() {
+      if (LocalStorage.has("auth")) {
+        if (LocalStorage.has("lang")) {
+          if (LocalStorage.getItem("lang") === "zh-hans") {
+            openURL(baseurl + "media/upload_example/dnlist_cn.xlsx");
+          } else {
+            openURL(baseurl + "media/upload_example/dnlist_en.xlsx");
+          }
+        } else {
+          openURL(baseurl + "media/upload_example/dnlist_en.xlsx");
+        }
+      } else {
+        _this.$q.notify({
+          message: _this.$t("notice.loginerror"),
+          color: "negative",
+          icon: "warning",
+        });
+      }
+    },
+
+    switchWarehouse(record) {
+      const filterItem = this.warehouse_list.find(
+        (item) => (item.id = record.warehouse_id)
+      );
+      return record.warehouse_id + "-" + filterItem.warehosue_name || "";
+    },
+
+    validate1(val) {
+      const reg = /^[1-9]\d*$/g;
+      const check = reg.test(val);
       if (check) {
-        this.isError1 = false
+        this.isError1 = false;
       } else {
-        this.isError1 = true
+        this.isError1 = true;
       }
     },
-    validate2 (val1, val2) {
-      const reg = /^[0-9]\d*$/g
-      const check = reg.test(val1)
+    validate2(val1, val2) {
+      const reg = /^[0-9]\d*$/g;
+      const check = reg.test(val1);
       if (check && val1 <= val2) {
-        this.isError2 = false
+        this.isError2 = false;
       } else {
-        this.isError2 = true
+        this.isError2 = true;
       }
     },
-    getList () {
-      var _this = this
-      if (LocalStorage.has('auth')) {
-        getauth(_this.pathname + 'list/', {})
-          .then(res => {
-            _this.table_list = []
-            res.results.forEach(item => {
+    getList() {
+      var _this = this;
+      if (LocalStorage.has("auth")) {
+        getauth(_this.pathname + "list/", {})
+          .then((res) => {
+            _this.table_list = [];
+            res.results.forEach((item) => {
               if (item.dn_status === 1) {
-                item.dn_status = _this.$t('outbound.freshorder')
+                item.dn_status = _this.$t("outbound.freshorder");
               } else if (item.dn_status === 2) {
-                item.dn_status = _this.$t('outbound.neworder')
+                item.dn_status = _this.$t("outbound.neworder");
               } else if (item.dn_status === 3) {
-                item.dn_status = _this.$t('outbound.pickstock')
+                item.dn_status = _this.$t("outbound.pickstock");
               } else if (item.dn_status === 4) {
-                item.dn_status = _this.$t('outbound.pickedstock')
+                item.dn_status = _this.$t("outbound.pickedstock");
               } else if (item.dn_status === 5) {
-                item.dn_status = _this.$t('outbound.shippedstock')
+                item.dn_status = _this.$t("outbound.shippedstock");
               } else if (item.dn_status === 6) {
-                item.dn_status = _this.$t('outbound.received')
+                item.dn_status = _this.$t("outbound.received");
               } else {
-                item.dn_status = 'N/A'
+                item.dn_status = "N/A";
               }
-              _this.table_list.push(item)
-            })
-            res.results.forEach(item => {
+              _this.table_list.push(item);
+            });
+            res.results.forEach((item) => {
               if (item.asn_status === 1) {
-                item.asn_status = _this.$t()
+                item.asn_status = _this.$t();
               }
-            })
-            _this.customer_list = res.customer_list
-            _this.customer_list1 = res.customer_list
-            _this.pathname_previous = res.previous
-            _this.pathname_next = res.next
+            });
+            _this.customer_list = res.customer_list;
+            _this.customer_list1 = res.customer_list;
+            _this.pathname_previous = res.previous;
+            _this.pathname_next = res.next;
+            _this.warehouse_list = res.warehouse_list;
           })
-          .catch(err => {
+          .catch((err) => {
             _this.$q.notify({
               message: err.detail,
-              icon: 'close',
-              color: 'negative'
-            })
-          })
+              icon: "close",
+              color: "negative",
+            });
+          });
       } else {
       }
     },
-    getSearchList () {
-      var _this = this
-      if (LocalStorage.has('auth')) {
-        getauth(_this.pathname + 'list/?dn_code__icontains=' + _this.filter, {})
-          .then(res => {
-            _this.table_list = []
-            res.results.forEach(item => {
+    getSearchList() {
+      var _this = this;
+      if (LocalStorage.has("auth")) {
+        getauth(_this.pathname + "list/?dn_code__icontains=" + _this.filter, {})
+          .then((res) => {
+            _this.table_list = [];
+            res.results.forEach((item) => {
               if (item.dn_status === 1) {
-                item.dn_status = _this.$t('outbound.freshorder')
+                item.dn_status = _this.$t("outbound.freshorder");
               } else if (item.dn_status === 2) {
-                item.dn_status = _this.$t('outbound.neworder')
+                item.dn_status = _this.$t("outbound.neworder");
               } else if (item.dn_status === 3) {
-                item.dn_status = _this.$t('outbound.pickstock')
+                item.dn_status = _this.$t("outbound.pickstock");
               } else if (item.dn_status === 4) {
-                item.dn_status = _this.$t('outbound.pickedstock')
+                item.dn_status = _this.$t("outbound.pickedstock");
               } else if (item.dn_status === 5) {
-                item.dn_status = _this.$t('outbound.shippedstock')
+                item.dn_status = _this.$t("outbound.shippedstock");
               } else if (item.dn_status === 6) {
-                item.dn_status = _this.$t('outbound.received')
+                item.dn_status = _this.$t("outbound.received");
               } else {
-                item.dn_status = 'N/A'
+                item.dn_status = "N/A";
               }
-              _this.table_list.push(item)
-            })
-            _this.customer_list = res.customer_list
-            _this.customer_list1 = res.customer_list
-            _this.pathname_previous = res.previous
-            _this.pathname_next = res.next
+              _this.table_list.push(item);
+            });
+            _this.customer_list = res.customer_list;
+            _this.customer_list1 = res.customer_list;
+            _this.pathname_previous = res.previous;
+            _this.pathname_next = res.next;
           })
-          .catch(err => {
+          .catch((err) => {
             _this.$q.notify({
               message: err.detail,
-              icon: 'close',
-              color: 'negative'
-            })
-          })
+              icon: "close",
+              color: "negative",
+            });
+          });
       } else {
       }
     },
-    getListPrevious () {
-      var _this = this
-      if (LocalStorage.has('auth')) {
+    getListPrevious() {
+      var _this = this;
+      if (LocalStorage.has("auth")) {
         getauth(_this.pathname_previous, {})
-          .then(res => {
-            _this.table_list = []
-            res.results.forEach(item => {
+          .then((res) => {
+            _this.table_list = [];
+            res.results.forEach((item) => {
               if (item.dn_status === 1) {
-                item.dn_status = _this.$t('outbound.freshorder')
+                item.dn_status = _this.$t("outbound.freshorder");
               } else if (item.dn_status === 2) {
-                item.dn_status = _this.$t('outbound.neworder')
+                item.dn_status = _this.$t("outbound.neworder");
               } else if (item.dn_status === 3) {
-                item.dn_status = _this.$t('outbound.pickstock')
+                item.dn_status = _this.$t("outbound.pickstock");
               } else if (item.dn_status === 4) {
-                item.dn_status = _this.$t('outbound.pickedstock')
+                item.dn_status = _this.$t("outbound.pickedstock");
               } else if (item.dn_status === 5) {
-                item.dn_status = _this.$t('outbound.shippedstock')
+                item.dn_status = _this.$t("outbound.shippedstock");
               } else if (item.dn_status === 6) {
-                item.dn_status = _this.$t('outbound.received')
+                item.dn_status = _this.$t("outbound.received");
               } else {
-                item.dn_status = 'N/A'
+                item.dn_status = "N/A";
               }
-              _this.table_list.push(item)
-            })
-            _this.customer_list = res.customer_list
-            _this.customer_list1 = res.customer_list
-            _this.pathname_previous = res.previous
-            _this.pathname_next = res.next
+              _this.table_list.push(item);
+            });
+            _this.customer_list = res.customer_list;
+            _this.customer_list1 = res.customer_list;
+            _this.pathname_previous = res.previous;
+            _this.pathname_next = res.next;
           })
-          .catch(err => {
+          .catch((err) => {
             _this.$q.notify({
               message: err.detail,
-              icon: 'close',
-              color: 'negative'
-            })
-          })
+              icon: "close",
+              color: "negative",
+            });
+          });
       } else {
       }
     },
-    getListNext () {
-      var _this = this
-      if (LocalStorage.has('auth')) {
+    getListNext() {
+      var _this = this;
+      if (LocalStorage.has("auth")) {
         getauth(_this.pathname_next, {})
-          .then(res => {
-            _this.table_list = []
-            res.results.forEach(item => {
+          .then((res) => {
+            _this.table_list = [];
+            res.results.forEach((item) => {
               if (item.dn_status === 1) {
-                item.dn_status = _this.$t('outbound.freshorder')
+                item.dn_status = _this.$t("outbound.freshorder");
               } else if (item.dn_status === 2) {
-                item.dn_status = _this.$t('outbound.neworder')
+                item.dn_status = _this.$t("outbound.neworder");
               } else if (item.dn_status === 3) {
-                item.dn_status = _this.$t('outbound.pickstock')
+                item.dn_status = _this.$t("outbound.pickstock");
               } else if (item.dn_status === 4) {
-                item.dn_status = _this.$t('outbound.pickedstock')
+                item.dn_status = _this.$t("outbound.pickedstock");
               } else if (item.dn_status === 5) {
-                item.dn_status = _this.$t('outbound.shippedstock')
+                item.dn_status = _this.$t("outbound.shippedstock");
               } else if (item.dn_status === 6) {
-                item.dn_status = _this.$t('outbound.received')
+                item.dn_status = _this.$t("outbound.received");
               } else {
-                item.dn_status = 'N/A'
+                item.dn_status = "N/A";
               }
-              _this.table_list.push(item)
-            })
-            _this.customer_list = res.customer_list
-            _this.customer_list1 = res.customer_list
-            _this.pathname_previous = res.previous
-            _this.pathname_next = res.next
+              _this.table_list.push(item);
+            });
+            _this.customer_list = res.customer_list;
+            _this.customer_list1 = res.customer_list;
+            _this.pathname_previous = res.previous;
+            _this.pathname_next = res.next;
           })
-          .catch(err => {
+          .catch((err) => {
             _this.$q.notify({
               message: err.detail,
-              icon: 'close',
-              color: 'negative'
-            })
-          })
+              icon: "close",
+              color: "negative",
+            });
+          });
       } else {
       }
     },
-    reFresh () {
-      var _this = this
-      _this.table_list = []
-      _this.getList()
+    reFresh() {
+      var _this = this;
+      _this.table_list = [];
+      _this.getList();
     },
-    newFormOpen () {
-      var _this = this
-      _this.isEdit = false
-      _this.goodsDataClear()
-      _this.newForm = true
-      _this.newdn.creater = _this.login_name
-      postauth(_this.pathname + 'list/', _this.newdn)
-        .then(res => {
+    newFormOpen() {
+      var _this = this;
+      _this.isEdit = false;
+      _this.goodsDataClear();
+      _this.newForm = true;
+      _this.newdn.creater = _this.login_name;
+      postauth(_this.pathname + "list/", _this.newdn)
+        .then((res) => {
           if (!res.detail) {
-            _this.newFormData.dn_code = res.dn_code
+            _this.newFormData.dn_code = res.dn_code;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           _this.$q.notify({
             message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
-    newDataSubmit () {
-      var _this = this
-      _this.newFormData.creater = _this.login_name
-      let cancelRequest = false
-      if (_this.newFormData.customer !== '') {
-        _this.newFormData.goods_code = []
-        _this.newFormData.goods_qty = []
-        let goodsDataCheck = 0
+    newDataSubmit() {
+      var _this = this;
+      _this.newFormData.creater = _this.login_name;
+      let cancelRequest = false;
+      if (_this.newFormData.customer !== "") {
+        _this.newFormData.goods_code = [];
+        _this.newFormData.goods_qty = [];
+        let goodsDataCheck = 0;
         for (let i = 0; i < 10; i++) {
-          const goodsData = `goodsData${i + 1}`
-          if (_this[goodsData].code !== '' && _this[goodsData].qty !== '') {
+          const goodsData = `goodsData${i + 1}`;
+          if (_this[goodsData].code !== "" && _this[goodsData].qty !== "") {
             if (_this[goodsData].qty < 1) {
-              cancelRequest = true
+              cancelRequest = true;
               _this.$q.notify({
-                message: 'Total Quantity Must Be > 0',
-                icon: 'close',
-                color: 'negative'
-              })
+                message: "Total Quantity Must Be > 0",
+                icon: "close",
+                color: "negative",
+              });
             } else {
-              _this.newFormData.goods_code.push(_this[goodsData].code)
-              _this.newFormData.goods_qty.push(_this[goodsData].qty)
+              _this.newFormData.goods_code.push(_this[goodsData].code);
+              _this.newFormData.goods_qty.push(_this[goodsData].qty);
             }
-            goodsDataCheck += 1
+            goodsDataCheck += 1;
           }
         }
         if (goodsDataCheck === 0) {
-          cancelRequest = true
+          cancelRequest = true;
           _this.$q.notify({
-            message: 'Please Enter The Goods & Qty',
-            icon: 'close',
-            color: 'negative'
-          })
+            message: "Please Enter The Goods & Qty",
+            icon: "close",
+            color: "negative",
+          });
         }
       } else {
-        cancelRequest = true
+        cancelRequest = true;
         _this.$q.notify({
-          message: 'Please Enter The Customer',
-          icon: 'close',
-          color: 'negative'
-        })
+          message: "Please Enter The Customer",
+          icon: "close",
+          color: "negative",
+        });
       }
       if (!cancelRequest) {
-        postauth(_this.pathname + 'detail/', _this.newFormData)
-          .then(res => {
-            _this.table_list = []
-            _this.getList()
-            _this.newDataCancel()
-            if (res.detail === 'success') {
+        postauth(_this.pathname + "detail/", {
+          ..._this.newFormData,
+          warehouse_id: _this.warehouseId,
+        })
+          .then((res) => {
+            _this.table_list = [];
+            _this.getList();
+            _this.newDataCancel();
+            if (res.detail === "success") {
               _this.$q.notify({
-                message: 'Success Create',
-                icon: 'check',
-                color: 'green'
-              })
+                message: "Success Create",
+                icon: "check",
+                color: "green",
+              });
             }
           })
-          .catch(err => {
+          .catch((err) => {
             _this.$q.notify({
               message: err.detail,
-              icon: 'close',
-              color: 'negative'
-            })
-          })
+              icon: "close",
+              color: "negative",
+            });
+          });
       }
     },
-    newDataCancel () {
-      var _this = this
-      _this.newForm = false
+    newDataCancel() {
+      var _this = this;
+      _this.newForm = false;
       _this.newFormData = {
-        dn_code: '',
-        customer: '',
+        dn_code: "",
+        customer: "",
         goods_code: [],
         goods_qty: [],
-        creater: ''
-      }
-      _this.goodsDataClear()
+        creater: "",
+      };
+      _this.goodsDataClear();
     },
-    goodsDataClear () {
-      var _this = this
+    goodsDataClear() {
+      var _this = this;
       for (let i = 1; i <= 10; i++) {
-        _this[`goodsData${i}`] = { code: '', qty: '' }
+        _this[`goodsData${i}`] = { code: "", qty: "" };
       }
     },
-    editData (e) {
-      var _this = this
-      _this.isEdit = true
-      _this.goodsDataClear()
-      if (e.dn_status !== _this.$t('outbound.freshorder')) {
+    editData(e) {
+      var _this = this;
+      _this.isEdit = true;
+      _this.goodsDataClear();
+      if (e.dn_status !== _this.$t("outbound.freshorder")) {
         _this.$q.notify({
-          message: e.dn_code + ' DN Status Not ' + _this.$t('outbound.freshorder'),
-          icon: 'close',
-          color: 'negative'
-        })
+          message:
+            e.dn_code + " DN Status Not " + _this.$t("outbound.freshorder"),
+          icon: "close",
+          color: "negative",
+        });
       } else {
-        _this.newFormData.dn_code = e.dn_code
-        _this.newFormData.customer = e.customer
-        getauth(_this.pathname + 'detail/?dn_code=' + e.dn_code).then(res => {
-          _this.newForm = true
-          _this.editid = e.id
+        _this.newFormData.dn_code = e.dn_code;
+        _this.newFormData.customer = e.customer;
+        _this.warehouseId = e.warehouse_id;
+        getauth(_this.pathname + "detail/?dn_code=" + e.dn_code).then((res) => {
+          _this.newForm = true;
+          _this.editid = e.id;
           res.results.forEach((detail, index) => {
-            _this[`goodsData${index + 1}`] = { code: detail.goods_code, qty: detail.goods_qty }
-          })
-        })
+            _this[`goodsData${index + 1}`] = {
+              code: detail.goods_code,
+              qty: detail.goods_qty,
+            };
+          });
+        });
       }
     },
-    editDataSubmit () {
-      var _this = this
-      _this.newFormData.creater = _this.login_name
-      let cancelRequest = false
-      if (_this.newFormData.customer !== '') {
-        _this.newFormData.goods_code = []
-        _this.newFormData.goods_qty = []
-        let goodsDataCheck = 0
+    editDataSubmit() {
+      var _this = this;
+      _this.newFormData.creater = _this.login_name;
+      let cancelRequest = false;
+      if (_this.newFormData.customer !== "") {
+        _this.newFormData.goods_code = [];
+        _this.newFormData.goods_qty = [];
+        let goodsDataCheck = 0;
         for (let i = 0; i < 10; i++) {
-          const goodsData = `goodsData${i + 1}`
-          if (_this[goodsData].code !== '' && _this[goodsData].qty !== '') {
+          const goodsData = `goodsData${i + 1}`;
+          if (_this[goodsData].code !== "" && _this[goodsData].qty !== "") {
             if (_this[goodsData].qty < 1) {
-              cancelRequest = true
+              cancelRequest = true;
               _this.$q.notify({
-                message: 'Total Quantity Must Be > 0',
-                icon: 'close',
-                color: 'negative'
-              })
+                message: "Total Quantity Must Be > 0",
+                icon: "close",
+                color: "negative",
+              });
             } else {
-              _this.newFormData.goods_code.push(_this[goodsData].code)
-              _this.newFormData.goods_qty.push(_this[goodsData].qty)
+              _this.newFormData.goods_code.push(_this[goodsData].code);
+              _this.newFormData.goods_qty.push(_this[goodsData].qty);
             }
-            goodsDataCheck += 1
+            goodsDataCheck += 1;
           }
         }
         if (goodsDataCheck === 0) {
-          cancelRequest = true
+          cancelRequest = true;
           _this.$q.notify({
-            message: 'Please Enter The Goods & Qty',
-            icon: 'close',
-            color: 'negative'
-          })
+            message: "Please Enter The Goods & Qty",
+            icon: "close",
+            color: "negative",
+          });
         }
       } else {
-        cancelRequest = true
+        cancelRequest = true;
         _this.$q.notify({
-          message: 'Please Enter The Customer',
-          icon: 'close',
-          color: 'negative'
-        })
+          message: "Please Enter The Customer",
+          icon: "close",
+          color: "negative",
+        });
       }
       if (!cancelRequest) {
-        putauth(_this.pathname + 'detail/', _this.newFormData)
-          .then(res => {
-            _this.table_list = []
-            _this.editDataCancel()
-            _this.getList()
+        putauth(_this.pathname + "detail/", {
+          ..._this.newFormData,
+          warehouse_id: _this.warehouseId,
+        })
+          .then((res) => {
+            _this.table_list = [];
+            _this.editDataCancel();
+            _this.getList();
             if (!res.detail) {
               _this.$q.notify({
-                message: 'Success Edit DN',
-                icon: 'check',
-                color: 'green'
-              })
+                message: "Success Edit DN",
+                icon: "check",
+                color: "green",
+              });
             }
           })
-          .catch(err => {
+          .catch((err) => {
             _this.$q.notify({
               message: err.detail,
-              icon: 'close',
-              color: 'negative'
-            })
-          })
+              icon: "close",
+              color: "negative",
+            });
+          });
       }
     },
-    editDataCancel () {
-      var _this = this
-      _this.newForm = false
-      _this.editid = 0
+    editDataCancel() {
+      var _this = this;
+      _this.newForm = false;
+      _this.editid = 0;
+      _this.warehouseId = "";
       _this.newFormData = {
-        dn_code: '',
-        customer: '',
+        dn_code: "",
+        customer: "",
         goods_code: [],
         goods_qty: [],
-        creater: ''
-      }
-      _this.goodsDataClear()
+        creater: "",
+      };
+      _this.goodsDataClear();
     },
-    deleteData (e) {
-      var _this = this
-      if (e.dn_status !== _this.$t('outbound.freshorder')) {
+    deleteData(e) {
+      var _this = this;
+      if (e.dn_status !== _this.$t("outbound.freshorder")) {
         _this.$q.notify({
-          message: e.dn_code + ' DN Status Is Not ' + _this.$t('outbound.freshorder'),
-          icon: 'close',
-          color: 'negative'
-        })
+          message:
+            e.dn_code + " DN Status Is Not " + _this.$t("outbound.freshorder"),
+          icon: "close",
+          color: "negative",
+        });
       } else {
-        _this.deleteForm = true
-        _this.deleteid = e.id
+        _this.deleteForm = true;
+        _this.deleteid = e.id;
       }
     },
-    deleteDataSubmit () {
-      var _this = this
-      deleteauth(_this.pathname + 'list/' + _this.deleteid + '/')
-        .then(res => {
-          _this.table_list = []
-          _this.deleteDataCancel()
-          _this.getList()
+    deleteDataSubmit() {
+      var _this = this;
+      deleteauth(_this.pathname + "list/" + _this.deleteid + "/")
+        .then((res) => {
+          _this.table_list = [];
+          _this.deleteDataCancel();
+          _this.getList();
           if (!res.detail) {
             _this.$q.notify({
-              message: 'Success Delete DN',
-              icon: 'check',
-              color: 'green'
-            })
+              message: "Success Delete DN",
+              icon: "check",
+              color: "green",
+            });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           _this.$q.notify({
             message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
-    deleteDataCancel () {
-      var _this = this
-      _this.deleteForm = false
-      _this.deleteid = 0
+    deleteDataCancel() {
+      var _this = this;
+      _this.deleteForm = false;
+      _this.deleteid = 0;
     },
-    neworderData (e) {
-      var _this = this
-      if (e.dn_status !== _this.$t('outbound.freshorder')) {
+    neworderData(e) {
+      var _this = this;
+      if (e.dn_status !== _this.$t("outbound.freshorder")) {
         _this.$q.notify({
-          message: e.dn_code + ' DN Status Is Not ' + _this.$t('outbound.freshorder'),
-          icon: 'close',
-          color: 'negative'
-        })
+          message:
+            e.dn_code + " DN Status Is Not " + _this.$t("outbound.freshorder"),
+          icon: "close",
+          color: "negative",
+        });
       } else {
-        _this.neworderForm = true
-        _this.neworderid = e.id
+        _this.neworderForm = true;
+        _this.neworderid = e.id;
       }
     },
-    neworderDataSubmit () {
-      var _this = this
-      postauth(_this.pathname + 'neworder/' + _this.neworderid + '/', {})
-        .then(res => {
-          _this.table_list = []
-          _this.neworderDataCancel()
-          _this.getList()
+    neworderDataSubmit() {
+      var _this = this;
+      postauth(_this.pathname + "neworder/" + _this.neworderid + "/", {})
+        .then((res) => {
+          _this.table_list = [];
+          _this.neworderDataCancel();
+          _this.getList();
           if (!res.detail) {
             _this.$q.notify({
-              message: 'Success Confirm DN Delivery',
-              icon: 'check',
-              color: 'green'
-            })
+              message: "Success Confirm DN Delivery",
+              icon: "check",
+              color: "green",
+            });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           _this.$q.notify({
             message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
-    neworderDataCancel () {
-      var _this = this
-      _this.neworderForm = false
-      _this.neworderid = 0
+    neworderDataCancel() {
+      var _this = this;
+      _this.neworderForm = false;
+      _this.neworderid = 0;
     },
-    orderreleaseData (e) {
-      var _this = this
-      if (e.dn_status !== _this.$t('outbound.neworder')) {
+    orderreleaseData(e) {
+      var _this = this;
+      if (e.dn_status !== _this.$t("outbound.neworder")) {
         _this.$q.notify({
-          message: e.dn_code + ' DN Status Is Not ' + _this.$t('outbound.neworder'),
-          icon: 'close',
-          color: 'negative'
-        })
+          message:
+            e.dn_code + " DN Status Is Not " + _this.$t("outbound.neworder"),
+          icon: "close",
+          color: "negative",
+        });
       } else {
-        _this.orderreleaseForm = true
-        _this.orderreleaseid = e.id
+        _this.orderreleaseForm = true;
+        _this.orderreleaseid = e.id;
       }
     },
-    orderreleaseAllData () {
-      var _this = this
-      postauth(_this.pathname + 'orderrelease/', {})
-        .then(res => {
-          _this.table_list = []
-          _this.getList()
+    orderreleaseAllData() {
+      var _this = this;
+      postauth(_this.pathname + "orderrelease/", {})
+        .then((res) => {
+          _this.table_list = [];
+          _this.getList();
           if (!res.detail) {
             _this.$q.notify({
-              message: 'Success Release All Order',
-              icon: 'check',
-              color: 'green'
-            })
+              message: "Success Release All Order",
+              icon: "check",
+              color: "green",
+            });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           _this.$q.notify({
             message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
-    orderreleaseDataSubmit () {
-      var _this = this
-      putauth(_this.pathname + 'orderrelease/' + _this.orderreleaseid + '/', {})
-        .then(res => {
-          _this.table_list = []
-          _this.orderreleaseDataCancel()
-          _this.getList()
+    orderreleaseDataSubmit() {
+      var _this = this;
+      putauth(_this.pathname + "orderrelease/" + _this.orderreleaseid + "/", {})
+        .then((res) => {
+          _this.table_list = [];
+          _this.orderreleaseDataCancel();
+          _this.getList();
           if (!res.detail) {
             _this.$q.notify({
-              message: 'Success Release DN Code',
-              icon: 'check',
-              color: 'green'
-            })
+              message: "Success Release DN Code",
+              icon: "check",
+              color: "green",
+            });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           _this.$q.notify({
             message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
-    orderreleaseDataCancel () {
-      var _this = this
-      _this.orderreleaseForm = false
-      _this.orderreleaseid = 0
+    orderreleaseDataCancel() {
+      var _this = this;
+      _this.orderreleaseForm = false;
+      _this.orderreleaseid = 0;
     },
-    getFocus (number) {
-      this.listNumber = number
+    getFocus(number) {
+      this.listNumber = number;
     },
-    setOptions (val) {
-      const _this = this
+    setOptions(val) {
+      const _this = this;
       if (!val) {
-        _this[`goodsData${_this.listNumber}`].code = ''
+        _this[`goodsData${_this.listNumber}`].code = "";
       }
-      const needle = val.toLowerCase()
-      getauth('goods/?goods_code__icontains=' + needle).then(res => {
-        const goodscodelist = []
+      const needle = val.toLowerCase();
+      getauth("goods/?goods_code__icontains=" + needle).then((res) => {
+        const goodscodelist = [];
         for (let i = 0; i < res.results.length; i++) {
-          goodscodelist.push(res.results[i].goods_code)
+          goodscodelist.push(res.results[i].goods_code);
           if (_this.listNumber) {
             if (res.results[i].goods_code === val) {
-              _this[`goodsData${_this.listNumber}`].code = val
+              _this[`goodsData${_this.listNumber}`].code = val;
             }
           }
         }
-        _this.options1 = goodscodelist
-      })
+        _this.options1 = goodscodelist;
+      });
     },
-    filterFn (val, update, abort) {
+    filterFn(val, update, abort) {
       if (val.length < 1) {
-        abort()
-        return
+        abort();
+        return;
       }
       update(() => {
-        this.options = this.options1
-      })
+        this.options = this.options1;
+      });
     },
-    setModel (val) {
-      const _this = this
-      _this.newFormData.customer = val
+    setModel(val) {
+      const _this = this;
+      _this.newFormData.customer = val;
     },
-    filterFnS (val, update, abort) {
-      var _this = this
+    filterFnS(val, update, abort) {
+      var _this = this;
       update(() => {
-        const needle = val.toLocaleLowerCase()
-        const data_filter = _this.customer_list1
-        _this.customer_list = data_filter.filter(v => v.toLocaleLowerCase().indexOf(needle) > -1)
-      })
+        const needle = val.toLocaleLowerCase();
+        const data_filter = _this.customer_list1;
+        _this.customer_list = data_filter.filter(
+          (v) => v.toLocaleLowerCase().indexOf(needle) > -1
+        );
+      });
     },
-    PrintPickingList (e) {
-      var _this = this
-      var QRCode = require('qrcode')
+    PrintPickingList(e) {
+      var _this = this;
+      var QRCode = require("qrcode");
       QRCode.toDataURL(e.bar_code, [
         {
-          errorCorrectionLevel: 'H',
-          mode: 'byte',
-          version: '2',
-          type: 'image/jpeg'
-        }
+          errorCorrectionLevel: "H",
+          mode: "byte",
+          version: "2",
+          type: "image/jpeg",
+        },
       ])
-        .then(url => {
-          _this.bar_code = url
+        .then((url) => {
+          _this.bar_code = url;
         })
-        .catch(err => {
-          console.error(err)
-        })
-      _this.viewPLForm = true
-      getauth(_this.pathname + 'pickinglist/' + e.id + '/')
-        .then(res => {
-          _this.pickinglist_print_table = []
-          _this.picklist_check = 0
-          res.forEach(item => {
+        .catch((err) => {
+          console.error(err);
+        });
+      _this.viewPLForm = true;
+      getauth(_this.pathname + "pickinglist/" + e.id + "/")
+        .then((res) => {
+          _this.pickinglist_print_table = [];
+          _this.picklist_check = 0;
+          res.forEach((item) => {
             if (item.picked_qty > 0) {
-              _this.picklist_check += 1
+              _this.picklist_check += 1;
             } else {
             }
-          })
-          _this.pickinglist_print_table = res
-          _this.viewPLForm = true
+          });
+          _this.pickinglist_print_table = res;
+          _this.viewPLForm = true;
         })
-        .catch(err => {
+        .catch((err) => {
           _this.$q.notify({
             message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
-    pickedData (e) {
-      var _this = this
-      if (e.dn_status !== _this.$t('outbound.pickstock')) {
+    pickedData(e) {
+      var _this = this;
+      if (e.dn_status !== _this.$t("outbound.pickstock")) {
         _this.$q.notify({
-          message: e.dn_code + ' DN Status Is Not ' + _this.$t('outbound.pickstock'),
-          icon: 'close',
-          color: 'negative'
-        })
+          message:
+            e.dn_code + " DN Status Is Not " + _this.$t("outbound.pickstock"),
+          icon: "close",
+          color: "negative",
+        });
       } else {
-        _this.pickFormData.dn_code = e.dn_code
-        _this.pickFormData.customer = e.customer
-        getauth(_this.pathname + 'pickinglist/' + e.id + '/').then(res => {
-          _this.pickedForm = true
-          _this.pickedid = e.id
-          _this.pickFormData.goodsData = res
-        })
+        _this.pickFormData.dn_code = e.dn_code;
+        _this.pickFormData.customer = e.customer;
+        getauth(_this.pathname + "pickinglist/" + e.id + "/").then((res) => {
+          _this.pickedForm = true;
+          _this.pickedid = e.id;
+          _this.pickFormData.goodsData = res;
+        });
       }
     },
-    pickedDataSubmit () {
-      var _this = this
-      _this.pickFormData.creater = _this.login_name
-      postauth(_this.pathname + 'picked/' + _this.pickedid + '/', _this.pickFormData)
-        .then(res => {
-          _this.table_list = []
-          _this.pickedDataCancel()
-          _this.getList()
+    pickedDataSubmit() {
+      var _this = this;
+      _this.pickFormData.creater = _this.login_name;
+      postauth(
+        _this.pathname + "picked/" + _this.pickedid + "/",
+        _this.pickFormData
+      )
+        .then((res) => {
+          _this.table_list = [];
+          _this.pickedDataCancel();
+          _this.getList();
           if (!res.detail) {
             _this.$q.notify({
-              message: 'Success Confirm Picking List',
-              icon: 'check',
-              color: 'green'
-            })
+              message: "Success Confirm Picking List",
+              icon: "check",
+              color: "green",
+            });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           _this.$q.notify({
             message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
-    pickedDataCancel () {
-      var _this = this
-      _this.pickedForm = false
-      _this.pickedid = 0
+    pickedDataCancel() {
+      var _this = this;
+      _this.pickedForm = false;
+      _this.pickedid = 0;
       _this.pickFormData = {
-        dn_code: '',
-        customer: '',
+        dn_code: "",
+        customer: "",
         goodsData: [],
-        creater: ''
-      }
-      _this.goodsDataClear()
+        creater: "",
+      };
+      _this.goodsDataClear();
     },
-    viewData (e) {
-      var _this = this
-      ViewPrintAuth(_this.pathname + 'viewprint/' + e.id + '/').then(res => {
-        _this.viewprint_table = res.dn_detail
-        _this.warehouse_detail = res.warehouse_detail
-        _this.customer_detail = res.customer_detail
-        _this.viewdn = e.dn_code
-        var QRCode = require('qrcode')
+    viewData(e) {
+      var _this = this;
+      ViewPrintAuth(_this.pathname + "viewprint/" + e.id + "/").then((res) => {
+        _this.viewprint_table = res.dn_detail;
+        _this.warehouse_detail = res.warehouse_detail;
+        _this.customer_detail = res.customer_detail;
+        _this.viewdn = e.dn_code;
+        var QRCode = require("qrcode");
         QRCode.toDataURL(e.bar_code, [
           {
-            errorCorrectionLevel: 'H',
-            mode: 'byte',
-            version: '2',
-            type: 'image/jpeg'
-          }
+            errorCorrectionLevel: "H",
+            mode: "byte",
+            version: "2",
+            type: "image/jpeg",
+          },
         ])
-          .then(url => {
-            _this.bar_code = url
+          .then((url) => {
+            _this.bar_code = url;
           })
-          .catch(err => {
-            console.error(err)
-          })
-        _this.viewForm = true
-      })
+          .catch((err) => {
+            console.error(err);
+          });
+        _this.viewForm = true;
+      });
     },
-    filterFnDispatch (val, update, abort) {
-      var _this = this
+    filterFnDispatch(val, update, abort) {
+      var _this = this;
       if (val.length < 1) {
-        abort()
-        return
+        abort();
+        return;
       }
       update(() => {
-        const needle = val.toLowerCase()
-        getauth('driver/?driver_name__icontains=' + needle)
-          .then(res => {
-            const drivernamelist = []
+        const needle = val.toLowerCase();
+        getauth("driver/?driver_name__icontains=" + needle)
+          .then((res) => {
+            const drivernamelist = [];
             for (let i = 0; i < res.results.length; i++) {
-              drivernamelist.push(res.results[i].driver_name)
+              drivernamelist.push(res.results[i].driver_name);
             }
-            LocalStorage.set('driver_name_list', drivernamelist)
-            _this.driver_options = LocalStorage.getItem('driver_name_list')
-            _this.$forceUpdate()
+            LocalStorage.set("driver_name_list", drivernamelist);
+            _this.driver_options = LocalStorage.getItem("driver_name_list");
+            _this.$forceUpdate();
           })
-          .catch(err => {
+          .catch((err) => {
             _this.$q.notify({
               message: err.detail,
-              icon: 'close',
-              color: 'negative'
-            })
-          })
-      })
+              icon: "close",
+              color: "negative",
+            });
+          });
+      });
     },
-    DispatchDN (e) {
-      var _this = this
-      if (e.dn_status !== _this.$t('outbound.pickedstock')) {
+    DispatchDN(e) {
+      var _this = this;
+      if (e.dn_status !== _this.$t("outbound.pickedstock")) {
         _this.$q.notify({
-          message: e.dn_code + ' DN Status Is Not ' + _this.$t('outbound.pickedstock'),
-          icon: 'close',
-          color: 'negative'
-        })
+          message:
+            e.dn_code + " DN Status Is Not " + _this.$t("outbound.pickedstock"),
+          icon: "close",
+          color: "negative",
+        });
       } else {
-        _this.dispatchFormData.dn_code = e.dn_code
-        _this.dispatchid = e.id
-        _this.dispatchForm = true
+        _this.dispatchFormData.dn_code = e.dn_code;
+        _this.dispatchid = e.id;
+        _this.dispatchForm = true;
       }
     },
-    dispatchDataCancel () {
-      var _this = this
-      _this.dispatchFormData = { dn_code: '', driver: '' }
-      _this.dispatchForm = false
+    dispatchDataCancel() {
+      var _this = this;
+      _this.dispatchFormData = { dn_code: "", driver: "" };
+      _this.dispatchForm = false;
     },
-    dispatchDataSubmit () {
-      var _this = this
-      postauth(_this.pathname + 'dispatch/' + _this.dispatchid + '/', _this.dispatchFormData)
-        .then(res => {
-          _this.table_list = []
-          _this.dispatchDataCancel()
-          _this.getList()
+    dispatchDataSubmit() {
+      var _this = this;
+      postauth(
+        _this.pathname + "dispatch/" + _this.dispatchid + "/",
+        _this.dispatchFormData
+      )
+        .then((res) => {
+          _this.table_list = [];
+          _this.dispatchDataCancel();
+          _this.getList();
           if (!res.detail) {
             _this.$q.notify({
-              message: 'Success Dispatch',
-              icon: 'check',
-              color: 'green'
-            })
+              message: "Success Dispatch",
+              icon: "check",
+              color: "green",
+            });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           _this.$q.notify({
             message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
-    PODData (e) {
-      var _this = this
-      if (e.dn_status !== _this.$t('outbound.shippedstock')) {
+    PODData(e) {
+      var _this = this;
+      if (e.dn_status !== _this.$t("outbound.shippedstock")) {
         _this.$q.notify({
-          message: e.dn_code + ' DN Status Is Not ' + _this.$t('outbound.shippedstock'),
-          icon: 'close',
-          color: 'negative'
-        })
+          message:
+            e.dn_code +
+            " DN Status Is Not " +
+            _this.$t("outbound.shippedstock"),
+          icon: "close",
+          color: "negative",
+        });
       } else {
-        _this.podFormData.dn_code = e.dn_code
-        _this.podFormData.customer = e.customer
-        getauth(_this.pathname + 'detail/?dn_code=' + e.dn_code).then(res => {
-          _this.podForm = true
-          _this.podid = e.id
-          _this.podFormData.goodsData = res.results
-        })
+        _this.podFormData.dn_code = e.dn_code;
+        _this.podFormData.customer = e.customer;
+        getauth(_this.pathname + "detail/?dn_code=" + e.dn_code).then((res) => {
+          _this.podForm = true;
+          _this.podid = e.id;
+          _this.podFormData.goodsData = res.results;
+        });
       }
     },
-    PODDataCancel () {
-      var _this = this
-      _this.podForm = false
-      _this.podid = 0
+    PODDataCancel() {
+      var _this = this;
+      _this.podForm = false;
+      _this.podid = 0;
       _this.podFormData = {
-        dn_code: '',
-        customer: '',
-        goodsData: []
-      }
+        dn_code: "",
+        customer: "",
+        goodsData: [],
+      };
     },
-    PODDataSubmit () {
-      var _this = this
+    PODDataSubmit() {
+      var _this = this;
       if (!(_this.isError1 || _this.isError2)) {
-        postauth(_this.pathname + 'pod/' + _this.podid + '/', _this.podFormData)
-          .then(res => {
-            _this.table_list = []
-            _this.PODDataCancel()
-            _this.getList()
+        postauth(_this.pathname + "pod/" + _this.podid + "/", _this.podFormData)
+          .then((res) => {
+            _this.table_list = [];
+            _this.PODDataCancel();
+            _this.getList();
             if (!res.detail) {
               _this.$q.notify({
-                message: 'Success Dispatch',
-                icon: 'check',
-                color: 'green'
-              })
+                message: "Success Dispatch",
+                icon: "check",
+                color: "green",
+              });
             }
           })
-          .catch(err => {
+          .catch((err) => {
             _this.$q.notify({
               message: err.detail,
-              icon: 'close',
-              color: 'negative'
-            })
-          })
+              icon: "close",
+              color: "negative",
+            });
+          });
       }
+    },
+  },
+  created() {
+    var _this = this;
+    if (LocalStorage.has("openid")) {
+      _this.openid = LocalStorage.getItem("openid");
+    } else {
+      _this.openid = "";
+      LocalStorage.set("openid", "");
+    }
+    if (LocalStorage.has("login_name")) {
+      _this.login_name = LocalStorage.getItem("login_name");
+    } else {
+      _this.login_name = "";
+      LocalStorage.set("login_name", "");
+    }
+    if (LocalStorage.has("auth")) {
+      _this.authin = "1";
+      _this.table_list = [];
+      _this.getList();
+    } else {
+      _this.authin = "0";
+    }
+    if (LocalStorage.has("goods_code_list")) {
+    } else {
+      LocalStorage.set("goods_code_list", []);
     }
   },
-  created () {
-    var _this = this
-    if (LocalStorage.has('openid')) {
-      _this.openid = LocalStorage.getItem('openid')
-    } else {
-      _this.openid = ''
-      LocalStorage.set('openid', '')
-    }
-    if (LocalStorage.has('login_name')) {
-      _this.login_name = LocalStorage.getItem('login_name')
-    } else {
-      _this.login_name = ''
-      LocalStorage.set('login_name', '')
-    }
-    if (LocalStorage.has('auth')) {
-      _this.authin = '1'
-      _this.table_list = []
-      _this.getList()
-    } else {
-      _this.authin = '0'
-    }
-    if (LocalStorage.has('goods_code_list')) {
-    } else {
-      LocalStorage.set('goods_code_list', [])
-    }
-  },
-  mounted () {
-    var _this = this
+  mounted() {
+    var _this = this;
     if (_this.$q.platform.is.electron) {
-      _this.height = String(_this.$q.screen.height - 290) + 'px'
+      _this.height = String(_this.$q.screen.height - 290) + "px";
     } else {
-      _this.height = _this.$q.screen.height - 290 + '' + 'px'
+      _this.height = _this.$q.screen.height - 290 + "" + "px";
     }
   },
-  updated () {},
-  destroyed () {}
-}
+  updated() {},
+  destroyed() {},
+};
 </script>
+
+<style lang="scss">
+.custom-uploader {
+  width: 100%;
+  height: 80px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  box-shadow: none;
+  background: transparent !important;
+  .q-uploader__header {
+    height: 100%;
+    background: transparent !important;
+    color: #000;
+    text-align: center;
+    .q-btn {
+      width: 100%;
+      height: 100%;
+    }
+    .q-btn--round {
+      border-radius: 0 !important;
+    }
+  }
+  .q-uploader__list {
+    display: none;
+  }
+}
+.custom-download {
+  margin-top: 20px;
+  span {
+    font-size: 14px;
+    color: #000;
+    cursor: pointer;
+  }
+}
+</style>

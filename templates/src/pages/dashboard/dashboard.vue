@@ -4,7 +4,7 @@
       <div class="q-pa-md">
         <div class="q-gutter-y-md" style="max-width: 100%">
           <q-tabs v-model="detaillink">
-            <transition appear enter-active-class="animated zoomIn">
+            <!-- <transition appear enter-active-class="animated zoomIn">
               <q-route-tab
                 name="outbounddashboard"
                 :label="$t('dashboards.outbound_statements')"
@@ -21,7 +21,7 @@
                 :to="{ name: 'inbounddashboard' }"
                 exact
               />
-            </transition>
+            </transition> -->
             <transition appear enter-active-class="animated zoomIn">
               <q-route-tab
                 name="inboundAndOutbound"
@@ -41,12 +41,12 @@
 
 <script>
 export default {
-  name: 'Pagedashboard',
-  data () {
+  name: "Pagedashboard",
+  data() {
     return {
-      detaillink: 'outbounddashboard'
-    }
+      detaillink: "inboundAndOutbound",
+    };
   },
-  methods: {}
-}
+  methods: {},
+};
 </script>

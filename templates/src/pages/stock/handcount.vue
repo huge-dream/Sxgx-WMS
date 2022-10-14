@@ -19,15 +19,15 @@
         <template v-slot:top>
           <q-btn-group push>
             <q-btn
-              :label="$t('stock.view_stocklist.cyclecount')"
+              :label="$t('twoKai.handcount')"
               icon="refresh"
-              @click="getList()"
+              @click="handcountVisible = true"
             >
               <q-tooltip
                 content-class="bg-amber text-black shadow-4"
                 :offset="[10, 10]"
                 content-style="font-size: 12px"
-                >{{ $t("stock.view_stocklist.cyclecounttip") }}</q-tooltip
+                >{{ $t("twoKai.handcount") }}</q-tooltip
               >
             </q-btn>
             <q-btn
@@ -149,6 +149,66 @@
         </div>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="handcountVisible">
+      <q-card class="shadow-24">
+        <q-bar
+          class="bg-light-blue-10 text-white rounded-borders"
+          style="height: 50px"
+        >
+          <div>{{ $t("twoKai.handcount") }}</div>
+          <q-space />
+          <q-btn dense flat icon="close" v-close-popup>
+            <q-tooltip content-class="bg-amber text-black shadow-4">{{
+              $t("index.close")
+            }}</q-tooltip>
+          </q-btn>
+        </q-bar>
+        <q-card-section style="max-height: 325px; width: 400px" class="scroll">
+          <q-select
+            ref="one"
+            dense
+            outlined
+            square
+            use-input
+            hide-selected
+            fill-input
+            v-model="handcountVal"
+            :label="$t('goods.view_goodslist.goods_code')"
+            :options="skuOptions"
+            @input-value="setOptions"
+            @filter="filterFn"
+          >
+            <template v-slot:no-option>
+              <q-item
+                ><q-item-section class="text-grey"
+                  >No results</q-item-section
+                ></q-item
+              >
+            </template>
+            <template v-if="handcountVal" v-slot:append>
+              <q-icon
+                name="cancel"
+                @click.stop="handcountVal = ''"
+                class="cursor-pointer"
+              />
+            </template>
+          </q-select>
+          <div style="float: right; padding: 15px 15px 15px 0">
+            <q-btn
+              color="white"
+              text-color="black"
+              style="margin-right: 25px"
+              @click="(handcountVisible = false), (handcountVal = '')"
+              >{{ $t("cancel") }}</q-btn
+            >
+            <q-btn color="primary" @click="handleHandcountSubmit">{{
+              $t("submit")
+            }}</q-btn>
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 <router-view />
@@ -212,14 +272,39 @@ export default {
       options: [],
       error1: this.$t("stock.view_stocklist.error1"),
       CountFrom: false,
+      handcountVisible: false,
+      handcountVal: "",
+      skuOptions: SessionStorage.getItem("goods_code"),
+      options1: [],
     };
   },
   methods: {
+    setOptions(val) {
+      const _this = this;
+      const needle = val.toLowerCase();
+      getauth("goods/?goods_code__icontains=" + needle).then((res) => {
+        const goodscodelist = [];
+        for (let i = 0; i < res.results.length; i++) {
+          goodscodelist.push(res.results[i].goods_code);
+        }
+        _this.options1 = goodscodelist;
+      });
+    },
+    filterFn(val, update, abort) {
+      if (val.length < 1) {
+        abort();
+        return;
+      }
+      update(() => {
+        this.skuOptions = this.options1;
+      });
+    },
     getList() {
       var _this = this;
       getauth(_this.pathname)
         .then((res) => {
           _this.table_list = res;
+          _this.handcountVisible = false;
         })
         .catch((err) => {
           _this.$q.notify({
@@ -326,7 +411,7 @@ export default {
     }
     if (LocalStorage.has("auth")) {
       _this.authin = "1";
-      _this.getList();
+      //_this.getList();
     } else {
       _this.authin = "0";
     }

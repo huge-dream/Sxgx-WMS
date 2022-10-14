@@ -182,7 +182,7 @@ export default {
     view_tradelist: {
       mode_code: '交易方式',
       bin_name: '庫比特名稱',
-      goods_code: '商品编码',
+      goods_code: 'SKU',
       goods_qty: '商品編碼',
       creater: '創建人',
       update_time: '更新時間',

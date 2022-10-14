@@ -5,7 +5,11 @@
   >
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar class="main-headers text-white shadow-18 rounded-borders">
-        <transition appear enter-active-class="animated zoomIn">
+        <transition
+          v-if="authin === '1'"
+          appear
+          enter-active-class="animated zoomIn"
+        >
           <q-btn flat @click="drawerleft = !drawerleft" round dense icon="menu">
             <q-tooltip
               content-class="bg-amber text-black shadow-4"
@@ -21,8 +25,18 @@
           }}</q-toolbar-title>
         </transition>
         <q-space />
+        <div v-if="isVip9 === 9">
+          {{ $t("twoKai.useWarehouse") }}：{{ useWarehouse }}
+        </div>
         <transition appear enter-active-class="animated zoomIn">
-          <q-btn icon="api" round dense flat style="margin: 0 10px 0 10px" @click="apiLink()">
+          <q-btn
+            icon="api"
+            round
+            dense
+            flat
+            style="margin: 0 10px 0 10px"
+            @click="apiLink()"
+          >
             <q-tooltip
               content-class="bg-amber text-black shadow-4"
               :offset="[15, 15]"
@@ -78,6 +92,44 @@
             </q-menu>
           </q-btn>
         </transition>
+
+        <transition
+          v-if="isVip9 === 9"
+          appear
+          enter-active-class="animated zoomIn"
+        >
+          <q-btn
+            round
+            dense
+            flat
+            color="white"
+            icon="account_balance"
+            style="margin: 0 10px 0 10px"
+          >
+            <q-tooltip
+              content-class="bg-amber text-black shadow-4"
+              :offset="[15, 15]"
+              content-style="font-size: 12px"
+              >{{ $t("twoKai.duocang") }}</q-tooltip
+            >
+            <q-menu>
+              <q-list style="min-width: 100px">
+                <q-item
+                  clickable
+                  v-close-popup
+                  v-for="(item, index) in warehouseList"
+                  :key="index"
+                  @click="warehouseChange(item)"
+                >
+                  <q-item-section>{{
+                    item.id + "-" + item.warehouse_name
+                  }}</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </transition>
+
         <q-separator vertical />
         <template v-if="authin === '1'">
           <transition appear enter-active-class="animated zoomIn">
@@ -90,13 +142,6 @@
               @click="read = true"
               style="margin: 0 10px 0 10px"
             >
-              <q-badge
-                v-if="read_num"
-                color="red"
-                text-color="white"
-                floating
-                >{{ read_num }}</q-badge
-              >
               <q-tooltip
                 content-class="bg-amber text-black shadow-4"
                 :offset="[15, 15]"
@@ -213,6 +258,7 @@
       </q-toolbar>
     </q-header>
     <q-drawer
+      v-if="authin === '1'"
       v-model="drawerleft"
       show-if-above
       :width="200"
@@ -224,13 +270,13 @@
         <q-list>
           <q-item
             clickable
-            :to="{ name: 'outbounddashboard' }"
-            @click="linkChange('outbounddashboard')"
+            :to="{ name: 'inboundAndOutbound' }"
+            @click="linkChange('inboundAndOutbound')"
             v-ripple
             exact
-            :active="link === 'outbounddashboard' && link !== ''"
+            :active="link === 'inboundAndOutbound' && link !== ''"
             :class="{
-              'my-menu-link': link === 'outbounddashboard' && link !== '',
+              'my-menu-link': link === 'inboundAndOutbound' && link !== '',
             }"
           >
             <q-item-section avatar><q-icon name="auto_graph" /></q-item-section>
@@ -650,337 +696,358 @@
   </q-layout>
 </template>
 <script>
-import { getauth, post, baseurl } from 'boot/axios_request'
-import { LocalStorage, SessionStorage, openURL } from 'quasar'
-import Bus from 'boot/bus.js'
+import { getauth, post, baseurl } from "boot/axios_request";
+import { LocalStorage, SessionStorage, openURL } from "quasar";
+import Bus from "boot/bus.js";
 
 export default {
-  data () {
+  data() {
     return {
-      device: LocalStorage.getItem('device'),
-      device_name: LocalStorage.getItem('device_name'),
+      isVip9: LocalStorage.getItem("is_vip") || "",
+      device: LocalStorage.getItem("device"),
+      device_name: LocalStorage.getItem("device_name"),
       lang: this.$i18n.locale,
-      container_height: this.$q.screen.height + '' + 'px',
+      container_height: this.$q.screen.height + "" + "px",
       langOptions: [
-        { value: 'en-us', label: 'English' },
-        { value: 'zh-hans', label: '中文简体' },
-        { value: 'zh-hant', label: '中文繁體' },
-        { value: 'fr', label: 'Français' },
-        { value: 'pt', label: 'Português' },
-        { value: 'sp', label: 'Español' },
-        { value: 'de', label: 'Deutsch' },
-        { value: 'ru', label: 'русский язык' },
-        { value: 'ar', label: 'Arabic' },
-        { value: 'it', label: 'Italiano' },
-        { value: 'ja', label: '日本語' }
+        { value: "en-us", label: "English" },
+        { value: "zh-hans", label: "中文简体" },
+        { value: "zh-hant", label: "中文繁體" },
+        { value: "fr", label: "Français" },
+        { value: "pt", label: "Português" },
+        { value: "sp", label: "Español" },
+        { value: "de", label: "Deutsch" },
+        { value: "ru", label: "русский язык" },
+        { value: "ar", label: "Arabic" },
+        { value: "it", label: "Italiano" },
+        { value: "ja", label: "日本語" },
       ],
-      title: this.$t('index.webtitle'),
+      title: this.$t("index.webtitle"),
       admin: false,
       adminlogin: {
-        name: '',
-        password: ''
+        name: "",
+        password: "",
       },
-      openid: '',
+      openid: "",
       isPwd: true,
       isPwd2: true,
-      authin: '0',
+      authin: "0",
       authid: false,
       left: false,
       drawerleft: false,
-      tab: '',
+      tab: "",
       login: false,
-      link: '',
-      login_name: '',
+      link: "",
+      login_name: "",
       login_id: 0,
-      check_code: '',
+      check_code: "",
       register: false,
       registerform: {
-        name: '',
-        password1: '',
-        password2: ''
+        name: "",
+        password1: "",
+        password2: "",
       },
-      needLogin: '',
-      activeTab: ''
-    }
+      needLogin: "",
+      activeTab: "",
+      warehouseList: [],
+      useWarehouse: LocalStorage.getItem("useWarehouse") || "all",
+    };
   },
   methods: {
-    linkChange (e) {
-      var _this = this
-      localStorage.removeItem('menulink')
-      localStorage.setItem('menulink', e)
-      _this.link = e
+    getWarehouseData() {
+      getauth(baseurl + "warehouse").then((res) => {
+        this.warehouseList = res.results;
+      });
     },
-    drawerClick (e) {
-      var _this = this
+    warehouseChange(record) {
+      this.useWarehouse = record.id + "-" + record.warehouse_name;
+      this.openid = record.openid;
+      LocalStorage.set("openid", record.openid);
+      LocalStorage.set("useWarehouse", this.useWarehouse);
+    },
+    linkChange(e) {
+      var _this = this;
+      localStorage.removeItem("menulink");
+      localStorage.setItem("menulink", e);
+      _this.link = e;
+    },
+    drawerClick(e) {
+      var _this = this;
       if (_this.miniState) {
-        _this.miniState = false
-        e.stopPropagation()
+        _this.miniState = false;
+        e.stopPropagation();
       }
     },
-    brownlink (e) {
-      openURL(e)
+    brownlink(e) {
+      openURL(e);
     },
-    apiLink () {
-      openURL(baseurl + 'docs/')
+    apiLink() {
+      openURL(baseurl + "docs/");
     },
-    Login () {
-      var _this = this
-      if (_this.login_name === '') {
+    Login() {
+      var _this = this;
+      if (_this.login_name === "") {
         _this.$q.notify({
-          message: 'Please enter the login name',
-          color: 'negative',
-          icon: 'close'
-        })
+          message: "Please enter the login name",
+          color: "negative",
+          icon: "close",
+        });
       } else {
-        if (_this.openid === '') {
+        if (_this.openid === "") {
           _this.$q.notify({
-            message: 'Please Enter The Openid',
-            icon: 'close',
-            color: 'negative'
-          })
+            message: "Please Enter The Openid",
+            icon: "close",
+            color: "negative",
+          });
         } else {
-          if (_this.check_code === '') {
+          if (_this.check_code === "") {
             _this.$q.notify({
-              message: 'Please Enter The Check Code',
-              icon: 'close',
-              color: 'negative'
-            })
+              message: "Please Enter The Check Code",
+              icon: "close",
+              color: "negative",
+            });
           } else {
-            LocalStorage.set('openid', _this.openid)
-            SessionStorage.set('axios_check', 'false')
+            LocalStorage.set("openid", _this.openid);
+            SessionStorage.set("axios_check", "false");
             getauth(
-              'staff/?staff_name=' +
+              "staff/?staff_name=" +
                 _this.login_name +
-                '&check_code=' +
+                "&check_code=" +
                 _this.check_code
             )
               .then((res) => {
                 if (res.count === 1) {
-                  _this.authin = '1'
-                  _this.login = false
-                  _this.login_id = res.results[0].id
-                  LocalStorage.set('auth', '1')
-                  LocalStorage.set('login_name', _this.login_name)
-                  LocalStorage.set('login_id', res.results[0].id)
-                  LocalStorage.set('login_mode', 'user')
+                  _this.authin = "1";
+                  _this.login = false;
+                  _this.login_id = res.results[0].id;
+                  LocalStorage.set("auth", "1");
+                  LocalStorage.set("login_name", _this.login_name);
+                  LocalStorage.set("login_id", res.results[0].id);
+                  LocalStorage.set("login_mode", "user");
                   _this.$q.notify({
-                    message: 'Success Login',
-                    icon: 'check',
-                    color: 'green'
-                  })
-                  localStorage.removeItem('menulink')
-                  _this.link = ''
-                  _this.$router.push({ name: 'web_index' })
+                    message: "Success Login",
+                    icon: "check",
+                    color: "green",
+                  });
+                  localStorage.removeItem("menulink");
+                  _this.link = "";
+                  this.staffType();
+                  _this.$router.push({ name: "web_index" });
                 }
               })
               .catch((err) => {
                 _this.$q.notify({
                   message: err.detail,
-                  icon: 'close',
-                  color: 'negative'
-                })
-              })
+                  icon: "close",
+                  color: "negative",
+                });
+              });
           }
         }
       }
     },
-    adminLogin () {
-      var _this = this
+    adminLogin() {
+      var _this = this;
       if (!_this.adminlogin.name) {
         _this.$q.notify({
-          message: 'Please enter the admin name',
-          color: 'negative',
-          icon: 'close'
-        })
+          message: "Please enter the admin name",
+          color: "negative",
+          icon: "close",
+        });
       } else {
         if (!_this.adminlogin.password) {
           _this.$q.notify({
-            message: 'Please enter the admin password',
-            icon: 'close',
-            color: 'negative'
-          })
+            message: "Please enter the admin password",
+            icon: "close",
+            color: "negative",
+          });
         } else {
-          SessionStorage.set('axios_check', 'false')
-          post('login/', _this.adminlogin)
+          SessionStorage.set("axios_check", "false");
+          post("login/", _this.adminlogin)
             .then((res) => {
-              if (res.code === '200') {
-                _this.authin = '1'
-                _this.login = false
-                _this.admin = false
-                _this.openid = res.data.openid
-                _this.login_name = res.data.name
-                _this.login_id = res.data.user_id
-                LocalStorage.set('auth', '1')
-                LocalStorage.set('openid', res.data.openid)
-                LocalStorage.set('login_name', _this.login_name)
-                LocalStorage.set('login_id', _this.login_id)
-                LocalStorage.set('login_mode', 'admin')
+              if (res.code === "200") {
+                _this.authin = "1";
+                _this.login = false;
+                _this.admin = false;
+                _this.openid = res.data.openid;
+                _this.login_name = res.data.name;
+                _this.login_id = res.data.user_id;
+                LocalStorage.set("auth", "1");
+                LocalStorage.set("openid", res.data.openid);
+                LocalStorage.set("login_name", _this.login_name);
+                LocalStorage.set("login_id", _this.login_id);
+                LocalStorage.set("login_mode", "admin");
                 _this.$q.notify({
-                  message: 'Success Login',
-                  icon: 'check',
-                  color: 'green'
-                })
-                localStorage.removeItem('menulink')
-                _this.link = ''
-                _this.$router.push({ name: 'web_index' })
+                  message: "Success Login",
+                  icon: "check",
+                  color: "green",
+                });
+                localStorage.removeItem("menulink");
+                _this.link = "";
+                this.staffType();
+                _this.$router.push({ name: "web_index" });
               } else {
                 _this.$q.notify({
                   message: res.msg,
-                  icon: 'close',
-                  color: 'negative'
-                })
+                  icon: "close",
+                  color: "negative",
+                });
               }
             })
             .catch((err) => {
               _this.$q.notify({
                 message: err.detail,
-                icon: 'close',
-                color: 'negative'
-              })
-            })
+                icon: "close",
+                color: "negative",
+              });
+            });
         }
       }
     },
-    Logout () {
-      var _this = this
-      _this.authin = '0'
-      _this.login_name = ''
-      LocalStorage.remove('auth')
-      SessionStorage.remove('axios_check')
-      LocalStorage.set('login_name', '')
-      LocalStorage.set('login_id', '')
+    Logout() {
+      var _this = this;
+      _this.authin = "0";
+      _this.login_name = "";
+      _this.isVip9 = "";
+      LocalStorage.remove("auth");
+      LocalStorage.remove("is_vip");
+      SessionStorage.remove("axios_check");
+      LocalStorage.set("login_name", "");
+      LocalStorage.set("login_id", "");
+      LocalStorage.set("useWarehouse", "");
       _this.$q.notify({
-        message: 'Success Logout',
-        icon: 'check',
-        color: 'negative'
-      })
+        message: "Success Logout",
+        icon: "check",
+        color: "negative",
+      });
       // _this.staffType();
-      localStorage.removeItem('menulink')
-      _this.link = ''
-      _this.$router.push({ name: 'web_index' })
+      localStorage.removeItem("menulink");
+      _this.link = "";
+      _this.$router.push({ name: "web_index" });
     },
-    Register () {
-      var _this = this
-      SessionStorage.set('axios_check', 'false')
-      post('register/', _this.registerform)
+    Register() {
+      var _this = this;
+      SessionStorage.set("axios_check", "false");
+      post("register/", _this.registerform)
         .then((res) => {
-          if (res.code === '200') {
-            _this.register = false
-            _this.openid = res.data.openid
-            _this.login_name = _this.registerform.name
-            _this.login_id = res.data.user_id
-            _this.authin = '1'
-            LocalStorage.set('openid', res.data.openid)
-            LocalStorage.set('login_name', _this.registerform.name)
-            LocalStorage.set('login_id', _this.login_id)
-            LocalStorage.set('auth', '1')
+          if (res.code === "200") {
+            _this.register = false;
+            _this.openid = res.data.openid;
+            _this.login_name = _this.registerform.name;
+            _this.login_id = res.data.user_id;
+            _this.authin = "1";
+            LocalStorage.set("openid", res.data.openid);
+            LocalStorage.set("login_name", _this.registerform.name);
+            LocalStorage.set("login_id", _this.login_id);
+            LocalStorage.set("auth", "1");
             _this.registerform = {
-              name: '',
-              password1: '',
-              password2: ''
-            }
+              name: "",
+              password1: "",
+              password2: "",
+            };
             _this.$q.notify({
               message: res.msg,
-              icon: 'check',
-              color: 'green'
-            })
-            _this.staffType()
-            localStorage.removeItem('menulink')
-            _this.link = ''
-            _this.$router.push({ name: 'web_index' })
+              icon: "check",
+              color: "green",
+            });
+            _this.staffType();
+            localStorage.removeItem("menulink");
+            _this.link = "";
+            _this.$router.push({ name: "web_index" });
           } else {
             _this.$q.notify({
               message: res.msg,
-              icon: 'close',
-              color: 'negative'
-            })
+              icon: "close",
+              color: "negative",
+            });
           }
         })
         .catch((err) => {
           _this.$q.notify({
             message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
-    staffType () {
-      var _this = this
-      getauth('staff/?staff_name=' + _this.login_name).then((res) => {
-        LocalStorage.set('staff_type', res.results[0].staff_type)
-      })
-    },
-    langChange (e) {
-      var _this = this
-      _this.lang = e
-      window.setTimeout(() => {
-        location.reload()
-      }, 1)
-    },
-    isLoggedIn () {
-      if (this.$q.localStorage.getItem('openid')) {
-        this.login = true
-      } else {
-        this.register = true
+    staffType() {
+      if (this.isVip9 !== 9) {
+        var _this = this;
+        getauth("staff/?staff_name=" + _this.login_name).then((res) => {
+          this.isVip9 = res.results[0].vip || "";
+          LocalStorage.set("staff_type", res.results[0].staff_type);
+          LocalStorage.set("is_vip", res.results[0].vip);
+        });
       }
-    }
-  },
-  created () {
-    var _this = this
-    if (LocalStorage.has('openid')) {
-      _this.openid = LocalStorage.getItem('openid')
-      _this.activeTab = LocalStorage.getItem('login_mode')
-    } else {
-      _this.openid = ''
-      LocalStorage.set('openid', '')
-    }
-    if (LocalStorage.has('login_name')) {
-      _this.login_name = LocalStorage.getItem('login_name')
-    } else {
-      _this.login_name = ''
-      LocalStorage.set('login_name', '')
-    }
-    if (LocalStorage.has('auth')) {
-      _this.authin = '1'
-      _this.staffType()
-      _this.Readnum()
-    } else {
-      LocalStorage.set('staff_type', 'Admin')
-      _this.authin = '0'
-      _this.isLoggedIn()
-    }
-  },
-  mounted () {
-    var _this = this
-    _this.link = localStorage.getItem('menulink')
-    Bus.$on('needLogin', (val) => {
-      _this.isLoggedIn()
-    })
-  },
-  updated () {
-  },
-  beforeDestroy () {
-    Bus.$off('needLogin')
-  },
-  destroyed () {
-  },
-  watch: {
-    lang (lang) {
-      var _this = this
-      LocalStorage.set('lang', lang)
-      _this.$i18n.locale = lang
+      this.getWarehouseData();
     },
-    login (val) {
+    langChange(e) {
+      var _this = this;
+      _this.lang = e;
+      window.setTimeout(() => {
+        location.reload();
+      }, 1);
+    },
+    isLoggedIn() {
+      if (this.$q.localStorage.getItem("openid")) {
+        this.login = true;
+      } else {
+        this.register = true;
+      }
+    },
+  },
+  created() {
+    var _this = this;
+    if (LocalStorage.has("openid")) {
+      _this.openid = LocalStorage.getItem("openid");
+      _this.activeTab = LocalStorage.getItem("login_mode");
+    } else {
+      _this.openid = "";
+      LocalStorage.set("openid", "");
+    }
+    if (LocalStorage.has("login_name")) {
+      _this.login_name = LocalStorage.getItem("login_name");
+    } else {
+      _this.login_name = "";
+      LocalStorage.set("login_name", "");
+    }
+    if (LocalStorage.has("auth")) {
+      _this.authin = "1";
+      _this.staffType();
+    } else {
+      LocalStorage.set("staff_type", "Admin");
+      _this.authin = "0";
+      _this.isLoggedIn();
+    }
+  },
+  mounted() {
+    var _this = this;
+    _this.link = localStorage.getItem("menulink");
+    Bus.$on("needLogin", (val) => {
+      _this.isLoggedIn();
+    });
+  },
+  updated() {},
+  beforeDestroy() {
+    Bus.$off("needLogin");
+  },
+  destroyed() {},
+  watch: {
+    lang(lang) {
+      var _this = this;
+      LocalStorage.set("lang", lang);
+      _this.$i18n.locale = lang;
+    },
+    login(val) {
       if (val) {
-        if (this.activeTab === 'admin') {
-          this.admin = true
+        if (this.activeTab === "admin") {
+          this.admin = true;
         } else {
-          this.admin = false
+          this.admin = false;
         }
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 <style>
 .tabs .q-tab__indicator {
