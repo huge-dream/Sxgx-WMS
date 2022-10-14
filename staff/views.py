@@ -85,10 +85,10 @@ class APIViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = Users.objects.filter(vip=9).first().openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
+            query_dict = {
+                'openid': self.request.auth.openid
+                'is_delete': False
+            }
             if id is not None:
                 query_dict['id'] = id
             return ListModel.objects.filter(**query_dict)
