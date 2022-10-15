@@ -101,7 +101,7 @@ class ASNDetailUpdateSerializer(serializers.ModelSerializer):
     goods_code = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     goods_desc = serializers.CharField(read_only=False, required=False)
     goods_qty = serializers.IntegerField(read_only=False, required=True, validators=[datasolve.qty_0_data_validate])
-    patch_number = serializers.CharField(read_only=False, required=True)
+    patch_number = serializers.CharField(read_only=False, required=False)
     warehouse_id = serializers.IntegerField(read_only=False, required=True, validators=[datasolve.warehouse_validate])
     creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     class Meta:
