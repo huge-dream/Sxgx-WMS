@@ -73,7 +73,7 @@ class DnListViewSet(viewsets.ModelViewSet):
                 for i in range(len(empty_qs)):
                     if empty_qs[i].create_time <= cur_date - date_check:
                         empty_qs[i].delete()
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else Nonelter(vip=9).exists() else Nonelter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -171,7 +171,7 @@ class DnDetailViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -436,7 +436,7 @@ class DnViewPrintViewSet(viewsets.ModelViewSet):
         id = self.get_project()
         if self.request.user:
             if id is None:
-                superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+                superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -500,7 +500,7 @@ class DnNewOrderViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -576,7 +576,7 @@ class DnOrderReleaseViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'dn_status': 2, 'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -1502,7 +1502,7 @@ class DnPickingListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'id': id}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -1537,7 +1537,7 @@ class DnPickingListFilterViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user:
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -1571,7 +1571,7 @@ class DnPickedViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -1779,7 +1779,7 @@ class DnDispatchViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -1874,7 +1874,7 @@ class DnPODViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -1980,7 +1980,7 @@ class FileListDownloadView(viewsets.ModelViewSet):
                 for i in range(len(empty_qs)):
                     if empty_qs[i].create_time <= cur_date - date_check:
                         empty_qs[i].delete()
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -2037,7 +2037,7 @@ class FileDetailDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
