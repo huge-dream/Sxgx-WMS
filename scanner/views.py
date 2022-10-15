@@ -40,7 +40,7 @@ class SannerDnDetailPickingListView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = Users.objects.filter(vip=9).first().openid
+            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -76,7 +76,7 @@ class ListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = Users.objects.filter(vip=9).first().openid
+            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
             query_dict = {}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -114,7 +114,7 @@ class SannerView(viewsets.ModelViewSet):
     def get_queryset(self):
         bar_code = self.get_project()
         if self.request.user:
-            superopenid = Users.objects.filter(vip=9).first().openid
+            superopenid = u.openid if (u:=Users.objects.filter(vip=9).first()) else None
             query_dict = {}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
