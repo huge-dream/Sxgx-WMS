@@ -210,7 +210,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                         'supplier': str(data['supplier']),
                         'goods_code': str(data['goods_code'][i]),
                         'goods_qty': int(data['goods_qty'][i]),
-                        'patch_number': str(data.get('patch_number', 'N/A')),
+                        'patch_number': str(data.get('patch_number', '')),
                         'warehouse_id': int(data['warehouse_id']),
                         'creater': str(staff_name),
                     }
@@ -248,7 +248,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                                                goods_weight=goods_weight,
                                                goods_volume=goods_volume,
                                                goods_cost=goods_cost,
-                                               patch_number=str(data.get('patch_number', 'N/A')),
+                                               patch_number=str(data.get('patch_number', '')),
                                                warehouse_id=int(data['warehouse_id']),
                                                creater=str(staff_name))
                     post_data_list.append(post_data)
@@ -287,7 +287,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 AsnListModel.objects.filter(openid=self.request.auth.openid, asn_code=str(data['asn_code'])).update(
                     supplier=str(data['supplier']), total_weight=total_weight, total_volume=total_volume,
                     total_cost=total_cost, transportation_fee=transportation_res,
-                    patch_number=str(data.get('patch_number', 'N/A')), warehouse_id=int(data['warehouse_id']))
+                    patch_number=str(data.get('patch_number', '')), warehouse_id=int(data['warehouse_id']))
                 return Response({"detail": "success"}, status=200)
             else:
                 raise APIException({"detail": "Supplier does not exists"})
@@ -309,7 +309,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                         'supplier': str(data['supplier']),
                         'goods_code': str(data['goods_code'][i]),
                         'goods_qty': int(data['goods_qty'][i]),
-                        'patch_number': str(data.get('patch_number', 'N/A')),
+                        'patch_number': str(data.get('patch_number', '')),
                         'warehouse_id': int(data['warehouse_id']),
                         'creater': str(staff_name),
                     }
@@ -359,7 +359,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                                                goods_qty=int(data['goods_qty'][j]),
                                                goods_weight=goods_weight,
                                                goods_volume=goods_volume,
-                                               patch_number=str(data.get('patch_number', 'N/A')),
+                                               patch_number=str(data.get('patch_number', '')),
                                                warehouse_id=int(data['warehouse_id']),
                                                creater=str(staff_name))
                     post_data_list.append(post_data)
