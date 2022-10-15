@@ -45,7 +45,7 @@ class ReceiptsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
+            superopenid = None if (u:=Users.objects.filter(vip=9).first()) is None else u.openid
             query_dict = {
                 'asn_status__gte': 4,
                 'create_time__gte': timezone.now().date() - relativedelta(days=14),
@@ -137,7 +137,7 @@ class SalesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
+            superopenid = None if (u:=Users.objects.filter(vip=9).first()) is None else u.openid
             query_dict = {
                 'dn_status__gte': 4,
                 'create_time__gte': timezone.now().date() - relativedelta(days=14),
