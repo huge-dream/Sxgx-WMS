@@ -38,7 +38,11 @@ class QTYRecorderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user:
-            superopenid = None if (u:=Users.objects.filter(vip=9).first()) is None else u.openid
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
             query_dict = {}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -89,7 +93,11 @@ class CyclecountModeDayViewSet(viewsets.ModelViewSet):
         if self.request.user:
             cur_date = timezone.now()
             delt_date = relativedelta(days=1)
-            superopenid = None if (u:=Users.objects.filter(vip=9).first()) is None else u.openid
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
             query_dict = {
                 'cyclecount_status': 0,
                 'update_time__gte': str((cur_date - delt_date).date()) + ' 00:00:00',
@@ -155,7 +163,11 @@ class CyclecountModeAllViewSet(viewsets.ModelViewSet):
         if self.request.user:
             date_choice = self.request.GET.get('create_time', '')
             cur_time = timezone.now().date()
-            superopenid = None if (u:=Users.objects.filter(vip=9).first()) is None else u.openid
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
             query_dict = {
                 'cyclecount_status': 1
             }
@@ -198,7 +210,11 @@ class FileDownloadView(viewsets.ModelViewSet):
         if self.request.user:
             cur_date = timezone.now()
             delt_date = relativedelta(days=1)
-            superopenid = None if (u:=Users.objects.filter(vip=9).first()) is None else u.openid
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
             query_dict = {
                 'cyclecount_status': 0,
                 'update_time__gte': str((cur_date - delt_date).date()) + ' 00:00:00'
@@ -260,7 +276,11 @@ class FileDownloadAllView(viewsets.ModelViewSet):
         if self.request.user:
             cur_date = timezone.now()
             delt_date = relativedelta(days=1)
-            superopenid = None if (u:=Users.objects.filter(vip=9).first()) is None else u.openid
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
             query_dict = {
                 'cyclecount_status': 1,
                 'update_time__gte': str((cur_date - delt_date).date()) + ' 00:00:00',
@@ -383,7 +403,11 @@ class ManualCyclecountViewSet(viewsets.ModelViewSet):
         if self.request.user:
             cur_date = timezone.now()
             delt_date = relativedelta(days=1)
-            superopenid = None if (u:=Users.objects.filter(vip=9).first()) is None else u.openid
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
             query_dict = {
                 'cyclecount_status': 0,
                 'update_time__gte': str((cur_date - delt_date).date()) + ' 00:00:00',
@@ -449,7 +473,11 @@ class ManualCyclecountRecorderViewSet(viewsets.ModelViewSet):
         if self.request.user:
             date_choice = self.request.GET.get('create_time', '')
             cur_time = timezone.now().date()
-            superopenid = None if (u:=Users.objects.filter(vip=9).first()) is None else u.openid
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
             query_dict = {
                 'cyclecount_status': 1
             }
