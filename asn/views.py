@@ -210,7 +210,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                         'supplier': str(data['supplier']),
                         'goods_code': str(data['goods_code'][i]),
                         'goods_qty': int(data['goods_qty'][i]),
-                        'patch_number': str(data['patch_number']),
+                        'patch_number': str(data.get('patch_number', '')),
                         'warehouse_id': int(data['warehouse_id']),
                         'creater': str(staff_name),
                     }
