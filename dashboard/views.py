@@ -45,7 +45,7 @@ class ReceiptsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else Nonelter(vip=9).exists() else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {
                 'asn_status__gte': 4,
                 'create_time__gte': timezone.now().date() - relativedelta(days=14),

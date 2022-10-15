@@ -73,7 +73,7 @@ class DnListViewSet(viewsets.ModelViewSet):
                 for i in range(len(empty_qs)):
                     if empty_qs[i].create_time <= cur_date - date_check:
                         empty_qs[i].delete()
-            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else Nonelter(vip=9).exists() else Nonelter(vip=9).exists() else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid

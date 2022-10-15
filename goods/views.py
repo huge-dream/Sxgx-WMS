@@ -49,7 +49,7 @@ class SannerGoodsTagView(viewsets.ModelViewSet):
     def get_queryset(self):
         bar_code = self.get_project()
         if self.request.user:
-            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else Nonelter(vip=9).exists() else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {'is_delete': False}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -129,7 +129,7 @@ class APIViewSet(viewsets.ModelViewSet):
                 query_dict['id'] = id
             result = ListModel.objects.filter(**query_dict)
             if search_word:
-                result = data_list.filter(Q(goods_shape=search_word) | Q(goods_specs=search_word))
+                result = result.filter(Q(goods_shape=search_word) | Q(goods_specs=search_word))
             return result
         else:
             return ListModel.objects.filter().none()

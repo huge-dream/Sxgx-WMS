@@ -38,7 +38,7 @@ class QTYRecorderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user:
-            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else Nonelter(vip=9).exists() else None
+            superopenid = Users.objects.filter(vip=9).first().openid if Users.objects.filter(vip=9).exists() else None
             query_dict = {}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
@@ -270,7 +270,7 @@ class FileDownloadAllView(viewsets.ModelViewSet):
                 query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
-            return ListModel.objects.filter(**query_dict)
+            return CyclecountModeDayModel.objects.filter(**query_dict)
         else:
             return CyclecountModeDayModel.objects.none()
 

@@ -1131,7 +1131,7 @@ class FileListDownloadView(viewsets.ModelViewSet):
                 query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
-            return ListModel.objects.filter(Q(**query_dict) & ~Q(supplier=''))
+            return AsnListModel.objects.filter(Q(**query_dict) & ~Q(supplier=''))
         else:
             return AsnListModel.objects.none()
 
