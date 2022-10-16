@@ -337,31 +337,29 @@ class GetGoodsCyclecountViewSet(StockBinViewSet):
         staff_name = staff.objects.filter(openid=self.request.auth.openid, id=self.request.META.get('HTTP_OPERATOR')).first().staff_name
         queryset = self.filter_queryset(self.get_queryset())
         goods_code = self.request.GET.get('goods_code', '')
-        return_data = []
         for i in queryset:
-            bins = StockBinModel.objects.filter(goods_code=i.goods_code)
+            bins = StockBinModel.objects.filter(goods_code=goods_code)
             for j in bins:
+                if (d:=ManualCyclecountModeModel.objects.filter(cyclecount_status=0, bin_name=j.bin_name, goods_code=goods_code)).exists():
+                    d.delete()
                 data = {
                     'openid': self.request.auth.openid,
                     'creater': staff_name,
                     'cyclecount_status': 0,
                     'bin_name': j.bin_name,
-                    'goods_code': i.goods_code,
+                    'goods_code': goods_code,
                     'goods_qty': j.goods_qty,
                     'physical_inventory': 0,
                     'difference': 0,
-                    't_code': Md5.md5(i.goods_code)
+                    't_code': Md5.md5(goods_code)
                 }
                 serializer = serializers.ManualCyclecountPostSerializer(data=data)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
-                return_data.append(serializer.data)
-        queryset = ManualCyclecountModeModel.objects.filter(
-            goods_code=goods_code,
-            cyclecount_status=0)
+        queryset = ManualCyclecountModeModel.objects.filter(goods_code=goods_code, cyclecount_status=0)
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = serializers.ManualCyclecountGetSerializer(page, many=True)
+            serializer = serializers.ManualCyclecountGetSerializer(instance=page, many=True)
             return self.get_paginated_response(serializer.data)
         serializer = serializers.ManualCyclecountGetSerializer(instance=queryset, many=True)
         return Response(serializer.data)
