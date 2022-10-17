@@ -443,8 +443,7 @@ class DnViewPrintViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                u = Users.objects.filter(vip=9).first()
+            u = Users.objects.filter(vip=9).first()
             if u is None:
                 superopenid = None
             else:

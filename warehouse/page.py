@@ -12,8 +12,6 @@ class MyPageNumberPaginationWarehouse(PageNumberPagination):
     def get_paginated_response(self, data):
         for i in range(len(data)):
             data[i]['vip'] = Users.objects.filter(openid=data[i]['openid']).first().vip
-            if data[i]['vip'] == 9:
-                data[i]['warehouse_name'] = 'all'
         return Response(OrderedDict([
             ('count', self.page.paginator.count),
             ('next', self.get_next_link()),

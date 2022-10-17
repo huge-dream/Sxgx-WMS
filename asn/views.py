@@ -447,17 +447,25 @@ class AsnViewPrintViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk):
         qs = self.get_object()
-        if qs.openid != self.request.auth.openid:
+        u = Users.objects.filter(vip=9).first()
+        query_data = {}
+        if u is None:
+            superopenid = None
+        else:
+            superopenid = u.openid
+        if qs.openid != self.request.auth.openid and self.request.auth.openid != superopenid:
             raise APIException({"detail": "Cannot update data which not yours"})
         else:
             context = {}
-            asn_detail_list = AsnDetailModel.objects.filter(openid=self.request.auth.openid,
+            if self.request.auth.openid != superopenid:
+                query_data['openid'] = self.request.auth.openid
+            asn_detail_list = AsnDetailModel.objects.filter(**query_data,
                                                             asn_code=qs.asn_code,
                                                             is_delete=False)
             asn_detail = serializers.ASNDetailGetSerializer(asn_detail_list, many=True)
-            supplier_detail = supplier.objects.filter(openid=self.request.auth.openid,
+            supplier_detail = supplier.objects.filter(**query_data,
                                                             supplier_name=qs.supplier).first()
-            warehouse_detail = warehouse.objects.filter(openid=self.request.auth.openid,).first()
+            warehouse_detail = warehouse.objects.filter(**query_data,).first()
             context['asn_detail'] = asn_detail.data
             context['supplier_detail'] = {
                 "supplier_name": supplier_detail.supplier_name,

@@ -98,3 +98,23 @@ class ManualCyclecountUpdateSerializer(serializers.ModelSerializer):
         model = ManualCyclecountModeModel
         exclude = []
         read_only_fields = ['id', 'create_time', 'update_time', ]
+
+
+class ManualFileRenderSerializer(serializers.ModelSerializer):
+    creater = serializers.CharField(read_only=False, required=False)
+    physical_inventory = serializers.SerializerMethodField()
+    difference = serializers.SerializerMethodField()
+    create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
+    update_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
+
+    class Meta:
+        model = ManualCyclecountModeModel
+        ref_name = 'ManualFileRenderSerializer'
+        exclude = ['openid']
+
+    def get_physical_inventory(self, obj):
+        return ''
+
+    def get_difference(self, obj):
+        return ''
+

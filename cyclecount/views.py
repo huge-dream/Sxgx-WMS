@@ -338,24 +338,22 @@ class GetGoodsCyclecountViewSet(StockBinViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         goods_code = self.request.GET.get('goods_code', '')
         for i in queryset:
-            bins = StockBinModel.objects.filter(goods_code=goods_code)
-            for j in bins:
-                if (d:=ManualCyclecountModeModel.objects.filter(cyclecount_status=0, bin_name=j.bin_name, goods_code=goods_code)).exists():
-                    d.delete()
-                data = {
-                    'openid': self.request.auth.openid,
-                    'creater': staff_name,
-                    'cyclecount_status': 0,
-                    'bin_name': j.bin_name,
-                    'goods_code': goods_code,
-                    'goods_qty': j.goods_qty,
-                    'physical_inventory': 0,
-                    'difference': 0,
-                    't_code': Md5.md5(goods_code)
-                }
-                serializer = serializers.ManualCyclecountPostSerializer(data=data)
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
+            if (d:=ManualCyclecountModeModel.objects.filter(cyclecount_status=0, bin_name=i.bin_name, goods_code=goods_code)).exists():
+                d.delete()
+            data = {
+                'openid': self.request.auth.openid,
+                'creater': staff_name,
+                'cyclecount_status': 0,
+                'bin_name': i.bin_name,
+                'goods_code': goods_code,
+                'goods_qty': i.goods_qty,
+                'physical_inventory': 0,
+                'difference': 0,
+                't_code': Md5.md5(goods_code)
+            }
+            serializer = serializers.ManualCyclecountPostSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
         queryset = ManualCyclecountModeModel.objects.filter(goods_code=goods_code, cyclecount_status=0)
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -498,3 +496,69 @@ class ManualCyclecountRecorderViewSet(viewsets.ModelViewSet):
             return serializers.ManualCyclecountGetSerializer
         else:
             return self.http_method_not_allowed(request=self.request)
+
+class ManualFileDownloadView(viewsets.ModelViewSet):
+    renderer_classes = (FileRenderCN, ) + tuple(api_settings.DEFAULT_RENDERER_CLASSES)
+    filter_backends = [DjangoFilterBackend, OrderingFilter, ]
+    ordering_fields = ['id', "create_time"]
+    filter_class = ManualFilter
+
+    def get_project(self):
+        try:
+            id = self.kwargs.get('pk')
+            return id
+        except:
+            return None
+
+    def get_queryset(self):
+        id = self.get_project()
+        if self.request.user:
+            cur_date = timezone.now()
+            delt_date = relativedelta(days=1)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
+            query_dict = {
+                'cyclecount_status': 0,
+                'update_time__gte': str((cur_date - delt_date).date()) + ' 00:00:00'
+            }
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return ManualCyclecountModeModel.objects.filter(**query_dict)
+        else:
+            return ManualCyclecountModeModel.objects.none()
+
+    def get_serializer_class(self):
+        if self.action in ['list']:
+            return serializers.ManualFileRenderSerializer
+        else:
+            return self.http_method_not_allowed(request=self.request)
+
+    def get_lang(self, data):
+        lang = self.request.META.get('HTTP_LANGUAGE')
+        if lang:
+            if lang == 'zh-hans':
+                return FileRenderCN().render(data)
+            else:
+                return FileRenderEN().render(data)
+        else:
+            return FileRenderEN().render(data)
+
+    def list(self, request, *args, **kwargs):
+        from datetime import datetime
+        dt = datetime.now()
+        data = (
+            serializers.ManualFileRenderSerializer(instance).data
+            for instance in self.filter_queryset(self.get_queryset())
+        )
+        renderer = self.get_lang(data)
+        response = StreamingHttpResponse(
+            renderer,
+            content_type="text/csv"
+        )
+        response['Content-Disposition'] = "attachment; filename='manualcyclecount_{}.csv'".format(str(dt.strftime('%Y%m%d%H%M%S%f')))
+        return response
