@@ -563,7 +563,8 @@ export default {
     downloadjianhuodantip: "下载所有拣货单",
     patch_number: "批次号",
     warehouse_id: "仓库",
-    update_time: '修改日期',
+    update_time: "修改日期",
+    deliver_download: "下载发货单",
     view_batch: {
       batch_name: "批次号",
       error1: "请输入批次号",

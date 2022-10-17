@@ -28,7 +28,11 @@
         <div v-if="isVip9 === 9">
           {{ $t("twoKai.useWarehouse") }}：{{ useWarehouse }}
         </div>
-        <transition appear enter-active-class="animated zoomIn">
+        <transition
+          v-if="authin === '1'"
+          appear
+          enter-active-class="animated zoomIn"
+        >
           <q-btn
             icon="api"
             round
@@ -45,7 +49,11 @@
             >
           </q-btn>
         </transition>
-        <transition appear enter-active-class="animated zoomIn">
+        <transition
+          v-if="authin === '1'"
+          appear
+          enter-active-class="animated zoomIn"
+        >
           <q-btn
             icon="img:statics/icons/GitHub.png"
             round
@@ -754,7 +762,7 @@ export default {
   },
   methods: {
     getWarehouseData() {
-      getauth(baseurl + "warehouse/").then((res) => {
+      getauth(baseurl + "warehouse/getallwarehouse/").then((res) => {
         res.results.map((item) => {
           if (item.vip === 9) {
             item.warehouse_name = "all";

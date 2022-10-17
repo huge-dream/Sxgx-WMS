@@ -206,7 +206,7 @@
                   content-class="bg-amber text-black shadow-4"
                   :offset="[10, 10]"
                   content-style="font-size: 12px"
-                  >{{ $t("print") }}</q-tooltip
+                  >{{ $t("twoKai.deliver_download") }}</q-tooltip
                 >
               </q-btn>
               <!-- <q-btn
@@ -1385,6 +1385,7 @@
 <script>
 import {
   getauth,
+  getfile,
   postauth,
   putauth,
   deleteauth,
@@ -1559,28 +1560,41 @@ export default {
   },
   methods: {
     handleRecordDownload(record) {
-      console.log(record);
-    },
-    handleDownload() {
-      let _this = this;
-      getfile(
-        _this.pathname + "filelist/?lang=" + LocalStorage.getItem("lang")
-      ).then((res) => {
-        var timeStamp = Date.now();
-        var formattedString = date.formatDate(timeStamp, "YYYYMMDDHHmmssSSS");
-        const status = exportFile(
-          _this.pathname + formattedString + ".csv",
-          "\uFEFF" + res.data,
-          "text/csv"
-        );
-        if (status !== true) {
-          _this.$q.notify({
-            message: "Browser denied file download...",
-            color: "negative",
-            icon: "warning",
-          });
-        }
-      });
+      if (!record.id) {
+        _this.$q.notify({
+          message: "Browser denied file download...",
+          color: "negative",
+          icon: "warning",
+        });
+        return;
+      }
+
+      if (LocalStorage.has("auth")) {
+        getfile(
+          `dn/filedetail/${record.id}/?lang=${LocalStorage.getItem("lang")}`
+        ).then((res) => {
+          var timeStamp = Date.now();
+          var formattedString = date.formatDate(timeStamp, "YYYYMMDDHHmmssSSS");
+          const status = exportFile(
+            `dn_filedetail_${record.id}_${formattedString}.csv`,
+            "\uFEFF" + res.data,
+            "text/csv"
+          );
+          if (status !== true) {
+            this.$q.notify({
+              message: "Browser denied file download...",
+              color: "negative",
+              icon: "warning",
+            });
+          }
+        });
+      } else {
+        this.$q.notify({
+          message: _this.$t("notice.loginerror"),
+          color: "negative",
+          icon: "warning",
+        });
+      }
     },
     onRejected(rejectedEntries) {
       this.$q.notify({

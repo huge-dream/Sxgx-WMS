@@ -1179,6 +1179,7 @@ import {
   deleteauth,
   ViewPrintAuth,
   getfile,
+  getpdfFile,
 } from "boot/axios_request";
 import {
   date,
@@ -1339,7 +1340,32 @@ export default {
   },
   methods: {
     handleRecordDownload(record) {
-      console.log(record);
+      if (LocalStorage.has("auth")) {
+        getpdfFile(
+          `asn/pdfdownload/${record.id}/?lang=${LocalStorage.getItem("lang")}`
+        ).then((res) => {
+          var timeStamp = Date.now();
+          var formattedString = date.formatDate(timeStamp, "YYYYMMDDHHmmssSSS");
+          const status = exportFile(
+            `asn_filedetail_${record.id}_${formattedString}.pdf`,
+            res.data,
+            "application/pdf"
+          );
+          if (status !== true) {
+            this.$q.notify({
+              message: "Browser denied file download...",
+              color: "negative",
+              icon: "warning",
+            });
+          }
+        });
+      } else {
+        this.$q.notify({
+          message: _this.$t("notice.loginerror"),
+          color: "negative",
+          icon: "warning",
+        });
+      }
     },
     handleDownload() {
       let _this = this;
