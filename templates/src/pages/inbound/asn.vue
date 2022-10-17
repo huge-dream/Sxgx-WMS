@@ -1586,6 +1586,22 @@ export default {
     newDataSubmit() {
       var _this = this;
       _this.newFormData.creater = _this.login_name;
+      if (!_this.newFormData.patch_number) {
+        _this.$q.notify({
+          message: "Please Enter The patch_number",
+          icon: "close",
+          color: "negative",
+        });
+        return;
+      }
+      if (!_this.warehouseId) {
+        _this.$q.notify({
+          message: "Please Enter The warehouse",
+          icon: "close",
+          color: "negative",
+        });
+        return;
+      }
       let cancelRequest = false;
       if (_this.newFormData.supplier !== "") {
         _this.newFormData.goods_code = [];

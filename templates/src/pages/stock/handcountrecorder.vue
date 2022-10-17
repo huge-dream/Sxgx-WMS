@@ -81,6 +81,9 @@
             <q-td key="difference" :props="props">
               {{ props.row.difference }}
             </q-td>
+            <q-td key="update_time" :props="props">
+              {{ props.row.update_time }}
+            </q-td>
           </q-tr>
         </template>
       </q-table>
@@ -185,6 +188,12 @@ export default {
           name: "difference",
           label: this.$t("stock.view_stocklist.difference"),
           field: "difference",
+          align: "center",
+        },
+        {
+          name: "update_time",
+          label: this.$t("twoKai.update_time"),
+          field: "update_time",
           align: "center",
         },
       ],

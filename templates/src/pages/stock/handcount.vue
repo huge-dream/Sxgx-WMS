@@ -336,7 +336,7 @@ export default {
               icon: "check",
               color: "green",
             });
-            _this.reFresh();
+            //_this.reFresh();
           })
           .catch((err) => {
             _this.$q.notify({
