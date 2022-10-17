@@ -202,7 +202,9 @@
               @click="(handcountVisible = false), (handcountVal = '')"
               >{{ $t("cancel") }}</q-btn
             >
-            <q-btn color="primary" @click="getList">{{ $t("submit") }}</q-btn>
+            <q-btn color="primary" @click="handleHandcountSubmit">{{
+              $t("submit")
+            }}</q-btn>
           </div>
         </q-card-section>
       </q-card>
@@ -356,7 +358,8 @@ export default {
       var _this = this;
       if (LocalStorage.has("auth")) {
         getfile(
-          "cyclecount/filecyclecountday/?lang=" + LocalStorage.getItem("lang")
+          "cyclecount/manualfilecyclecount/?lang=" +
+            LocalStorage.getItem("lang")
         ).then((res) => {
           var timeStamp = Date.now();
           var formattedString = date.formatDate(timeStamp, "YYYYMMDDHHmmssSSS");
@@ -389,6 +392,16 @@ export default {
       val = val.toString().replace(/^(0+)|[^\d]+/g, "");
     },
     handleHandcountSubmit() {
+      if (!this.handcountVal) {
+        this.$q.notify({
+          message: "Please Enter SKU",
+          icon: "close",
+          color: "negative",
+        });
+        return;
+      }
+      this.getList();
+      this.handcountVal = "";
       /* getauth(`goods/cyclecount?goods_code=${this.handcountVal}`).then(
         (res) => {
           console.log(res, "--11---");
