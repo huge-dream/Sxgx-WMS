@@ -336,6 +336,7 @@ export default {
               icon: "check",
               color: "green",
             });
+            _this.table_list = [];
             //_this.reFresh();
           })
           .catch((err) => {
