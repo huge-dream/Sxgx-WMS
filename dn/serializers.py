@@ -31,6 +31,7 @@ class DNListGetSerializer(serializers.ModelSerializer):
     dn_code = serializers.CharField(read_only=True, required=False)
     dn_status = serializers.IntegerField(read_only=True, required=False)
     customer = serializers.CharField(read_only=True, required=False)
+    warehouse_id = serializers.IntegerField(read_only=True, required=False)
     creater = serializers.CharField(read_only=True, required=False)
     bar_code = serializers.CharField(read_only=True, required=False)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
@@ -44,6 +45,7 @@ class DNListPostSerializer(serializers.ModelSerializer):
     openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])
     dn_code = serializers.CharField(read_only=False,  required=True, validators=[datasolve.dn_data_validate])
     customer = serializers.CharField(read_only=False, required=False)
+    warehouse_id = serializers.IntegerField(read_only=False, required=False, validators=[datasolve.warehouse_validate])
     bar_code = serializers.CharField(read_only=False, required=True)
     creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     class Meta:

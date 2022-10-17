@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.utils.urls import replace_query_param, remove_query_param
 
 from supplier.models import ListModel as supplier
+from warehouse.models import ListModel as warehouse
 
 class MyPageNumberPaginationASNList(PageNumberPagination):
     page_size = 30
@@ -54,8 +55,16 @@ class MyPageNumberPaginationASNList(PageNumberPagination):
         supplier_list = []
         for i in range(len(supplier_list_data)):
             supplier_list.append(supplier_list_data[i].supplier_name)
+        warehouse_list_data = warehouse.objects.filter(openid=self.request.auth.openid, is_delete=False)
+        warehouse_list = []
+        for i in range(len(warehouse_list_data)):
+            warehouse_dict = {
+                "id": warehouse_list_data[i].pk,
+                "warehosue_name": warehouse_list_data[i].warehouse_name}
+            warehouse_list.append(warehouse_dict)
         return Response(OrderedDict([
             ('supplier_list', supplier_list),
+            ('warehouse_list', warehouse_list),
             ('count', self.page.paginator.count),
             ('next', self.get_next_link()),
             ('previous', self.get_previous_link()),

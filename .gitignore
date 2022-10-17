@@ -1,8 +1,11 @@
 node_modules/
+.vscode/
 __pycache__/
 Authorization/
 authorization.txt
 authorization.json
+**/migrations/*
+!**/migrations/__init__.py
 db.sqlite3
 .idea/
 delete.py

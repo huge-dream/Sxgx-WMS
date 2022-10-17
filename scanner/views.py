@@ -16,6 +16,8 @@ from rest_framework.exceptions import APIException
 from stock.models import StockBinModel
 from dn.models import DnDetailModel
 from dn.filter import DnDetailFilter
+from userprofile.models import Users
+
 
 class SannerDnDetailPickingListView(viewsets.ModelViewSet):
     """
@@ -38,10 +40,17 @@ class SannerDnDetailPickingListView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return DnDetailModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return DnDetailModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DnDetailModel.objects.filter(**query_dict)
         else:
             return DnDetailModel.objects.none()
 
@@ -71,10 +80,17 @@ class ListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return ListModel.objects.filter(openid=self.request.auth.openid)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return ListModel.objects.filter(openid=self.request.auth.openid, id=id)
+                superopenid = u.openid
+            query_dict = {}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return ListModel.objects.filter(**query_dict)
         else:
             return ListModel.objects.none()
 
@@ -106,10 +122,18 @@ class SannerView(viewsets.ModelViewSet):
     def get_queryset(self):
         bar_code = self.get_project()
         if self.request.user:
-            if id is None:
-                return ListModel.objects.filter(openid=self.request.auth.openid)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return ListModel.objects.filter(openid=self.request.auth.openid, bar_code=bar_code)
+                superopenid = u.openid
+            query_dict = {}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+                query_dict['bar_code'] = bar_code
+            return ListModel.objects.filter(**query_dict)
         else:
             return ListModel.objects.none()
 

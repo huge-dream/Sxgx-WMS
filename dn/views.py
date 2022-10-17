@@ -32,6 +32,8 @@ from django.utils import timezone
 from .files import FileListRenderCN, FileListRenderEN, FileDetailRenderCN, FileDetailRenderEN
 from rest_framework.settings import api_settings
 from staff.models import ListModel as staff
+from userprofile.models import Users
+
 
 class DnListViewSet(viewsets.ModelViewSet):
     """
@@ -71,12 +73,17 @@ class DnListViewSet(viewsets.ModelViewSet):
                 for i in range(len(empty_qs)):
                     if empty_qs[i].create_time <= cur_date - date_check:
                         empty_qs[i].delete()
-            if id is None:
-                return DnListModel.objects.filter(
-                    Q(openid=self.request.auth.openid, is_delete=False) & ~Q(customer=''))
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return DnListModel.objects.filter(
-                    Q(openid=self.request.auth.openid, id=id, is_delete=False) & ~Q(customer=''))
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DnListModel.objects.filter(Q(**query_dict) & ~Q(customer=''))
         else:
             return DnListModel.objects.none()
 
@@ -168,10 +175,17 @@ class DnDetailViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return DnDetailModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return DnDetailModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DnDetailModel.objects.filter(**query_dict)
         else:
             return DnDetailModel.objects.none()
 
@@ -430,9 +444,17 @@ class DnViewPrintViewSet(viewsets.ModelViewSet):
         id = self.get_project()
         if self.request.user:
             if id is None:
-                return DnListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
+                u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return DnListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DnListModel.objects.filter(**query_dict)
         else:
             return DnListModel.objects.none()
 
@@ -490,10 +512,17 @@ class DnNewOrderViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return DnListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return DnListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DnListModel.objects.filter(**query_dict)
         else:
             return DnListModel.objects.none()
 
@@ -563,10 +592,20 @@ class DnOrderReleaseViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return DnListModel.objects.filter(openid=self.request.auth.openid, dn_status=2, is_delete=False).order_by('create_time')
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return DnListModel.objects.filter(openid=self.request.auth.openid, dn_status=2, id=id, is_delete=False)
+                superopenid = u.openid
+            query_dict = {'dn_status': 2, 'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+                result = DnListModel.objects.filter(**query_dict)
+            else:
+                result = DnListModel.objects.filter(**query_dict).order_by('create_time')
+            return result
         else:
             return DnListModel.objects.none()
 
@@ -1483,7 +1522,15 @@ class DnPickingListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            return DnListModel.objects.filter(openid=self.request.auth.openid, id=id)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
+            query_dict = {'id': id}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            return DnListModel.objects.filter(**query_dict)
         else:
             return DnListModel.objects.none()
 
@@ -1514,7 +1561,15 @@ class DnPickingListFilterViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user:
-            return PickingListModel.objects.filter(openid=self.request.auth.openid)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
+            query_dict = {}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            return PickingListModel.objects.filter(**query_dict)
         else:
             return PickingListModel.objects.none()
 
@@ -1544,10 +1599,17 @@ class DnPickedViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return DnListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return DnListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DnListModel.objects.filter(**query_dict)
         else:
             return DnListModel.objects.none()
 
@@ -1749,7 +1811,16 @@ class DnDispatchViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            return DnListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            query_dict['id'] = id
+            return DnListModel.objects.filter(**query_dict)
         else:
             return DnListModel.objects.none()
 
@@ -1839,7 +1910,16 @@ class DnPODViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            return DnListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            query_dict['id'] = id
+            return DnListModel.objects.filter(**query_dict)
         else:
             return DnListModel.objects.none()
 
@@ -1940,12 +2020,17 @@ class FileListDownloadView(viewsets.ModelViewSet):
                 for i in range(len(empty_qs)):
                     if empty_qs[i].create_time <= cur_date - date_check:
                         empty_qs[i].delete()
-            if id is None:
-                return DnListModel.objects.filter(
-                    Q(openid=self.request.auth.openid, is_delete=False) & ~Q(customer=''))
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return DnListModel.objects.filter(
-                    Q(openid=self.request.auth.openid, id=id, is_delete=False) & ~Q(customer=''))
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DnListModel.objects.filter(Q(**query_dict) % ~Q(customer=''))
         else:
             return DnListModel.objects.none()
 
@@ -1996,10 +2081,17 @@ class FileDetailDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return DnDetailModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return DnDetailModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DnListModel.objects.filter(**query_dict)
         else:
             return DnDetailModel.objects.none()
 
