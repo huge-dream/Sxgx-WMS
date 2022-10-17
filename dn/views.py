@@ -2090,7 +2090,7 @@ class FileDetailDownloadView(viewsets.ModelViewSet):
                 query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
-            return DnListModel.objects.filter(**query_dict)
+            return DnDetailModel.objects.filter(**query_dict)
         else:
             return DnDetailModel.objects.none()
 

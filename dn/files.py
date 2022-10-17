@@ -12,6 +12,7 @@ def list_file_headers():
         'create_time',
         'update_time'
     ]
+
 def list_cn_data_header():
     return dict([
         ('dn_code', u'发货单单号'),
@@ -60,6 +61,7 @@ def detail_file_headers():
         'create_time',
         'update_time'
     ]
+
 def detail_cn_data_header():
     return dict([
         ('dn_code', u'发货单单号'),
