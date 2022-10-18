@@ -79,7 +79,7 @@
               </q-tooltip>
             </q-btn>
 
-            <!-- <q-btn :label="$t('download')" icon="file_download">
+            <q-btn :label="$t('download')" icon="file_download">
               <q-tooltip
                 content-class="bg-amber text-black shadow-4"
                 :offset="[10, 10]"
@@ -87,7 +87,7 @@
               >
                 {{ $t("twoKai.downloadjianhuodantip") }}
               </q-tooltip>
-            </q-btn> -->
+            </q-btn>
           </q-btn-group>
           <q-space />
           <q-input
@@ -194,7 +194,7 @@
                 >
               </q-btn>
 
-              <q-btn
+              <!-- <q-btn
                 round
                 flat
                 push
@@ -208,8 +208,8 @@
                   content-style="font-size: 12px"
                   >{{ $t("twoKai.deliver_download") }}</q-tooltip
                 >
-              </q-btn>
-              <!-- <q-btn
+              </q-btn> -->
+              <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
                   $q.localStorage.getItem('staff_type') !== 'Customer' &&
@@ -220,16 +220,16 @@
                 flat
                 push
                 color="secondary"
-                icon="print"
+                icon="article"
                 @click="PrintPickingList(props.row)"
               >
                 <q-tooltip
                   content-class="bg-amber text-black shadow-4"
                   :offset="[10, 10]"
                   content-style="font-size: 12px"
-                  >{{ $t("print") }}</q-tooltip
+                  >{{ $t("twoKai.look_jianhuodan") }}</q-tooltip
                 >
-              </q-btn> -->
+              </q-btn>
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
@@ -1101,7 +1101,7 @@
           class="bg-light-blue-10 text-white rounded-borders"
           style="height: 50px"
         >
-          <div>{{ $t("print") }}</div>
+          <div>{{ $t("twoKai.look_jianhuodan") }}</div>
           <q-space />
         </q-bar>
         <div class="col-4" style="margin-top: 5%">
@@ -1135,9 +1135,9 @@
           </tbody>
         </q-markup-table>
       </q-card>
-      <div style="float: right; padding: 15px 15px 15px 0">
+      <!--  <div style="float: right; padding: 15px 15px 15px 0">
         <q-btn color="primary" icon="print" v-print="printPL">print</q-btn>
-      </div>
+      </div> -->
     </q-dialog>
     <q-dialog v-model="pickedForm">
       <q-card class="shadow-24">

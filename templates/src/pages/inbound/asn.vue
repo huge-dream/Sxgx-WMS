@@ -181,7 +181,7 @@
                   content-class="bg-amber text-black shadow-4"
                   :offset="[10, 10]"
                   content-style="font-size: 12px"
-                  >{{ $t("print") }}</q-tooltip
+                  >{{ $t("twoKai.download_tags") }}</q-tooltip
                 >
               </q-btn>
               <q-btn
