@@ -61,3 +61,5 @@ unicodecsv==0.14.1
 uritemplate==4.1.1
 urllib3==1.26.10
 zope.interface==5.4.0
+pillow==9.2.0
+python-barcode==0.14.0

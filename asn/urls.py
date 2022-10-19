@@ -32,4 +32,5 @@ re_path(r'^movetobin/(?P<pk>\d+)/$', views.MoveToBinViewSet.as_view({
 }), name="movetobin_1"),
 path(r'filelist/', views.FileListDownloadView.as_view({"get": "list"}), name="asnfilelistdownload"),
 path(r'filedetail/', views.FileDetailDownloadView.as_view({"get": "list"}), name="asnfiledetaildownload"),
+re_path(r'pdfdownload/(?P<pk>\d+)/$', views.PDFDownload.as_view({"get": "retrieve"})),
 ]

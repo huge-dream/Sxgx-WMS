@@ -46,10 +46,17 @@ class APIViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            if id is None:
-                return ListModel.objects.filter(is_delete=False)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
             else:
-                return ListModel.objects.filter(id=id, is_delete=False)
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return ListModel.objects.filter(**query_dict)
         else:
             return ListModel.objects.none()
 
@@ -157,6 +164,3 @@ class GetAllViewSet(viewsets.ModelViewSet):
             return serializers.WarehousePartialUpdateSerializer
         else:
             return self.http_method_not_allowed(request=self.request)
-
-    def list(self, request, *args, **kwargs):
-        return ListModel.objects.all()

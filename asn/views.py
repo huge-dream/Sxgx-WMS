@@ -31,6 +31,10 @@ from rest_framework.settings import api_settings
 from dateutil.relativedelta import relativedelta
 from staff.models import ListModel as staff
 from userprofile.models import Users
+from wsgiref.util import FileWrapper
+import mimetypes, os
+from django.conf import settings
+from utils import makepdf
 
 class AsnListViewSet(viewsets.ModelViewSet):
     """
@@ -210,7 +214,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                         'supplier': str(data['supplier']),
                         'goods_code': str(data['goods_code'][i]),
                         'goods_qty': int(data['goods_qty'][i]),
-                        'patch_number': str(data.get('patch_number', '')),
+                        'patch_number': str(data['patch_number']),
                         'warehouse_id': int(data['warehouse_id']),
                         'creater': str(staff_name),
                     }
@@ -248,7 +252,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                                                goods_weight=goods_weight,
                                                goods_volume=goods_volume,
                                                goods_cost=goods_cost,
-                                               patch_number=str(data.get('patch_number', '')),
+                                               patch_number=str(data['patch_number']),
                                                warehouse_id=int(data['warehouse_id']),
                                                creater=str(staff_name))
                     post_data_list.append(post_data)
@@ -287,7 +291,21 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 AsnListModel.objects.filter(openid=self.request.auth.openid, asn_code=str(data['asn_code'])).update(
                     supplier=str(data['supplier']), total_weight=total_weight, total_volume=total_volume,
                     total_cost=total_cost, transportation_fee=transportation_res,
-                    patch_number=str(data.get('patch_number', '')), warehouse_id=int(data['warehouse_id']))
+                    patch_number=str(data['patch_number']), warehouse_id=int(data['warehouse_id']))
+                all_data = AsnDetailModel.objects.filter(patch_number=data['patch_number'])
+                pdf_data = list()
+                for i in range(len(all_data)):
+                    d = dict()
+                    d['id'] = i + 1
+                    d['patch_number'] = all_data[i].patch_number
+                    d['brand'] = 'MADE IN CHINA'
+                    d['barcode'] = goods.objects.filter(goods_code=all_data[i].goods_code).first().bar_code
+                    d['total'] = all_data[i].goods_qty
+                    d['goods_code'] = all_data[i].goods_code
+                    d['address'] = 'EA'
+                    d['country'] = 'US'
+                    pdf_data.append(d)
+                makepdf.generate_pdf(pdf_data, data['patch_number'])
                 return Response({"detail": "success"}, status=200)
             else:
                 raise APIException({"detail": "Supplier does not exists"})
@@ -309,7 +327,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                         'supplier': str(data['supplier']),
                         'goods_code': str(data['goods_code'][i]),
                         'goods_qty': int(data['goods_qty'][i]),
-                        'patch_number': str(data.get('patch_number', '')),
+                        'patch_number': str(data['patch_number']),
                         'warehouse_id': int(data['warehouse_id']),
                         'creater': str(staff_name),
                     }
@@ -359,7 +377,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                                                goods_qty=int(data['goods_qty'][j]),
                                                goods_weight=goods_weight,
                                                goods_volume=goods_volume,
-                                               patch_number=str(data.get('patch_number', '')),
+                                               patch_number=str(data['patch_number']),
                                                warehouse_id=int(data['warehouse_id']),
                                                creater=str(staff_name))
                     post_data_list.append(post_data)
@@ -1267,3 +1285,55 @@ class FileDetailDownloadView(viewsets.ModelViewSet):
         )
         response['Content-Disposition'] = "attachment; filename='asndetail_{}.csv'".format(str(dt.strftime('%Y%m%d%H%M%S%f')))
         return response
+
+
+class PDFDownload(viewsets.ModelViewSet):
+    pagination_class = None
+    filter_backends = [DjangoFilterBackend, OrderingFilter, ]
+    ordering_fields = ['id', "create_time", "update_time", ]
+    filter_class = None
+
+    def get_project(self):
+        try:
+            id = self.kwargs.get('pk')
+            return id
+        except:
+            return None
+
+    def get_queryset(self):
+        id = self.get_project()
+        if self.request.user:
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
+            query_dict = {'is_delete': False}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return AsnListModel.objects.filter(**query_dict)
+        else:
+            return AsnListModel.objects.none()
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return serializers.ASNListGetSerializer
+        elif self.action in ['create']:
+            return serializers.ASNListPostSerializer
+        elif self.action in ['update']:
+            return serializers.ASNListUpdateSerializer
+        else:
+            return self.http_method_not_allowed(request=self.request)
+
+    def retrieve(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        if queryset.exists():
+            path = str(settings.BASE_DIR) + f'/media/asn_label/{queryset.first().patch_number}/{queryset.first().patch_number}.pdf'
+            content_type, encoding = mimetypes.guess_type(path)
+            response = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
+            response['Cache-Control'] = "max-age=864000000000"
+            return response
+        raise APIException({"detail": "This ASN PDF File Is Not Exists"})
+

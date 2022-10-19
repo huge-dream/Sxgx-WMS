@@ -41,6 +41,9 @@ from dn.models import DnDetailModel
 from dn.serializers import DNListPostSerializer
 from dn.serializers import DNDetailPostSerializer
 from dn import files as dnfiles
+from utils import makepdf
+from asgiref.sync import sync_to_async
+import asyncio
 
 
 class GoodlistfileViewSet(views.APIView):
@@ -98,6 +101,7 @@ class GoodlistfileViewSet(views.APIView):
                     if str(data_list[i][0]) == 'nan':
                         continue
                     else:
+                        # 0商品编码	1SKU 2商品供应商 3商品品类 4商品单位重量 5商品单位长度 6商品单位宽度 7商品单位高度 8商品形状 9最小单位体积 10商品单位 11商品规格 12商品成本 13商品价格
                         if str(data_list[i][1]) == 'nan':
                             data_list[i][1] = 'N/A'
                         if str(data_list[i][2]) == 'nan':
@@ -1080,6 +1084,7 @@ class AsnlistfileAddViewSet(views.APIView):
                     for d in range(len(data_list)):
                         data_validate(str(data_list[d]))
                     data = self.request.data
+                    patch_number_list = []
                     for i in range(len(data_list)):
                         if str(data_list[i][1]) == 'nan':
                             continue
@@ -1221,6 +1226,23 @@ class AsnlistfileAddViewSet(views.APIView):
                             supplier=supplier_name, total_weight=total_weight, total_volume=total_volume,
                             total_cost=total_cost, transportation_fee=transportation_res,
                             patch_number=str(data_list[i][3]), warehouse_id=int(data_list[i][4]))
+                        patch_number_list.append(data_list[i][3])
+                    patch_number_list = set(patch_number_list)
+                    for i in patch_number_list:
+                        all_data = AsnDetailModel.objects.filter(patch_number=i)
+                        pdf_data = list()
+                        for j in range(len(all_data)):
+                            d = dict()
+                            d['id'] = j + 1
+                            d['patch_number'] = all_data[j].patch_number
+                            d['brand'] = 'MADE IN CHINA'
+                            d['barcode'] = goods.objects.filter(goods_code=all_data[j].goods_code).first().bar_code
+                            d['total'] = all_data[j].goods_qty
+                            d['goods_code'] = all_data[j].goods_code
+                            d['address'] = 'EA'
+                            d['country'] = 'US'
+                            pdf_data.append(d)
+                        makepdf.generate_pdf(pdf_data, i)
                     return Response({"detail": "success"}, status=200)
                 except:
                     raise APIException({"detail": "Upload Failed"})
