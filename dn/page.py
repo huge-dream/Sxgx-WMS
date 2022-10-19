@@ -50,7 +50,7 @@ class MyPageNumberPaginationDNList(PageNumberPagination):
             raise APIException({"detail": "Wrong API Url"})
 
     def get_paginated_response(self, data):
-        customer_list_data = customer.objects.filter(openid=self.request.auth.openid, is_delete=False)
+        customer_list_data = customer.objects.filter(is_delete=False)
         customer_list = []
         for i in range(len(customer_list_data)):
             customer_list.append(customer_list_data[i].customer_name)
