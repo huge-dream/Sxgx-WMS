@@ -19,7 +19,7 @@ class SupplierGetSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'openid', 'create_time', 'update_time', ]
 
 class SupplierPostSerializer(serializers.ModelSerializer):
-    openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])
+    openid = serializers.CharField(read_only=False, required=False)
     supplier_name = serializers.CharField(read_only=False,  required=True, validators=[datasolve.data_validate])
     supplier_city = serializers.CharField(read_only=False,  required=True, validators=[datasolve.data_validate])
     supplier_address = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
