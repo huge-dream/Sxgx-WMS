@@ -48,14 +48,7 @@ class APIViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
             query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
             return ListModel.objects.filter(**query_dict)
@@ -88,15 +81,12 @@ class APIViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk):
         qs = self.get_object()
-        if qs.openid != self.request.auth.openid:
-            raise APIException({"detail": "Cannot update data which not yours"})
-        else:
-            data = self.request.data
-            serializer = self.get_serializer(qs, data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=200, headers=headers)
+        data = self.request.data
+        serializer = self.get_serializer(qs, data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=200, headers=headers)
 
     def partial_update(self, request, pk):
         qs = self.get_object()
@@ -137,14 +127,7 @@ class FileDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
             query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
             return ListModel.objects.filter(**query_dict)
