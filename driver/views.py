@@ -49,16 +49,10 @@ class APIViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
             query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
+            print(ListModel.objects.all())
             return ListModel.objects.filter(**query_dict)
         else:
             return ListModel.objects.none()
@@ -77,50 +71,37 @@ class APIViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = self.request.data
-        data['openid'] = self.request.auth.openid
-        if ListModel.objects.filter(openid=self.request.auth.openid, driver_name=data['driver_name'], is_delete=False).exists():
-            raise APIException({"detail": "Data Exists"})
-        else:
-            serializer = self.get_serializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=200, headers=headers)
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=200, headers=headers)
 
     def update(self, request, pk):
         qs = self.get_object()
-        if qs.openid != self.request.auth.openid:
-            raise APIException({"detail": "Cannot Update Data Which Not Yours"})
-        else:
-            data = self.request.data
-            serializer = self.get_serializer(qs, data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=200, headers=headers)
+        data = self.request.data
+        serializer = self.get_serializer(qs, data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=200, headers=headers)
 
     def partial_update(self, request, pk):
         qs = self.get_object()
-        if qs.openid != self.request.auth.openid:
-            raise APIException({"detail": "Cannot Partial Update Data Which Not Yours"})
-        else:
-            data = self.request.data
-            serializer = self.get_serializer(qs, data=data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=200, headers=headers)
+        data = self.request.data
+        serializer = self.get_serializer(qs, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=200, headers=headers)
 
     def destroy(self, request, pk):
         qs = self.get_object()
-        if qs.openid != self.request.auth.openid:
-            raise APIException({"detail": "Cannot Delete Data Which Not Yours"})
-        else:
-            qs.is_delete = True
-            qs.save()
-            serializer = self.get_serializer(qs, many=False)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=200, headers=headers)
+        qs.is_delete = True
+        qs.save()
+        serializer = self.get_serializer(qs, many=False)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=200, headers=headers)
 
 class DispatchListViewSet(viewsets.ModelViewSet):
     """
@@ -145,14 +126,7 @@ class DispatchListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
             query_dict = {}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
             return DispatchListModel.objects.filter(**query_dict)
@@ -181,14 +155,7 @@ class FileDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
             query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
             return ListModel.objects.filter(**query_dict)

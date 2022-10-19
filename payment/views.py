@@ -48,7 +48,6 @@ class TransportationFeeListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
             if u is None:
                 superopenid = None
             else:
@@ -134,7 +133,6 @@ class FreightfileDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
             if u is None:
                 superopenid = None
             else:

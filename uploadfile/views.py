@@ -41,6 +41,7 @@ from dn.models import DnDetailModel
 from dn.serializers import DNListPostSerializer
 from dn.serializers import DNDetailPostSerializer
 from dn import files as dnfiles
+from utils import makepdf
 
 
 class GoodlistfileViewSet(views.APIView):
@@ -52,7 +53,7 @@ class GoodlistfileViewSet(views.APIView):
 
     def get_queryset(self):
         if self.request.user:
-            return goodslist.objects.filter(openid=self.request.auth.openid)
+            return goodslist.objects.all()
         else:
             return goodslist.objects.filter().none()
 
@@ -91,7 +92,7 @@ class GoodlistfileViewSet(views.APIView):
                 else:
                     df = pd.read_excel(files)
                 df.drop_duplicates(keep='first', inplace=True)
-                data_list = df.drop_duplicates(subset=[data_header.get('goods_code')], keep='first').values
+                data_list = df.drop_duplicates(subset=[data_header.get('SKU')], keep='first').values
                 for d in range(len(data_list)):
                     data_validate(str(data_list[d]))
                 for i in range(len(data_list)):
@@ -102,8 +103,8 @@ class GoodlistfileViewSet(views.APIView):
                             data_list[i][1] = 'N/A'
                         if str(data_list[i][2]) == 'nan':
                             data_list[i][2] = 'N/A'
-                        if not is_number(str(data_list[i][3])):
-                            data_list[i][3] = 0
+                        if str(data_list[i][3]) == 'nan':
+                            data_list[i][3] = 'N/A'
                         if not is_number(str(data_list[i][4])):
                             data_list[i][4] = 0
                         if not is_number(str(data_list[i][5])):
@@ -114,41 +115,35 @@ class GoodlistfileViewSet(views.APIView):
                             data_list[i][7] = 0
                         if str(data_list[i][8]) == 'nan':
                             data_list[i][8] = 'N/A'
-                        if str(data_list[i][9]) == 'nan':
-                            data_list[i][9] = 'N/A'
-                        if str(data_list[i][10]) == 'nan':
-                            data_list[i][10] = 'N/A'
+                        if not is_number(str(data_list[i][9])):
+                            data_list[i][9] = 0
+                        if str(data_list[i][8]) == 'nan':
+                            data_list[i][8] = 'N/A'
                         if str(data_list[i][11]) == 'nan':
                             data_list[i][11] = 'N/A'
-                        if str(data_list[i][12]) == 'nan':
-                            data_list[i][12] = 'N/A'
-                        if str(data_list[i][13]) == 'nan':
-                            data_list[i][13] = 'N/A'
-                        if str(data_list[i][14]) == 'nan':
-                            data_list[i][14] = 'N/A'
-                        if not is_number(str(data_list[i][15])):
-                            data_list[i][15] = 0
-                        if not is_number(str(data_list[i][16])):
-                            data_list[i][16] = 0
+                        if not is_number(str(data_list[i][12])):
+                            data_list[i][12] = 0
+                        if not is_number(str(data_list[i][13])):
+                            data_list[i][13] = 0
                         bar_code = Md5.md5(str(data_list[i][0]).strip())
-                        goodslist.objects.create(openid=self.request.auth.openid,
+                        goodslist.objects.create(openid='init_data',
                                                  goods_code=str(data_list[i][0]).strip(),
                                                  goods_desc=str(data_list[i][1]).strip(),
                                                  goods_supplier=str(data_list[i][2]).strip(),
-                                                 goods_weight=data_list[i][3],
-                                                 goods_w=data_list[i][4],
-                                                 goods_d=data_list[i][5],
-                                                 goods_h=data_list[i][6],
-                                                 unit_volume=data_list[i][7],
-                                                 goods_unit=str(data_list[i][8]).strip(),
-                                                 goods_class=str(data_list[i][9]).strip(),
-                                                 goods_brand=str(data_list[i][10]).strip(),
-                                                 goods_color=str(data_list[i][11]).strip(),
-                                                 goods_shape=str(data_list[i][12]).strip(),
-                                                 goods_specs=str(data_list[i][13]).strip(),
-                                                 goods_origin=str(data_list[i][14]).strip(),
-                                                 goods_cost=data_list[i][15],
-                                                 goods_price=data_list[i][16],
+                                                 goods_weight=data_list[i][4],
+                                                 goods_w=data_list[i][5],
+                                                 goods_d=data_list[i][6],
+                                                 goods_h=data_list[i][7],
+                                                 unit_volume=data_list[i][9],
+                                                 goods_unit=str(data_list[i][10]).strip(),
+                                                 goods_class=str(data_list[i][3]).strip(),
+                                                 goods_brand='N/A',
+                                                 goods_color='N/A',
+                                                 goods_shape=str(data_list[i][8]).strip(),
+                                                 goods_specs=str(data_list[i][11]).strip(),
+                                                 goods_origin='N/A',
+                                                 goods_cost=data_list[i][12],
+                                                 goods_price=data_list[i][13],
                                                  bar_code=bar_code,
                                                  creater=str(staff_name)
                                                  )
@@ -161,12 +156,10 @@ class GoodlistfileViewSet(views.APIView):
                 for i in goods_supplier_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if supplier.objects.filter(openid=self.request.auth.openid,
-                                            supplier_name=str(i).strip()).exists():
+                    if supplier.objects.filter(supplier_name=str(i).strip()).exists():
                         pass
                     else:
-                        supplier.objects.create(openid=self.request.auth.openid,
-                                                supplier_name=str(i).strip(),
+                        supplier.objects.create(supplier_name=str(i).strip(),
                                                 supplier_city="Supplier City",
                                                 supplier_address="Supplier Address",
                                                 supplier_contact="Supplier Contact",
@@ -199,32 +192,6 @@ class GoodlistfileViewSet(views.APIView):
                                                   goods_class=str(i).strip(),
                                                   creater=str(staff_name)
                                                   )
-                goods_brand_list = df.drop_duplicates(subset=[data_header.get('goods_brand')], keep='first').loc[:,
-                                    data_header.get('goods_brand')].values
-                for i in goods_brand_list:
-                    if str(i) == 'nan':
-                        i = 'N/A'
-                    if goodsbrand.objects.filter(openid=self.request.auth.openid,
-                                               goods_brand=str(i).strip()).exists():
-                        pass
-                    else:
-                        goodsbrand.objects.create(openid=self.request.auth.openid,
-                                                  goods_brand=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
-                goods_color_list = df.drop_duplicates(subset=[data_header.get('goods_color')], keep='first').loc[:,
-                                    data_header.get('goods_color')].values
-                for i in goods_color_list:
-                    if str(i) == 'nan':
-                        i = 'N/A'
-                    if goodscolor.objects.filter(openid=self.request.auth.openid,
-                                                 goods_color=str(i).strip()).exists():
-                        pass
-                    else:
-                        goodscolor.objects.create(openid=self.request.auth.openid,
-                                                  goods_color=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
                 goods_shape_list = df.drop_duplicates(subset=[data_header.get('goods_shape')], keep='first').loc[:,
                                     data_header.get('goods_shape')].values
                 for i in goods_shape_list:
@@ -251,19 +218,6 @@ class GoodlistfileViewSet(views.APIView):
                                                   goods_specs=str(i).strip(),
                                                   creater=str(staff_name)
                                                   )
-                goods_origin_list = df.drop_duplicates(subset=[data_header.get('goods_origin')], keep='first').loc[:,
-                                    data_header.get('goods_origin')].values
-                for i in goods_origin_list:
-                    if str(i) == 'nan':
-                        i = 'N/A'
-                    if goodsorigin.objects.filter(openid=self.request.auth.openid,
-                                                  goods_origin=str(i).strip()).exists():
-                        pass
-                    else:
-                        goodsorigin.objects.create(openid=self.request.auth.openid,
-                                                   goods_origin=str(i).strip(),
-                                                   creater=str(staff_name)
-                                                   )
             else:
                 raise APIException({"detail": "Can Not Support This File Type"})
         else:
@@ -279,7 +233,7 @@ class SupplierfileViewSet(views.APIView):
 
     def get_queryset(self):
         if self.request.user:
-            return supplier.objects.filter(openid=self.request.auth.openid)
+            return supplier.objects.all()
         else:
             return supplier.objects.filter().none()
 
@@ -324,8 +278,7 @@ class SupplierfileViewSet(views.APIView):
                             data_list[i][4] = 'N/A'
                         if not is_number(str(data_list[i][5])):
                             data_list[i][5] = 0
-                        supplier.objects.create(openid=self.request.auth.openid,
-                                                supplier_name=str(data_list[i][0]).strip(),
+                        supplier.objects.create(supplier_name=str(data_list[i][0]).strip(),
                                                 supplier_city=str(data_list[i][1]).strip(),
                                                 supplier_address=str(data_list[i][2]).strip(),
                                                 supplier_contact=data_list[i][3],
@@ -348,7 +301,7 @@ class CustomerfileViewSet(views.APIView):
 
     def get_queryset(self):
         if self.request.user:
-            return customer.objects.filter(openid=self.request.auth.openid)
+            return customer.objects.all()
         else:
             return customer.objects.filter().none()
 
@@ -396,8 +349,7 @@ class CustomerfileViewSet(views.APIView):
                             data_list[i][4] = 'N/A'
                         if not is_number(str(data_list[i][5])):
                             data_list[i][5] = 0
-                        customer.objects.create(openid=self.request.auth.openid,
-                                                customer_name=str(data_list[i][0]).strip(),
+                        customer.objects.create(customer_name=str(data_list[i][0]).strip(),
                                                 customer_city=str(data_list[i][1]).strip(),
                                                 customer_address=str(data_list[i][2]).strip(),
                                                 customer_contact=data_list[i][3],
@@ -539,7 +491,7 @@ class GoodlistfileAddViewSet(views.APIView):
 
     def get_queryset(self):
         if self.request.user:
-            return goodslist.objects.filter(openid=self.request.auth.openid)
+            return goodslist.objects.all()
         else:
             return goodslist.objects.filter().none()
 
@@ -580,8 +532,8 @@ class GoodlistfileAddViewSet(views.APIView):
                             data_list[i][1] = 'N/A'
                         if str(data_list[i][2]) == 'nan':
                             data_list[i][2] = 'N/A'
-                        if not is_number(str(data_list[i][3])):
-                            data_list[i][3] = 0
+                        if str(data_list[i][3]) == 'nan':
+                            data_list[i][3] = 'N/A'
                         if not is_number(str(data_list[i][4])):
                             data_list[i][4] = 0
                         if not is_number(str(data_list[i][5])):
@@ -592,48 +544,41 @@ class GoodlistfileAddViewSet(views.APIView):
                             data_list[i][7] = 0
                         if str(data_list[i][8]) == 'nan':
                             data_list[i][8] = 'N/A'
-                        if str(data_list[i][9]) == 'nan':
-                            data_list[i][9] = 'N/A'
-                        if str(data_list[i][10]) == 'nan':
-                            data_list[i][10] = 'N/A'
+                        if not is_number(str(data_list[i][9])):
+                            data_list[i][9] = 0
+                        if str(data_list[i][8]) == 'nan':
+                            data_list[i][8] = 'N/A'
                         if str(data_list[i][11]) == 'nan':
                             data_list[i][11] = 'N/A'
-                        if str(data_list[i][12]) == 'nan':
-                            data_list[i][12] = 'N/A'
-                        if str(data_list[i][13]) == 'nan':
-                            data_list[i][13] = 'N/A'
-                        if str(data_list[i][14]) == 'nan':
-                            data_list[i][14] = 'N/A'
-                        if not is_number(str(data_list[i][15])):
-                            data_list[i][15] = 0
-                        if not is_number(str(data_list[i][16])):
-                            data_list[i][16] = 0
-                        if goodslist.objects.filter(openid=self.request.auth.openid,
-                                                     goods_code=str(data_list[i][0]).strip()).exists():
+                        if not is_number(str(data_list[i][12])):
+                            data_list[i][12] = 0
+                        if not is_number(str(data_list[i][13])):
+                            data_list[i][13] = 0
+                        if goodslist.objects.filter(oods_code=str(data_list[i][0]).strip()).exists():
                             pass
                         else:
                             bar_code = Md5.md5(str(data_list[i][0]).strip())
-                            goodslist.objects.create(openid=self.request.auth.openid,
-                                                     goods_code=str(data_list[i][0]).strip(),
-                                                     goods_desc=str(data_list[i][1]).strip(),
-                                                     goods_supplier=str(data_list[i][2]).strip(),
-                                                     goods_weight=data_list[i][3],
-                                                     goods_w=data_list[i][4],
-                                                     goods_d=data_list[i][5],
-                                                     goods_h=data_list[i][6],
-                                                     unit_volume=data_list[i][7],
-                                                     goods_unit=str(data_list[i][8]).strip(),
-                                                     goods_class=str(data_list[i][9]).strip(),
-                                                     goods_brand=str(data_list[i][10]).strip(),
-                                                     goods_color=str(data_list[i][11]).strip(),
-                                                     goods_shape=str(data_list[i][12]).strip(),
-                                                     goods_specs=str(data_list[i][13]).strip(),
-                                                     goods_origin=str(data_list[i][14]).strip(),
-                                                     goods_cost=data_list[i][15],
-                                                     goods_price=data_list[i][16],
-                                                     bar_code=bar_code,
-                                                     creater=str(staff_name)
-                                                     )
+                            goodslist.objects.create(openid='init_data',
+                                                    goods_code=str(data_list[i][0]).strip(),
+                                                    goods_desc=str(data_list[i][1]).strip(),
+                                                    goods_supplier=str(data_list[i][2]).strip(),
+                                                    goods_weight=data_list[i][4],
+                                                    goods_w=data_list[i][5],
+                                                    goods_d=data_list[i][6],
+                                                    goods_h=data_list[i][7],
+                                                    unit_volume=data_list[i][9],
+                                                    goods_unit=str(data_list[i][10]).strip(),
+                                                    goods_class=str(data_list[i][3]).strip(),
+                                                    goods_brand='N/A',
+                                                    goods_color='N/A',
+                                                    goods_shape=str(data_list[i][8]).strip(),
+                                                    goods_specs=str(data_list[i][11]).strip(),
+                                                    goods_origin='N/A',
+                                                    goods_cost=data_list[i][12],
+                                                    goods_price=data_list[i][13],
+                                                    bar_code=bar_code,
+                                                    creater=str(staff_name)
+                                                    )
                             scanner.objects.create(openid=self.request.auth.openid, mode="GOODS",
                                                    code=str(data_list[i][0]).strip(),
                                                    bar_code=bar_code)
@@ -642,12 +587,10 @@ class GoodlistfileAddViewSet(views.APIView):
                 for i in goods_supplier_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if supplier.objects.filter(openid=self.request.auth.openid,
-                                               supplier_name=str(i).strip()).exists():
+                    if supplier.objects.filter(supplier_name=str(i).strip()).exists():
                         pass
                     else:
-                        supplier.objects.create(openid=self.request.auth.openid,
-                                                supplier_name=str(i).strip(),
+                        supplier.objects.create(supplier_name=str(i).strip(),
                                                 supplier_city="Supplier City",
                                                 supplier_address="Supplier Address",
                                                 supplier_contact="Supplier Contact",
@@ -680,32 +623,6 @@ class GoodlistfileAddViewSet(views.APIView):
                                                   goods_class=str(i).strip(),
                                                   creater=str(staff_name)
                                                   )
-                goods_brand_list = df.drop_duplicates(subset=[data_header.get('goods_brand')], keep='first').loc[:,
-                                    data_header.get('goods_brand')].values
-                for i in goods_brand_list:
-                    if str(i) == 'nan':
-                        i = 'N/A'
-                    if goodsbrand.objects.filter(openid=self.request.auth.openid,
-                                                 goods_brand=str(i).strip()).exists():
-                        pass
-                    else:
-                        goodsbrand.objects.create(openid=self.request.auth.openid,
-                                                  goods_brand=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
-                goods_color_list = df.drop_duplicates(subset=[data_header.get('goods_color')], keep='first').loc[:,
-                                    data_header.get('goods_color')].values
-                for i in goods_color_list:
-                    if str(i) == 'nan':
-                        i = 'N/A'
-                    if goodscolor.objects.filter(openid=self.request.auth.openid,
-                                                 goods_color=str(i).strip()).exists():
-                        pass
-                    else:
-                        goodscolor.objects.create(openid=self.request.auth.openid,
-                                                  goods_color=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
                 goods_shape_list = df.drop_duplicates(subset=[data_header.get('goods_shape')], keep='first').loc[:,
                                     data_header.get('goods_shape')].values
                 for i in goods_shape_list:
@@ -732,19 +649,6 @@ class GoodlistfileAddViewSet(views.APIView):
                                                   goods_specs=str(i).strip(),
                                                   creater=str(staff_name)
                                                   )
-                goods_origin_list = df.drop_duplicates(subset=[data_header.get('goods_origin')], keep='first').loc[:,
-                                    data_header.get('goods_origin')].values
-                for i in goods_origin_list:
-                    if str(i) == 'nan':
-                        i = 'N/A'
-                    if goodsorigin.objects.filter(openid=self.request.auth.openid,
-                                                  goods_origin=str(i).strip()).exists():
-                        pass
-                    else:
-                        goodsorigin.objects.create(openid=self.request.auth.openid,
-                                                   goods_origin=str(i).strip(),
-                                                   creater=str(staff_name)
-                                                   )
             else:
                 raise APIException({"detail": "Can Not Support This File Type"})
         else:
@@ -760,7 +664,7 @@ class SupplierfileAddViewSet(views.APIView):
 
     def get_queryset(self):
         if self.request.user:
-            return supplier.objects.filter(openid=self.request.auth.openid)
+            return supplier.objects.all()
         else:
             return supplier.objects.filter().none()
 
@@ -807,8 +711,7 @@ class SupplierfileAddViewSet(views.APIView):
                             data_list[i][4] = 'N/A'
                         if not is_number(str(data_list[i][5])):
                             data_list[i][5] = 0
-                        if supplier.objects.filter(openid=self.request.auth.openid,
-                                                   supplier_name=str(data_list[i][0]).strip(),
+                        if supplier.objects.filter(supplier_name=str(data_list[i][0]).strip(),
                                                    supplier_city=str(data_list[i][1]).strip(),
                                                    supplier_address=str(data_list[i][2]).strip(),
                                                    supplier_contact=data_list[i][3],
@@ -818,8 +721,7 @@ class SupplierfileAddViewSet(views.APIView):
                                                    ).exists():
                             pass
                         else:
-                            supplier.objects.create(openid=self.request.auth.openid,
-                                                    supplier_name=str(data_list[i][0]).strip(),
+                            supplier.objects.create(supplier_name=str(data_list[i][0]).strip(),
                                                     supplier_city=str(data_list[i][1]).strip(),
                                                     supplier_address=str(data_list[i][2]).strip(),
                                                     supplier_contact=data_list[i][3],
@@ -842,7 +744,7 @@ class CustomerfileAddViewSet(views.APIView):
 
     def get_queryset(self):
         if self.request.user:
-            return customer.objects.filter(openid=self.request.auth.openid)
+            return customer.objects.all()
         else:
             return customer.objects.filter().none()
 
@@ -889,8 +791,7 @@ class CustomerfileAddViewSet(views.APIView):
                             data_list[i][4] = 'N/A'
                         if not is_number(str(data_list[i][5])):
                             data_list[i][5] = 0
-                        if customer.objects.filter(openid=self.request.auth.openid,
-                                                   customer_name=str(data_list[i][0]).strip(),
+                        if customer.objects.filter(customer_name=str(data_list[i][0]).strip(),
                                                    customer_city=str(data_list[i][1]).strip(),
                                                    customer_address=str(data_list[i][2]).strip(),
                                                    customer_contact=data_list[i][3],
@@ -899,8 +800,7 @@ class CustomerfileAddViewSet(views.APIView):
                                                    ).exists():
                             pass
                         else:
-                            customer.objects.create(openid=self.request.auth.openid,
-                                                    customer_name=str(data_list[i][0]).strip(),
+                            customer.objects.create(customer_name=str(data_list[i][0]).strip(),
                                                     customer_city=str(data_list[i][1]).strip(),
                                                     customer_address=str(data_list[i][2]).strip(),
                                                     customer_contact=data_list[i][3],
@@ -1042,7 +942,7 @@ class AsnlistfileAddViewSet(views.APIView):
 
     def get_queryset(self):
         if self.request.user:
-            return AsnListModel.objects.filter(openid=self.request.auth.openid)
+            return AsnListModel.objects.all()
         else:
             return AsnListModel.objects.filter().none()
 
@@ -1080,6 +980,7 @@ class AsnlistfileAddViewSet(views.APIView):
                     for d in range(len(data_list)):
                         data_validate(str(data_list[d]))
                     data = self.request.data
+                    patch_number_list = []
                     for i in range(len(data_list)):
                         if str(data_list[i][1]) == 'nan':
                             continue
@@ -1090,7 +991,7 @@ class AsnlistfileAddViewSet(views.APIView):
                         if str(data_list[i][3]) == 'nan':
                             data_list[i][3] = str(dt.strftime('%Y%m%d%H%M%S%f'))
                         warehouse_openid = warehouse.objects.filter(pk=int(data_list[i][4])).first().openid
-                        supplier_name = supplier.objects.filter(openid=warehouse_openid).first().supplier_name
+                        supplier_name = supplier.objects.all().first().supplier_name
                         if AsnListModel.objects.filter(openid=warehouse_openid,
                                                     patch_number=str(data_list[i][3])).exists():
                             data['asn_code'] = str(AsnListModel.objects.filter(openid=warehouse_openid,
@@ -1117,12 +1018,11 @@ class AsnlistfileAddViewSet(views.APIView):
                             scanner.objects.create(openid=warehouse_openid, mode="ASN", code=data['asn_code'], 
                                                 bar_code=data['bar_code'])
                         n = 'N/A'
-                        if goodslist.objects.filter(openid=warehouse_openid,
-                                                    goods_code=str(data_list[i][1]).strip()).exists():
+                        if goodslist.objects.filter(goods_code=str(data_list[i][1]).strip()).exists():
                             pass
                         else:
                             bar_code = Md5.md5(str(data_list[i][1]).strip())
-                            goodslist.objects.create(openid=warehouse_openid,
+                            goodslist.objects.create(openid='init_data',
                                                     goods_code=str(data_list[i][1]).strip(),
                                                     goods_desc=n,
                                                     goods_supplier=n,
@@ -1161,8 +1061,7 @@ class AsnlistfileAddViewSet(views.APIView):
                         weight_list = []
                         volume_list = []
                         cost_list = []
-                        goods_detail = goods.objects.filter(openid=warehouse_openid,
-                                                            goods_code=str(data_list[i][1]).strip(),
+                        goods_detail = goods.objects.filter(goods_code=str(data_list[i][1]).strip(),
                                                             is_delete=False).first()
                         goods_weight = round(goods_detail.goods_weight * int(data_list[i][2]) / 1000, 4)
                         goods_volume = round(goods_detail.unit_volume * int(data_list[i][2]), 4)
@@ -1191,8 +1090,7 @@ class AsnlistfileAddViewSet(views.APIView):
                         total_weight = sumOfList(weight_list, len(weight_list))
                         total_volume = sumOfList(volume_list, len(volume_list))
                         total_cost = sumOfList(cost_list, len(cost_list))
-                        supplier_city = supplier.objects.filter(openid=warehouse_openid,
-                                                                supplier_name=supplier_name,
+                        supplier_city = supplier.objects.filter(supplier_name=supplier_name,
                                                                 is_delete=False).first().supplier_city
                         warehouse_city = warehouse.objects.filter(openid=warehouse_openid).first().warehouse_city
                         transportation_fee = transportation.objects.filter(
@@ -1221,6 +1119,23 @@ class AsnlistfileAddViewSet(views.APIView):
                             supplier=supplier_name, total_weight=total_weight, total_volume=total_volume,
                             total_cost=total_cost, transportation_fee=transportation_res,
                             patch_number=str(data_list[i][3]), warehouse_id=int(data_list[i][4]))
+                        patch_number_list.append(data_list[i][3])
+                    patch_number_list = set(patch_number_list)
+                    for i in patch_number_list:
+                        all_data = AsnDetailModel.objects.filter(patch_number=i)
+                        pdf_data = list()
+                        for j in range(len(all_data)):
+                            d = dict()
+                            d['id'] = j + 1
+                            d['patch_number'] = all_data[j].patch_number
+                            d['brand'] = 'MADE IN CHINA'
+                            d['barcode'] = goods.objects.filter(goods_code=all_data[j].goods_code).first().bar_code
+                            d['total'] = all_data[j].goods_qty
+                            d['goods_code'] = all_data[j].goods_code
+                            d['address'] = 'EA'
+                            d['country'] = 'US'
+                            pdf_data.append(d)
+                        makepdf.generate_pdf(pdf_data, i)
                     return Response({"detail": "success"}, status=200)
                 except:
                     raise APIException({"detail": "Upload Failed"})
@@ -1239,7 +1154,7 @@ class DnlistfileaddViewSet(views.APIView):
 
     def get_queryset(self):
         if self.request.user:
-            return DnListModel.objects.filter(openid=self.request.auth.openid)
+            return DnListModel.objects.all()
         else:
             return DnListModel.objects.filter().none()
 
@@ -1270,10 +1185,11 @@ class DnlistfileaddViewSet(views.APIView):
                     else:
                         df = pd.read_excel(files)
                     df.drop_duplicates(keep='first', inplace=True)
-                    data_list = df.drop_duplicates(subset=['SKU'], keep='first').values
+                    data_list = df.drop_duplicates(subset=[data_header.get('SKU')], keep='first').values
                     for d in range(len(data_list)):
                         data_validate(str(data_list[d]))
                     data = self.request.data
+                    print('go')
                     for i in range(len(data_list)):
                         if str(data_list[i][0]) == 'nan':
                             continue
@@ -1282,7 +1198,7 @@ class DnlistfileaddViewSet(views.APIView):
                         if not is_number(str(data_list[i][2])):
                             data_list[i][2] = int(warehouse_id)
                         warehouse_openid = warehouse.objects.filter(pk=data_list[i][2]).first().openid
-                        customer_name = customer.objects.filter(openid=warehouse_openid).first().customer_name
+                        customer_name = customer.objects.all().first().customer_name
                         qs_set = DnListModel.objects.filter(openid=warehouse_openid, is_delete=False)
                         order_day = str(timezone.now().strftime('%Y%m%d'))
                         if len(qs_set) > 0:
@@ -1305,12 +1221,11 @@ class DnlistfileaddViewSet(views.APIView):
                         scanner.objects.create(openid=warehouse_openid, mode="DN", code=data['dn_code'], 
                                             bar_code=data['bar_code'])
                         n = 'N/A'
-                        if goodslist.objects.filter(openid=warehouse_openid,
-                                                    goods_code=str(data_list[i][0]).strip()).exists():
+                        if goodslist.objects.filter(goods_code=str(data_list[i][0]).strip()).exists():
                             pass
                         else:
                             bar_code = Md5.md5(str(data_list[i][0]).strip())
-                            goodslist.objects.create(openid=warehouse_openid,
+                            goodslist.objects.create(openid='init_data',
                                                     goods_code=str(data_list[i][0]).strip(),
                                                     goods_desc=n,
                                                     goods_supplier=n,
@@ -1348,8 +1263,7 @@ class DnlistfileaddViewSet(views.APIView):
                         weight_list = []
                         volume_list = []
                         cost_list = []
-                        goods_detail = goods.objects.filter(openid=warehouse_openid,
-                                                            goods_code=str(data_list[i][0]),
+                        goods_detail = goods.objects.filter(goods_code=str(data_list[i][0]),
                                                             is_delete=False).first()
                         goods_weight = round(goods_detail.goods_weight * int(data_list[i][1]) / 1000, 4)
                         goods_volume = round(goods_detail.unit_volume * int(data_list[i][1]), 4)
@@ -1382,8 +1296,7 @@ class DnlistfileaddViewSet(views.APIView):
                         total_weight = sumOfList(weight_list, len(weight_list))
                         total_volume = sumOfList(volume_list, len(volume_list))
                         total_cost = sumOfList(cost_list, len(cost_list))
-                        customer_city = customer.objects.filter(openid=warehouse_openid,
-                                                                customer_name=customer_name,
+                        customer_city = customer.objects.filter(customer_name=customer_name,
                                                                 is_delete=False).first().customer_city
                         warehouse_city = warehouse.objects.filter(openid=warehouse_openid).first().warehouse_city
                         transportation_fee = transportation.objects.filter(
