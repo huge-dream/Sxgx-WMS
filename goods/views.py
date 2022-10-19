@@ -49,14 +49,7 @@ class SannerGoodsTagView(viewsets.ModelViewSet):
     def get_queryset(self):
         bar_code = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
             query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
             if bar_code is not None:
                 query_dict['id'] = id
                 query_dict['bar_code'] = bar_code
@@ -126,13 +119,7 @@ class APIViewSet(viewsets.ModelViewSet):
         if self.request.user:
             search_word = self.request.GET.get('search', '')
             u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
             query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
             result = ListModel.objects.filter(**query_dict)
@@ -159,10 +146,10 @@ class APIViewSet(viewsets.ModelViewSet):
         data['openid'] = self.request.auth.openid
         data['unit_volume'] = round(
             (float(data['goods_w']) * float(data['goods_d']) * float(data['goods_h'])) / 1000000000, 4)
-        if ListModel.objects.filter(openid=data['openid'], goods_code=data['goods_code'], is_delete=False).exists():
+        if ListModel.objects.filter(goods_code=data['goods_code'], is_delete=False).exists():
             raise APIException({"detail": "Data Exists"})
         else:
-            if supplier.objects.filter(openid=data['openid'], supplier_name=data['goods_supplier'],
+            if supplier.objects.filter(supplier_name=data['goods_supplier'],
                                         is_delete=False).exists():
                 if goods_unit.objects.filter(openid=data['openid'], goods_unit=data['goods_unit'],
                                            is_delete=False).exists():
@@ -216,7 +203,7 @@ class APIViewSet(viewsets.ModelViewSet):
             data = self.request.data
             data['unit_volume'] = round(
                 (float(data['goods_w']) * float(data['goods_d']) * float(data['goods_h'])) / 1000000000, 4)
-            if supplier.objects.filter(openid=self.request.auth.openid, supplier_name=data['goods_supplier'],
+            if supplier.objects.filter(supplier_name=data['goods_supplier'],
                                         is_delete=False).exists():
                 if goods_unit.objects.filter(openid=self.request.auth.openid, goods_unit=data['goods_unit'],
                                                is_delete=False).exists():
@@ -267,7 +254,7 @@ class APIViewSet(viewsets.ModelViewSet):
             raise APIException({"detail": "Cannot partial_update data which not yours"})
         else:
             data = self.request.data
-            if supplier.objects.filter(openid=self.request.auth.openid, supplier_name=data['goods_supplier'],
+            if supplier.objects.filter(supplier_name=data['goods_supplier'],
                                         is_delete=False).exists():
                 if goods_unit.objects.filter(openid=self.request.auth.openid, goods_unit=data['goods_unit'],
                                                is_delete=False).exists():
@@ -315,14 +302,11 @@ class APIViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, pk):
         qs = self.get_object()
-        if qs.openid != self.request.auth.openid:
-            raise APIException({"detail": "Cannot delete data which not yours"})
-        else:
-            qs.is_delete = True
-            qs.save()
-            serializer = self.get_serializer(qs, many=False)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=200, headers=headers)
+        qs.is_delete = True
+        qs.save()
+        serializer = self.get_serializer(qs, many=False)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=200, headers=headers)
 
 class FileDownloadView(viewsets.ModelViewSet):
     renderer_classes = (FileRenderCN, ) + tuple(api_settings.DEFAULT_RENDERER_CLASSES)
@@ -341,13 +325,7 @@ class FileDownloadView(viewsets.ModelViewSet):
         id = self.get_project()
         if self.request.user:
             u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
             query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
             return ListModel.objects.filter(**query_dict)

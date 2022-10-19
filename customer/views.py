@@ -69,8 +69,7 @@ class APIViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = self.request.data
-        data['openid'] = 'init_data'
-        if ListModel.objects.filter(openid=data['openid'], customer_name=data['customer_name'], is_delete=False).exists():
+        if ListModel.objects.filter(customer_name=data['customer_name'], is_delete=False).exists():
             raise APIException({"detail": "Data exists"})
         else:
             serializer = self.get_serializer(data=data)
