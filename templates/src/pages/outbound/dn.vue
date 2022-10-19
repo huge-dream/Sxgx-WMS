@@ -79,7 +79,11 @@
               </q-tooltip>
             </q-btn>
 
-            <q-btn :label="$t('download')" icon="file_download">
+            <q-btn
+              :label="$t('download')"
+              icon="file_download"
+              @click="handleDownLoadAllData"
+            >
               <q-tooltip
                 content-class="bg-amber text-black shadow-4"
                 :offset="[10, 10]"
@@ -1111,10 +1115,12 @@
           <thead>
             <tr>
               <th class="text-left">{{ $t("outbound.view_dn.dn_code") }}</th>
+
               <th class="text-right">
                 {{ $t("warehouse.view_binset.bin_name") }}
               </th>
-              <th class="text-right">{{ $t("outbound.view_dn.goods_qty") }}</th>
+              <th class="text-left">SKU</th>
+              <!-- <th class="text-right">{{ $t("outbound.view_dn.goods_qty") }}</th> -->
               <th class="text-right">{{ $t("outbound.pickstock") }}</th>
               <th class="text-right">{{ $t("outbound.pickedstock") }}</th>
               <th class="text-right">Comments</th>
@@ -1123,10 +1129,14 @@
           <tbody>
             <tr v-for="(view, index) in pickinglist_print_table" :key="index">
               <td class="text-left">{{ view.dn_code }}</td>
+
               <td class="text-right">{{ view.bin_name }}</td>
-              <td class="text-right">{{ view.goods_code }}</td>
+              <td class="text-left">{{ view.goods_code }}</td>
+              <!--  <td class="text-right">{{ view.pick_qty }}</td> -->
               <td class="text-right">{{ view.pick_qty }}</td>
-              <td class="text-right" v-show="picklist_check === 0"></td>
+              <td class="text-right" v-show="picklist_check === 0">
+                {{ view.picked_qty }}
+              </td>
               <td class="text-right" v-show="picklist_check > 0">
                 {{ view.picked_qty }}
               </td>
@@ -1577,6 +1587,34 @@ export default {
           var formattedString = date.formatDate(timeStamp, "YYYYMMDDHHmmssSSS");
           const status = exportFile(
             `dn_filedetail_${record.id}_${formattedString}.csv`,
+            "\uFEFF" + res.data,
+            "text/csv"
+          );
+          if (status !== true) {
+            this.$q.notify({
+              message: "Browser denied file download...",
+              color: "negative",
+              icon: "warning",
+            });
+          }
+        });
+      } else {
+        this.$q.notify({
+          message: _this.$t("notice.loginerror"),
+          color: "negative",
+          icon: "warning",
+        });
+      }
+    },
+    handleDownLoadAllData() {
+      if (LocalStorage.has("auth")) {
+        getfile(
+          `dn/picklistdownload/?lang=${LocalStorage.getItem("lang")}`
+        ).then((res) => {
+          var timeStamp = Date.now();
+          var formattedString = date.formatDate(timeStamp, "YYYYMMDDHHmmssSSS");
+          const status = exportFile(
+            `dn_picklist_${formattedString}.csv`,
             "\uFEFF" + res.data,
             "text/csv"
           );
