@@ -364,7 +364,7 @@ export default {
           var timeStamp = Date.now();
           var formattedString = date.formatDate(timeStamp, "YYYYMMDDHHmmssSSS");
           const status = exportFile(
-            "cyclecountday_" + formattedString + ".csv",
+            "manualcyclecountday_" + formattedString + ".csv",
             "\uFEFF" + res.data,
             "text/csv"
           );
