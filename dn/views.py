@@ -454,16 +454,24 @@ class DnViewPrintViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk):
         qs = self.get_object()
-        if qs.openid != self.request.auth.openid:
+        u = Users.objects.filter(vip=9).first()
+        if u is None:
+            superopenid = None
+        else:
+            superopenid = u.openid
+        openid = {}
+        if self.request.auth.openid != superopenid:
+            openid['openid'] = self.request.auth.openid
+        if qs.openid != self.request.auth.openid and self.request.auth.openid != superopenid:
             raise APIException({"detail": "Cannot update data which not yours"})
         else:
             context = {}
-            dn_detail_list = DnDetailModel.objects.filter(openid=self.request.auth.openid,
+            dn_detail_list = DnDetailModel.objects.filter(**openid,
                                                           dn_code=qs.dn_code,
                                                           is_delete=False)
             dn_detail = serializers.DNDetailGetSerializer(dn_detail_list, many=True)
             customer_detail = customer.objects.filter(customer_name=qs.customer).first()
-            warehouse_detail = warehouse.objects.filter(openid=self.request.auth.openid).first()
+            warehouse_detail = warehouse.objects.filter(**openid).first()
             context['dn_detail'] = dn_detail.data
             context['customer_detail'] = {
                 "customer_name": customer_detail.customer_name,
@@ -1524,7 +1532,15 @@ class DnPickingListViewSet(viewsets.ModelViewSet):
         if qs.dn_status < 3:
             raise APIException({"detail": "No Picking List Been Created"})
         else:
-            picking_qs = PickingListModel.objects.filter(openid=self.request.auth.openid, dn_code=qs.dn_code)
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
+            openid = {}
+            if self.request.auth.openid != superopenid:
+                openid['openid'] = self.request.auth.openid
+            picking_qs = PickingListModel.objects.filter(**openid, dn_code=qs.dn_code)
             serializer = serializers.DNPickingListGetSerializer(picking_qs, many=True)
             return Response(serializer.data, status=200)
 
@@ -2006,7 +2022,7 @@ class FileListDownloadView(viewsets.ModelViewSet):
                 query_dict['openid'] = self.request.auth.openid
             if id is not None:
                 query_dict['id'] = id
-            return DnListModel.objects.filter(Q(**query_dict) % ~Q(customer=''))
+            return DnListModel.objects.filter(Q(**query_dict) & ~Q(customer=''))
         else:
             return DnListModel.objects.none()
 
@@ -2100,4 +2116,74 @@ class FileDetailDownloadView(viewsets.ModelViewSet):
             content_type="text/csv"
         )
         response['Content-Disposition'] = "attachment; filename='dndetail_{}.csv'".format(str(dt.strftime('%Y%m%d%H%M%S%f')))
+        return response
+
+
+class PickListDownloadView(viewsets.ModelViewSet):
+    renderer_classes = (FileListRenderCN, ) + tuple(api_settings.DEFAULT_RENDERER_CLASSES)
+    filter_backends = [DjangoFilterBackend, OrderingFilter, ]
+    ordering_fields = ['id', "create_time", "update_time", ]
+    filter_class = DnListFilter
+
+    def get_project(self):
+        try:
+            id = self.kwargs.get('pk')
+            return id
+        except:
+            return None
+
+    def get_queryset(self):
+        id = self.get_project()
+        if self.request.user:
+            empty_qs = DnListModel.objects.filter(
+                Q(openid=self.request.auth.openid, dn_status=1, is_delete=False) & Q(customer=''))
+            cur_date = timezone.now()
+            date_check = relativedelta(day=1)
+            if len(empty_qs) > 0:
+                for i in range(len(empty_qs)):
+                    if empty_qs[i].create_time <= cur_date - date_check:
+                        empty_qs[i].delete()
+            u = Users.objects.filter(vip=9).first()
+            if u is None:
+                superopenid = None
+            else:
+                superopenid = u.openid
+            query_dict = {'is_delete': False, 'dn_status': 3}
+            if self.request.auth.openid != superopenid:
+                query_dict['openid'] = self.request.auth.openid
+            if id is not None:
+                query_dict['id'] = id
+            return DnListModel.objects.filter(Q(**query_dict) & ~Q(customer=''))
+        else:
+            return DnListModel.objects.none()
+
+    def get_serializer_class(self):
+        if self.action in ['list']:
+            return serializers.FileListRenderSerializer
+        else:
+            return self.http_method_not_allowed(request=self.request)
+
+    def get_lang(self, data):
+        lang = self.request.META.get('HTTP_LANGUAGE')
+        if lang:
+            if lang == 'zh-hans':
+                return FileListRenderCN().render(data)
+            else:
+                return FileListRenderEN().render(data)
+        else:
+            return FileListRenderEN().render(data)
+
+    def list(self, request, *args, **kwargs):
+        from datetime import datetime
+        dt = datetime.now()
+        data = (
+            FileListRenderSerializer(instance).data
+            for instance in self.filter_queryset(self.get_queryset())
+        )
+        renderer = self.get_lang(data)
+        response = StreamingHttpResponse(
+            renderer,
+            content_type="text/csv"
+        )
+        response['Content-Disposition'] = "attachment; filename='picklist_{}.csv'".format(str(dt.strftime('%Y%m%d%H%M%S%f')))
         return response
