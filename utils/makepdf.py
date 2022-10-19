@@ -121,7 +121,7 @@ class DrawImg:
         self.folder = f'{base_dir}/media/asn_label/{self.goods["patch_number"]}'.replace('/', '\\')
         label_file_list = []
         for i in range(data['total']):
-            self.img_fp = Image.open(f'{base_dir}/media/asn_label/100x60cm.jpg')
+            self.img_fp = Image.open(f'{base_dir}/media/asn_label/base_label.jpg')
             self.draw = ImageDraw.Draw(self.img_fp)
             self.size_x, self.size_y = self.img_fp.size
             self.draw_patch(data['patch_number'])

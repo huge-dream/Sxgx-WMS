@@ -13,7 +13,7 @@ class GoodsclassGetSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', ]
 
 class GoodsclassPostSerializer(serializers.ModelSerializer):
-    openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])
+    openid = serializers.CharField(read_only=False, required=False)
     goods_class = serializers.CharField(read_only=False,  required=True, validators=[datasolve.data_validate])
     creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     class Meta:

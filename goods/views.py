@@ -118,7 +118,6 @@ class APIViewSet(viewsets.ModelViewSet):
         id = self.get_project()
         if self.request.user:
             search_word = self.request.GET.get('search', '')
-            u = Users.objects.filter(vip=9).first()
             query_dict = {'is_delete': False}
             if id is not None:
                 query_dict['id'] = id
@@ -324,7 +323,6 @@ class FileDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
             query_dict = {'is_delete': False}
             if id is not None:
                 query_dict['id'] = id

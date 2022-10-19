@@ -98,7 +98,7 @@ class GoodlistfileViewSet(views.APIView):
                 for d in range(len(data_list)):
                     data_validate(str(data_list[d]))
                 for i in range(len(data_list)):
-                    if str(data_list[i][0]) == 'nan':
+                    if str(data_list[i][0]) == 'nan': # 商品编码 goods_code
                         continue
                     else:
                         # 0商品编码	1SKU 2商品供应商 3商品品类 4商品单位重量 5商品单位长度 6商品单位宽度 7商品单位高度 8商品形状 9最小单位体积 10商品单位 11商品规格 12商品成本 13商品价格

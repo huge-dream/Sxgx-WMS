@@ -52,6 +52,7 @@ class APIViewSet(viewsets.ModelViewSet):
             query_dict = {'is_delete': False}
             if id is not None:
                 query_dict['id'] = id
+            print(ListModel.objects.all())
             return ListModel.objects.filter(**query_dict)
         else:
             return ListModel.objects.none()
@@ -125,7 +126,6 @@ class DispatchListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
             query_dict = {}
             if id is not None:
                 query_dict['id'] = id
@@ -155,7 +155,6 @@ class FileDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
             query_dict = {'is_delete': False}
             if id is not None:
                 query_dict['id'] = id
