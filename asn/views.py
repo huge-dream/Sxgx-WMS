@@ -205,7 +205,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = self.request.data
         if AsnListModel.objects.filter(openid=self.request.auth.openid, asn_code=str(data['asn_code']), is_delete=False).exists():
-            if supplier.objects.filter(openid=self.request.auth.openid, supplier_name=str(data['supplier']), is_delete=False).exists():
+            if supplier.objects.filter(supplier_name=str(data['supplier']), is_delete=False).exists():
                 staff_name = staff.objects.filter(openid=self.request.auth.openid, id=self.request.META.get('HTTP_OPERATOR')).first().staff_name
                 for i in range(len(data['goods_code'])):
                     check_data = {
@@ -225,9 +225,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 volume_list = []
                 cost_list = []
                 for j in range(len(data['goods_code'])):
-                    goods_detail = goods.objects.filter(openid=self.request.auth.openid,
-                                                        goods_code=str(data['goods_code'][j]),
-                                                        is_delete=False).first()
+                    goods_detail = goods.objects.filter(goods_code=str(data['goods_code'][j]), is_delete=False).first()
                     goods_weight = round(goods_detail.goods_weight * int(data['goods_qty'][j]) / 1000, 4)
                     goods_volume = round(goods_detail.unit_volume * int(data['goods_qty'][j]), 4)
                     goods_cost = round(goods_detail.goods_cost * int(data['goods_qty'][j]), 2)
@@ -262,9 +260,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 total_weight = sumOfList(weight_list, len(weight_list))
                 total_volume = sumOfList(volume_list, len(volume_list))
                 total_cost = sumOfList(cost_list, len(cost_list))
-                supplier_city = supplier.objects.filter(openid=self.request.auth.openid,
-                                                        supplier_name=str(data['supplier']),
-                                                        is_delete=False).first().supplier_city
+                supplier_city = supplier.objects.filter(supplier_name=str(data['supplier']), is_delete=False).first().supplier_city
                 warehouse_city = warehouse.objects.filter(openid=self.request.auth.openid).first().warehouse_city
                 transportation_fee = transportation.objects.filter(
                     Q(openid=self.request.auth.openid, send_city__icontains=supplier_city, receiver_city__icontains=warehouse_city,
@@ -316,8 +312,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
         data = self.request.data
         if AsnListModel.objects.filter(openid=self.request.auth.openid, asn_code=str(data['asn_code']),
                                        asn_status=1, is_delete=False).exists():
-            if supplier.objects.filter(openid=self.request.auth.openid, supplier_name=str(data['supplier']),
-                                       is_delete=False).exists():
+            if supplier.objects.filter(supplier_name=str(data['supplier']), is_delete=False).exists():
                 staff_name = staff.objects.filter(openid=self.request.auth.openid,
                                                   id=self.request.META.get('HTTP_OPERATOR')).first().staff_name
                 for i in range(len(data['goods_code'])):
@@ -351,9 +346,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 weight_list = []
                 volume_list = []
                 for j in range(len(data['goods_code'])):
-                    goods_detail = goods.objects.filter(openid=self.request.auth.openid,
-                                                        goods_code=str(data['goods_code'][j]),
-                                                        is_delete=False).first()
+                    goods_detail = goods.objects.filter(goods_code=str(data['goods_code'][j]), is_delete=False).first()
                     goods_weight = round(goods_detail.goods_weight * int(data['goods_qty'][j]) / 1000, 4)
                     goods_volume = round(goods_detail.unit_volume * int(data['goods_qty'][j]), 4)
                     goods_cost = round(goods_detail.goods_cost * int(data['goods_qty'][j]), 2)
@@ -385,9 +378,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                     volume_list.append(goods_volume)
                 total_weight = sumOfList(weight_list, len(weight_list))
                 total_volume = sumOfList(volume_list, len(volume_list))
-                supplier_city = supplier.objects.filter(openid=self.request.auth.openid,
-                                                        supplier_name=str(data['supplier']),
-                                                        is_delete=False).first().supplier_city
+                supplier_city = supplier.objects.filter(supplier_name=str(data['supplier']), is_delete=False).first().supplier_city
                 warehouse_city = warehouse.objects.filter(openid=self.request.auth.openid).first().warehouse_city
                 transportation_fee = transportation.objects.filter(
                     Q(openid=self.request.auth.openid, send_city__icontains=supplier_city,
@@ -481,9 +472,8 @@ class AsnViewPrintViewSet(viewsets.ModelViewSet):
                                                             asn_code=qs.asn_code,
                                                             is_delete=False)
             asn_detail = serializers.ASNDetailGetSerializer(asn_detail_list, many=True)
-            supplier_detail = supplier.objects.filter(**query_data,
-                                                            supplier_name=qs.supplier).first()
-            warehouse_detail = warehouse.objects.filter(**query_data,).first()
+            supplier_detail = supplier.objects.filter(supplier_name=qs.supplier).first()
+            warehouse_detail = warehouse.objects.filter(**query_data).first()
             context['asn_detail'] = asn_detail.data
             context['supplier_detail'] = {
                 "supplier_name": supplier_detail.supplier_name,
@@ -691,9 +681,7 @@ class AsnSortedViewSet(viewsets.ModelViewSet):
                                                            asn_status=3, supplier=str(data['supplier']),
                                                            goods_code=str(
                                                                data['goodsData'][j].get('goods_code'))).first()
-                goods_detail = goods.objects.filter(openid=self.request.auth.openid,
-                                                    goods_code=str(data['goodsData'][j].get('goods_code')),
-                                                    is_delete=False).first()
+                goods_detail = goods.objects.filter(goods_code=str(data['goodsData'][j].get('goods_code')), is_delete=False).first()
                 if int(data['goodsData'][j].get('goods_actual_qty')) == 0:
                     asn_detail.goods_actual_qty = int(data['goodsData'][j].get('goods_actual_qty'))
                     asn_detail.goods_shortage_qty = asn_detail.goods_qty
@@ -757,9 +745,7 @@ class AsnSortedViewSet(viewsets.ModelViewSet):
                                                            asn_code=str(data['asn_code']),
                                                            goods_code=str(
                                                                data['goodsData'][j].get('goods_code'))).first()
-                goods_detail = goods.objects.filter(openid=self.request.auth.openid,
-                                                    goods_code=str(data['goodsData'][j].get('goods_code')),
-                                                    is_delete=False).first()
+                goods_detail = goods.objects.filter(goods_code=str(data['goodsData'][j].get('goods_code')), is_delete=False).first()
                 if int(data['goodsData'][j].get('goods_actual_qty')) == 0:
                     asn_detail.goods_actual_qty = int(data['goodsData'][j].get('goods_actual_qty'))
                     asn_detail.goods_shortage_qty = asn_detail.goods_qty

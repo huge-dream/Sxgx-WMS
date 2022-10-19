@@ -51,7 +51,7 @@ class MyPageNumberPaginationASNList(PageNumberPagination):
             raise APIException({"detail": "Wrong API Url"})
 
     def get_paginated_response(self, data):
-        supplier_list_data = supplier.objects.filter(openid=self.request.auth.openid, is_delete=False)
+        supplier_list_data = supplier.objects.filter(is_delete=False)
         supplier_list = []
         for i in range(len(supplier_list_data)):
             supplier_list.append(supplier_list_data[i].supplier_name)
