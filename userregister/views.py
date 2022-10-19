@@ -383,25 +383,25 @@ def register(request, *args, **kwargs):
                             from goodsunit.models import ListModel as goodsunit
                             demo_data = []
                             for goods_unit in randomunit:
-                                demo_data.append(goodsunit(openid=transaction_code, goods_unit=goods_unit,
+                                demo_data.append(goodsunit(openid='init_data', goods_unit=goods_unit,
                                                            creater='DemoData'))
                             goodsunit.objects.bulk_create(demo_data, batch_size=100)
                             from goodsclass.models import ListModel as goodsclass
                             demo_data = []
                             for goods_class in randomclass:
-                                demo_data.append(goodsclass(openid=transaction_code, goods_class=goods_class,
+                                demo_data.append(goodsclass(openid='init_data', goods_class=goods_class,
                                                             creater='DemoData'))
                             goodsclass.objects.bulk_create(demo_data, batch_size=100)
                             from goodscolor.models import ListModel as goodscolor
                             demo_data = []
                             for goods_color in randomcolor:
-                                demo_data.append(goodscolor(openid=transaction_code, goods_color=goods_color,
+                                demo_data.append(goodscolor(openid='init_data', goods_color=goods_color,
                                                             creater='DemoData'))
                             goodscolor.objects.bulk_create(demo_data, batch_size=100)
                             from goodsbrand.models import ListModel as goodsbrand
                             goodsbrand_data_list = []
                             for goodsbrand_data in range(1, 42):
-                                demo_data = goodsbrand(openid=transaction_code,
+                                demo_data = goodsbrand(openid='init_data',
                                                        goods_brand='Brand Name-' + str(goodsbrand_data),
                                                        creater='DemoData'
                                                        )
@@ -410,19 +410,19 @@ def register(request, *args, **kwargs):
                             from goodsshape.models import ListModel as goodsshape
                             demo_data = []
                             for goods_shape in randomshape:
-                                demo_data.append(goodsshape(openid=transaction_code, goods_shape=goods_shape,
+                                demo_data.append(goodsshape(openid='init_data', goods_shape=goods_shape,
                                                             creater='DemoData'))
                             goodsshape.objects.bulk_create(demo_data, batch_size=100)
                             from goodsspecs.models import ListModel as goodsspecs
                             demo_data = []
                             for goods_specs in randomspecs:
-                                demo_data.append(goodsspecs(openid=transaction_code, goods_specs=goods_specs,
+                                demo_data.append(goodsspecs(openid='init_data', goods_specs=goods_specs,
                                                             creater='DemoData'))
                             goodsspecs.objects.bulk_create(demo_data, batch_size=100)
                             from goodsorigin.models import ListModel as goodsorigin
                             goodsorigin_data_list = []
                             for city in randomcity:
-                                demo_data = goodsorigin(openid=transaction_code,
+                                demo_data = goodsorigin(openid='init_data',
                                                         goods_origin=city,
                                                         creater='DemoData'
                                                         )
