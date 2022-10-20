@@ -19,7 +19,7 @@
       >
         <template v-slot:top>
           <q-btn-group push>
-            <q-btn
+            <!-- <q-btn
               v-show="
                 $q.localStorage.getItem('staff_type') !== 'Supplier' &&
                 $q.localStorage.getItem('staff_type') !== 'Customer' &&
@@ -36,7 +36,7 @@
                 content-style="font-size: 12px"
                 >{{ $t("newtip") }}</q-tooltip
               >
-            </q-btn>
+            </q-btn> -->
             <q-btn
               v-show="
                 $q.localStorage.getItem('staff_type') !== 'Supplier' &&
@@ -226,7 +226,7 @@
                   >{{ $t("confirmsorted") }}</q-tooltip
                 >
               </q-btn>
-              <q-btn
+              <!-- <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
                   $q.localStorage.getItem('staff_type') !== 'Customer' &&
@@ -246,7 +246,7 @@
                   content-style="font-size: 12px"
                   >{{ $t("edit") }}</q-tooltip
                 >
-              </q-btn>
+              </q-btn> -->
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&

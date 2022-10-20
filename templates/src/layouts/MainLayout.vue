@@ -28,7 +28,7 @@
         <div v-if="isVip9 === 9">
           {{ $t("twoKai.useWarehouse") }}：{{ useWarehouse }}
         </div>
-        <transition
+        <!--  <transition
           v-if="authin === '1'"
           appear
           enter-active-class="animated zoomIn"
@@ -69,7 +69,7 @@
               >GitHub Link</q-tooltip
             >
           </q-btn>
-        </transition>
+        </transition> -->
         <transition appear enter-active-class="animated zoomIn">
           <q-btn
             round
@@ -140,7 +140,7 @@
 
         <q-separator vertical />
         <template v-if="authin === '1'">
-          <transition appear enter-active-class="animated zoomIn">
+          <!-- <transition appear enter-active-class="animated zoomIn">
             <q-btn
               round
               dense
@@ -157,7 +157,7 @@
                 >{{ $t("index.unread") }}</q-tooltip
               >
             </q-btn>
-          </transition>
+          </transition> -->
           <transition appear enter-active-class="animated zoomIn">
             <q-btn-dropdown
               stretch
@@ -332,7 +332,7 @@
             <q-item-section>{{ $t("menuItem.stock") }}</q-item-section>
           </q-item>
           <q-separator />
-          <q-item
+          <!-- <q-item
             clickable
             :to="{ name: 'capitallist' }"
             @click="linkChange('finance')"
@@ -345,7 +345,7 @@
               ><q-icon name="devices_other"
             /></q-item-section>
             <q-item-section>{{ $t("menuItem.finance") }}</q-item-section>
-          </q-item>
+          </q-item> -->
           <q-item
             clickable
             :to="{ name: 'goodslist' }"
@@ -412,7 +412,9 @@
             <q-item-section>{{ $t("menuItem.driver") }}</q-item-section>
           </q-item>
           <q-separator v-show="device === 0" />
+
           <q-item
+            v-if="isVip9 === 9"
             clickable
             :to="{ name: 'initializeupload' }"
             @click="linkChange('uploadcenter')"
