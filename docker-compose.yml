@@ -2,68 +2,60 @@ version: '3.9'
 networks:
   basic:
 services:
-  front:
-#    build:
-#      context: ./
-#      dockerfile: ./docker/front/Dockerfile
-    container_name: greaterwms_front
-    image: greaterwms/greatermws_front:latest
-    restart: always
-    ports:
-      - '8080:8080'
-    volumes:
-      - ./templates:/GreaterWMS/templates:rw
-      - ./web_start.sh:/GreaterWMS/templates/webstart.sh
-    command:
-      - /bin/bash
-      - -c
-      #- "yarn install --force"
-      - |
-        bash /GreaterWMS/templates/webstart.sh
-    networks:
-      - basic
+#  front:
+##    build:
+##      context: ./
+##      dockerfile: ./docker/front/Dockerfile
+#    container_name: greaterwms_front
+#    image: greaterwms/greatermws_front:latest
+#    restart: always
+#    ports:
+#      - '8080:8080'
+#    volumes:
+#      - ./templates:/GreaterWMS/templates:rw
+#      - ./web_start.sh:/GreaterWMS/templates/webstart.sh
+#    command:
+#      - /bin/bash
+#      - -c
+#      #- "yarn install --force"
+#      - |
+#        bash /GreaterWMS/templates/webstart.sh
+#    networks:
+#      - basic
   backend:
-#    build:
-#      context: ./
-#      dockerfile: ./docker/backend/Dockerfile 
+    build:
+      context: ./
+      dockerfile: ./docker/backend/Dockerfile
     container_name: greaterwms_backend
-    image: greaterwms/greaterwms_backend:latest
+    #image: greaterwms/greaterwms_backend:latest
     restart: always
     volumes:
       - ./:/GreaterWMS/:rw #将前目录挂载到容器下
-      - ./supervisord.conf:/etc/supervisor/supervisord.conf
+      #- ./supervisord.conf:/etc/supervisor/supervisord.conf
     ports:
       - '8008:8008'
     command:
       - /bin/bash
       - -c
       - |
-        bash backend_start.sh && /etc/init.d/supervisor start
+        bash backend_start.sh
     networks:
       - basic
-#  greaterwms-mysql:
-#    image: mysql:5.7
-#    container_name: greaterwms-mysql
-#    #使用该参数，container内的root拥有真正的root权限，否则，container内的root只是外部的一个普通用户权限
-#    #设置为true，不然数据卷可能挂载不了，启动不起
-#    privileged: true
-#    restart: always
-#    ports:
-#      - "3306:3306"
-#    environment:
-#      MYSQL_ROOT_PASSWORD: "GreaterWMS20210816"
-#      MYSQL_DATABASE: "greaterwms"
-#      TZ: Asia/Shanghai
-#    command:
-#      --wait_timeout=31536000
-#      --interactive_timeout=31536000
-#      --max_connections=1000
-#    volumes:
-#      #映射mysql的数据目录到宿主机，保存数据
-#      - "./docker/mysql/data:/var/lib/mysql"
-#      #根据宿主机下的配置文件创建容器
-#      - "./docker/mysql/conf.d:/etc/mysql/conf.d"
-#      - "./docker/mysql/logs:/logs"
+  dvadmin-redis:
+    image: redis:6.0.6
+    container_name: dvadmin-redis
+    privileged: true
+    ports:
+      - 6379:6379
+    command: redis-server /etc/redis/redis.conf --appendonly yes
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./docker/redis/data:/data
+      - ./docker/redis/conf/redis.conf:/etc/redis/redis.conf
+    restart: always
+    networks:
+      - basic
 #    networks:
 #      - basic
 #   nginx:
