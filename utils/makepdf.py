@@ -5,7 +5,7 @@ from barcode.writer import ImageWriter
 from io import BytesIO
 import os
 from django.conf import settings
-
+from greaterwms.celery import app
 
 data = [{
     'id': 1,
@@ -99,20 +99,22 @@ class DrawImg:
         start_y = 420
         self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
 
-    def draw_barcode(self, code):
+    def draw_barcode(self, code, patch):
+        self.check_folder()
         CODE128 = barcode.get_barcode_class('code128')
         bc = CODE128(code, writer=ImageWriter())
-        ph = os.path.join(base_dir, str(code))
+        ph = os.path.join(base_dir, f'media/asn_label/{patch}/{code}')
         opt = {'write_text': False, 'quiet_zone': 2, 'text_distance': 10}
         bc.save(ph, opt)
         codeimg = Image.open(ph+'.png')
         out = codeimg.resize((750,180))
         self.img_fp.paste(out, (int((self.size_x - 750) / 2), 240))
-        os.remove(ph+'.png')
-
-    def save(self, i=None):
+        # os.remove(ph+'.png')
+    def check_folder(self):
         if self.goods['patch_number'] not in os.listdir(os.path.join(base_dir, 'media/asn_label/')):
             os.mkdir(self.folder)
+
+    def save(self, i=None):
         filename = os.path.join(self.folder, f'{self.goods["goods_code"]}{"" if i is None else f"-{i}"}.jpg')
         self.img_fp.save(filename)
     
@@ -131,7 +133,7 @@ class DrawImg:
             self.draw_prefix(f'{i+1}/{data["total"]}')
             self.draw_madeinchina(data['brand'])
             self.draw_sku(data['goods_code'])
-            self.draw_barcode(data['barcode'])
+            self.draw_barcode(data['barcode'], data['patch_number'])
             self.save(i+1)
             label_file_list.append(os.path.join(self.folder, f'{self.goods["goods_code"]}-{i+1}.jpg'))
         return label_file_list
@@ -144,7 +146,9 @@ def generate_label_files(data):
         patch_file_list.append(draw.make(i))
     return patch_file_list
 
-
+# @app.task
+import funboost
+@funboost.boost('makepdf', broker_kind=funboost.BrokerEnum.REDIS)
 def generate_pdf(data, patch):
     patch_file_list = generate_label_files(data)
     images = []
@@ -156,8 +160,5 @@ def generate_pdf(data, patch):
             img = Image.open(j)
             images.append(img)
     output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
-    # for i in patch_file_list:
-    #     for j in i:
-    #         os.remove(j)
-    # os.rmdir(f'{base_dir}/media/asn_label/{patch}/')
+
 

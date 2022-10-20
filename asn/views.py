@@ -301,7 +301,10 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                     d['address'] = 'EA'
                     d['country'] = 'US'
                     pdf_data.append(d)
-                makepdf.generate_pdf(pdf_data, data['patch_number'])
+                # makepdf.generate_pdf.delay(pdf_data, data['patch_number'])
+                # makepdf.generate_pdf(pdf_data, data['patch_number'])
+                makepdf.generate_pdf.push(pdf_data, data['patch_number'])
+                makepdf.generate_pdf.consume()
                 return Response({"detail": "success"}, status=200)
             else:
                 raise APIException({"detail": "Supplier does not exists"})
