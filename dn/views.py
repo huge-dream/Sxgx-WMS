@@ -29,7 +29,7 @@ import re
 from .serializers import FileListRenderSerializer, FileDetailRenderSerializer
 from django.http import StreamingHttpResponse
 from django.utils import timezone
-from .files import FileListRenderCN, FileListRenderEN, FileDetailRenderCN, FileDetailRenderEN
+from .files import FileListRenderCN, FileListRenderEN, FileDetailRenderCN, FileDetailRenderEN, PickListRenderCN, PickListRenderEN
 from rest_framework.settings import api_settings
 from staff.models import ListModel as staff
 from userprofile.models import Users
@@ -2135,31 +2135,21 @@ class PickListDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            empty_qs = DnListModel.objects.filter(
-                Q(openid=self.request.auth.openid, dn_status=1, is_delete=False) & Q(customer=''))
-            cur_date = timezone.now()
-            date_check = relativedelta(day=1)
-            if len(empty_qs) > 0:
-                for i in range(len(empty_qs)):
-                    if empty_qs[i].create_time <= cur_date - date_check:
-                        empty_qs[i].delete()
             u = Users.objects.filter(vip=9).first()
             if u is None:
                 superopenid = None
             else:
                 superopenid = u.openid
-            query_dict = {'is_delete': False, 'dn_status': 3}
+            query_dict = {'id': id, 'dn_status': 3}
             if self.request.auth.openid != superopenid:
                 query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return DnListModel.objects.filter(Q(**query_dict) & ~Q(customer=''))
+            return DnListModel.objects.filter(**query_dict)
         else:
             return DnListModel.objects.none()
 
     def get_serializer_class(self):
-        if self.action in ['list']:
-            return serializers.FileListRenderSerializer
+        if self.action in ['retrieve']:
+            return serializers.DNListGetSerializer
         else:
             return self.http_method_not_allowed(request=self.request)
 
@@ -2167,20 +2157,31 @@ class PickListDownloadView(viewsets.ModelViewSet):
         lang = self.request.META.get('HTTP_LANGUAGE')
         if lang:
             if lang == 'zh-hans':
-                return FileListRenderCN().render(data)
+                return PickListRenderCN().render(data)
             else:
-                return FileListRenderEN().render(data)
+                return PickListRenderEN().render(data)
         else:
             return FileListRenderEN().render(data)
 
     def list(self, request, *args, **kwargs):
         from datetime import datetime
         dt = datetime.now()
-        data = (
-            FileListRenderSerializer(instance).data
-            for instance in self.filter_queryset(self.get_queryset())
-        )
-        renderer = self.get_lang(data)
+
+        u = Users.objects.filter(vip=9).first()
+        if u is None:
+            superopenid = None
+        else:
+            superopenid = u.openid
+        openid = {}
+        if self.request.auth.openid != superopenid:
+            openid['openid'] = self.request.auth.openid
+        context = []
+        for i in DnListModel.objects.filter(**openid, dn_status=3):
+            picking_qs = PickingListModel.objects.filter(**openid, dn_code=i.dn_code)
+            serializer = serializers.DNPickingListGetSerializer(picking_qs, many=True)
+            for j in serializer.data:
+                context.append(j)
+        renderer = self.get_lang(context)
         response = StreamingHttpResponse(
             renderer,
             content_type="text/csv"

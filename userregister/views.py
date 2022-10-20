@@ -385,19 +385,19 @@ def register(request, *args, **kwargs):
                             for goods_unit in randomunit:
                                 demo_data.append(goodsunit(openid='init_data', goods_unit=goods_unit,
                                                            creater='DemoData'))
-                            goodsunit.objects.bulk_create(demo_data, batch_size=100)
+                            # goodsunit.objects.bulk_create(demo_data, batch_size=100)
                             from goodsclass.models import ListModel as goodsclass
                             demo_data = []
                             for goods_class in randomclass:
                                 demo_data.append(goodsclass(openid='init_data', goods_class=goods_class,
                                                             creater='DemoData'))
-                            goodsclass.objects.bulk_create(demo_data, batch_size=100)
+                            # goodsclass.objects.bulk_create(demo_data, batch_size=100)
                             from goodscolor.models import ListModel as goodscolor
                             demo_data = []
                             for goods_color in randomcolor:
                                 demo_data.append(goodscolor(openid='init_data', goods_color=goods_color,
                                                             creater='DemoData'))
-                            goodscolor.objects.bulk_create(demo_data, batch_size=100)
+                            # goodscolor.objects.bulk_create(demo_data, batch_size=100)
                             from goodsbrand.models import ListModel as goodsbrand
                             goodsbrand_data_list = []
                             for goodsbrand_data in range(1, 42):
@@ -406,19 +406,19 @@ def register(request, *args, **kwargs):
                                                        creater='DemoData'
                                                        )
                                 goodsbrand_data_list.append(demo_data)
-                            goodsbrand.objects.bulk_create(goodsbrand_data_list, batch_size=100)
+                            # goodsbrand.objects.bulk_create(goodsbrand_data_list, batch_size=100)
                             from goodsshape.models import ListModel as goodsshape
                             demo_data = []
                             for goods_shape in randomshape:
                                 demo_data.append(goodsshape(openid='init_data', goods_shape=goods_shape,
                                                             creater='DemoData'))
-                            goodsshape.objects.bulk_create(demo_data, batch_size=100)
+                            # goodsshape.objects.bulk_create(demo_data, batch_size=100)
                             from goodsspecs.models import ListModel as goodsspecs
                             demo_data = []
                             for goods_specs in randomspecs:
                                 demo_data.append(goodsspecs(openid='init_data', goods_specs=goods_specs,
                                                             creater='DemoData'))
-                            goodsspecs.objects.bulk_create(demo_data, batch_size=100)
+                            # goodsspecs.objects.bulk_create(demo_data, batch_size=100)
                             from goodsorigin.models import ListModel as goodsorigin
                             goodsorigin_data_list = []
                             for city in randomcity:
@@ -427,7 +427,7 @@ def register(request, *args, **kwargs):
                                                         creater='DemoData'
                                                         )
                                 goodsorigin_data_list.append(demo_data)
-                            goodsorigin.objects.bulk_create(goodsorigin_data_list, batch_size=100)
+                            # goodsorigin.objects.bulk_create(goodsorigin_data_list, batch_size=100)
                             from goods.models import ListModel as goods
                             goods_data_list = []
                             for goods_data in range(1, 42):

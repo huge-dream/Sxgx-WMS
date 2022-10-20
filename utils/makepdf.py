@@ -36,7 +36,7 @@ class DrawImg:
         self.img_fp = img_fp
         self.draw = None
         self.size_x, self.size_y = None, None
-        self.font_path = f'{base_dir}/media/asn_label/arial.ttf'
+        self.font_path = os.path.join(base_dir, 'media/asn_label/arial.ttf')
         self.goods = {}
         self.folder = ''
 
@@ -102,7 +102,7 @@ class DrawImg:
     def draw_barcode(self, code):
         CODE128 = barcode.get_barcode_class('code128')
         bc = CODE128(code, writer=ImageWriter())
-        ph = f'{base_dir}/{code}'
+        ph = os.path.join(base_dir, str(code))
         opt = {'write_text': False, 'quiet_zone': 2, 'text_distance': 10}
         bc.save(ph, opt)
         codeimg = Image.open(ph+'.png')
@@ -111,17 +111,17 @@ class DrawImg:
         os.remove(ph+'.png')
 
     def save(self, i=None):
-        if self.goods['patch_number'] not in os.listdir(f'{base_dir}/media/asn_label'):
+        if self.goods['patch_number'] not in os.listdir(os.path.join(base_dir, 'media/asn_label/')):
             os.mkdir(self.folder)
-        filename = f'{self.folder}/{self.goods["goods_code"]}{"" if i is None else f"-{i}"}.jpg'
+        filename = os.path.join(self.folder, f'{self.goods["goods_code"]}{"" if i is None else f"-{i}"}.jpg')
         self.img_fp.save(filename)
     
     def make(self, data):
         self.goods = data
-        self.folder = f'{base_dir}/media/asn_label/{self.goods["patch_number"]}'.replace('/', '\\')
+        self.folder = os.path.join(base_dir, f'media/asn_label/{self.goods["patch_number"]}/')
         label_file_list = []
         for i in range(data['total']):
-            self.img_fp = Image.open(f'{base_dir}/media/asn_label/base_label.jpg')
+            self.img_fp = Image.open(os.path.join(base_dir, 'media/asn_label/base_label.jpg'))
             self.draw = ImageDraw.Draw(self.img_fp)
             self.size_x, self.size_y = self.img_fp.size
             self.draw_patch(data['patch_number'])
@@ -133,7 +133,7 @@ class DrawImg:
             self.draw_sku(data['goods_code'])
             self.draw_barcode(data['barcode'])
             self.save(i+1)
-            label_file_list.append(f'{self.folder}/{self.goods["goods_code"]}-{i+1}.jpg'.replace('/', '\\'))
+            label_file_list.append(os.path.join(self.folder, f'{self.goods["goods_code"]}-{i+1}.jpg'))
         return label_file_list
 
 
@@ -155,7 +155,7 @@ def generate_pdf(data, patch):
         for j in i:
             img = Image.open(j)
             images.append(img)
-    output.save(f'{base_dir}/media/asn_label/{patch}/{patch}.pdf', 'pdf', save_all=True, append_images=images[1:])
+    output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
     # for i in patch_file_list:
     #     for j in i:
     #         os.remove(j)

@@ -15,5 +15,6 @@ logs/
 !/media/upload_example/*
 !/media/asn_label/*.jpg
 !/media/asn_label/*.png
+!/media/asn_label/*.ttf
 aaaaa
 ~*
