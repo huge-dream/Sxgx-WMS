@@ -52,7 +52,6 @@ class APIViewSet(viewsets.ModelViewSet):
             query_dict = {'is_delete': False}
             if id is not None:
                 query_dict['id'] = id
-            print(ListModel.objects.all())
             return ListModel.objects.filter(**query_dict)
         else:
             return ListModel.objects.none()

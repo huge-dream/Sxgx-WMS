@@ -42,6 +42,7 @@ from dn.serializers import DNListPostSerializer
 from dn.serializers import DNDetailPostSerializer
 from dn import files as dnfiles
 from utils import makepdf
+from traceback import format_exc
 
 
 class GoodlistfileViewSet(views.APIView):
@@ -126,8 +127,7 @@ class GoodlistfileViewSet(views.APIView):
                         if not is_number(str(data_list[i][13])):
                             data_list[i][13] = 0
                         bar_code = Md5.md5(str(data_list[i][0]).strip())
-                        goodslist.objects.create(openid='init_data',
-                                                 goods_code=str(data_list[i][0]).strip(),
+                        goodslist.objects.create(goods_code=str(data_list[i][0]).strip(),
                                                  goods_desc=str(data_list[i][1]).strip(),
                                                  goods_supplier=str(data_list[i][2]).strip(),
                                                  goods_weight=data_list[i][4],
@@ -171,53 +171,37 @@ class GoodlistfileViewSet(views.APIView):
                 for i in goods_unit_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if goodsunit.objects.filter(openid=self.request.auth.openid,
-                                                goods_unit=str(i).strip()).exists():
+                    if goodsunit.objects.filter(goods_unit=str(i).strip()).exists():
                         pass
                     else:
-                        goodsunit.objects.create(openid=self.request.auth.openid,
-                                                 goods_unit=str(i).strip(),
-                                                 creater=str(staff_name)
-                                                 )
+                        goodsunit.objects.create(goods_unit=str(i).strip(), creater=str(staff_name))
                 goods_class_list = df.drop_duplicates(subset=[data_header.get('goods_class')], keep='first').loc[:,
                                     data_header.get('goods_class')].values
                 for i in goods_class_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if goodsclass.objects.filter(openid=self.request.auth.openid,
-                                                 goods_class=str(i).strip()).exists():
+                    if goodsclass.objects.filter(goods_class=str(i).strip()).exists():
                         pass
                     else:
-                        goodsclass.objects.create(openid=self.request.auth.openid,
-                                                  goods_class=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
+                        goodsclass.objects.create(goods_class=str(i).strip(), creater=str(staff_name))
                 goods_shape_list = df.drop_duplicates(subset=[data_header.get('goods_shape')], keep='first').loc[:,
                                     data_header.get('goods_shape')].values
                 for i in goods_shape_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if goodsshape.objects.filter(openid=self.request.auth.openid,
-                                                 goods_shape=str(i).strip()).exists():
+                    if goodsshape.objects.filter(goods_shape=str(i).strip()).exists():
                         pass
                     else:
-                        goodsshape.objects.create(openid=self.request.auth.openid,
-                                                  goods_shape=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
+                        goodsshape.objects.create(goods_shape=str(i).strip(), creater=str(staff_name))
                 goods_specs_list = df.drop_duplicates(subset=[data_header.get('goods_specs')], keep='first').loc[:,
                                     data_header.get('goods_specs')].values
                 for i in goods_specs_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if goodsspecs.objects.filter(openid=self.request.auth.openid,
-                                                 goods_specs=str(i).strip()).exists():
+                    if goodsspecs.objects.filter(goods_specs=str(i).strip()).exists():
                         pass
                     else:
-                        goodsspecs.objects.create(openid=self.request.auth.openid,
-                                                  goods_specs=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
+                        goodsspecs.objects.create(goods_specs=str(i).strip(), creater=str(staff_name))
             else:
                 raise APIException({"detail": "Can Not Support This File Type"})
         else:
@@ -521,7 +505,7 @@ class GoodlistfileAddViewSet(views.APIView):
                 else:
                     df = pd.read_excel(files)
                 df.drop_duplicates(keep='first', inplace=True)
-                data_list = df.drop_duplicates(subset=[data_header.get('goods_code')], keep='first').values
+                data_list = df.drop_duplicates(subset=[data_header.get('SKU')], keep='first').values
                 for d in range(len(data_list)):
                     data_validate(str(data_list[d]))
                 for i in range(len(data_list)):
@@ -554,12 +538,11 @@ class GoodlistfileAddViewSet(views.APIView):
                             data_list[i][12] = 0
                         if not is_number(str(data_list[i][13])):
                             data_list[i][13] = 0
-                        if goodslist.objects.filter(oods_code=str(data_list[i][0]).strip()).exists():
+                        if goodslist.objects.filter(goods_code=str(data_list[i][0]).strip()).exists():
                             pass
                         else:
                             bar_code = Md5.md5(str(data_list[i][0]).strip())
-                            goodslist.objects.create(openid='init_data',
-                                                    goods_code=str(data_list[i][0]).strip(),
+                            goodslist.objects.create(goods_code=str(data_list[i][0]).strip(),
                                                     goods_desc=str(data_list[i][1]).strip(),
                                                     goods_supplier=str(data_list[i][2]).strip(),
                                                     goods_weight=data_list[i][4],
@@ -602,53 +585,37 @@ class GoodlistfileAddViewSet(views.APIView):
                 for i in goods_unit_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if goodsunit.objects.filter(openid=self.request.auth.openid,
-                                                goods_unit=str(i).strip()).exists():
+                    if goodsunit.objects.filter(goods_unit=str(i).strip()).exists():
                         pass
                     else:
-                        goodsunit.objects.create(openid=self.request.auth.openid,
-                                                 goods_unit=str(i).strip(),
-                                                 creater=str(staff_name)
-                                                 )
+                        goodsunit.objects.create(goods_unit=str(i).strip(), creater=str(staff_name))
                 goods_class_list = df.drop_duplicates(subset=[data_header.get('goods_class')], keep='first').loc[:,
                                     data_header.get('goods_class')].values
                 for i in goods_class_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if goodsclass.objects.filter(openid=self.request.auth.openid,
-                                              goods_class=str(i).strip()).exists():
+                    if goodsclass.objects.filter(goods_class=str(i).strip()).exists():
                         pass
                     else:
-                        goodsclass.objects.create(openid=self.request.auth.openid,
-                                                  goods_class=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
+                        goodsclass.objects.create(goods_class=str(i).strip(), creater=str(staff_name))
                 goods_shape_list = df.drop_duplicates(subset=[data_header.get('goods_shape')], keep='first').loc[:,
                                     data_header.get('goods_shape')].values
                 for i in goods_shape_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if goodsshape.objects.filter(openid=self.request.auth.openid,
-                                                 goods_shape=str(i).strip()).exists():
+                    if goodsshape.objects.filter(goods_shape=str(i).strip()).exists():
                         pass
                     else:
-                        goodsshape.objects.create(openid=self.request.auth.openid,
-                                                  goods_shape=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
+                        goodsshape.objects.create(goods_shape=str(i).strip(), creater=str(staff_name))
                 goods_specs_list = df.drop_duplicates(subset=[data_header.get('goods_specs')], keep='first').loc[:,
                                     data_header.get('goods_specs')].values
                 for i in goods_specs_list:
                     if str(i) == 'nan':
                         i = 'N/A'
-                    if goodsspecs.objects.filter(openid=self.request.auth.openid,
-                                              goods_specs=str(i).strip()).exists():
+                    if goodsspecs.objects.filter(goods_specs=str(i).strip()).exists():
                         pass
                     else:
-                        goodsspecs.objects.create(openid=self.request.auth.openid,
-                                                  goods_specs=str(i).strip(),
-                                                  creater=str(staff_name)
-                                                  )
+                        goodsspecs.objects.create(goods_specs=str(i).strip(), creater=str(staff_name))
             else:
                 raise APIException({"detail": "Can Not Support This File Type"})
         else:
@@ -1022,8 +989,7 @@ class AsnlistfileAddViewSet(views.APIView):
                             pass
                         else:
                             bar_code = Md5.md5(str(data_list[i][1]).strip())
-                            goodslist.objects.create(openid='init_data',
-                                                    goods_code=str(data_list[i][1]).strip(),
+                            goodslist.objects.create(goods_code=str(data_list[i][1]).strip(),
                                                     goods_desc=n,
                                                     goods_supplier=n,
                                                     goods_weight=0,
@@ -1164,11 +1130,11 @@ class DnlistfileaddViewSet(views.APIView):
         else:
             lang = 'en-us'
         if lang == 'zh-hans':
-            data_header = asnfiles.list_cn_data_header()
+            data_header = dnfiles.dnlist_cn_data_header()
         elif lang == 'en-us':
-            data_header = asnfiles.list_en_data_header()
+            data_header = dnfiles.dnlist_en_data_header()
         else:
-            data_header = asnfiles.list_en_data_header()
+            data_header = dnfiles.dnlist_en_data_header()
         return data_header
 
     def post(self, request, *args, **kwargs):
@@ -1189,8 +1155,6 @@ class DnlistfileaddViewSet(views.APIView):
                     for d in range(len(data_list)):
                         data_validate(str(data_list[d]))
                     data = self.request.data
-                    print('go')
-                    print(data_list)
                     for i in range(len(data_list)):
                         if str(data_list[i][0]) == 'nan':
                             continue
@@ -1226,8 +1190,7 @@ class DnlistfileaddViewSet(views.APIView):
                             pass
                         else:
                             bar_code = Md5.md5(str(data_list[i][0]).strip())
-                            goodslist.objects.create(openid='init_data',
-                                                    goods_code=str(data_list[i][0]).strip(),
+                            goodslist.objects.create(goods_code=str(data_list[i][0]).strip(),
                                                     goods_desc=n,
                                                     goods_supplier=n,
                                                     goods_weight=0,
@@ -1327,6 +1290,7 @@ class DnlistfileaddViewSet(views.APIView):
                             total_cost=total_cost, transportation_fee=transportation_res)
                     return Response({"detail": "success"}, status=200)
                 except:
+                    print(format_exc())
                     raise APIException({"detail": "Upload Failed"})
         else:
             raise APIException({"detail": "Please Select One File"})

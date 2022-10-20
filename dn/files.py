@@ -144,6 +144,28 @@ def picklist_en_data_header():
         (['update_time', u'update_time']),
     ])
 
+def dnlist_file_headers():
+    return [
+        'SKU',
+        'Wait Deliver Oty',
+        'Warehouse ID',
+    ]
+
+def dnlist_cn_data_header():
+    return dict([
+        (['SKU', u'SKU']),
+        (['Wait Deliver Oty', u'待发货数量']),
+        (['Warehouse ID', u'仓库ID']),
+    ])
+
+def dnlist_en_data_header():
+    return dict([
+        (['SKU', u'SKU']),
+        (['Wait Deliver Oty', u'Wait Deliver Oty']),
+        (['Warehouse ID', u'Warehouse ID']),
+    ])
+
+
 class FileListRenderCN(CSVStreamingRenderer):
     header = list_file_headers()
     labels = list_cn_data_header()
@@ -167,3 +189,11 @@ class PickListRenderCN(CSVStreamingRenderer):
 class PickListRenderEN(CSVStreamingRenderer):
     header = picklist_file_headers()
     labels = picklist_en_data_header()
+
+class DnListRenderCN(CSVStreamingRenderer):
+    header = dnlist_file_headers()
+    labels = dnlist_cn_data_header()
+
+class DnListRenderEN(CSVStreamingRenderer):
+    header = dnlist_file_headers()
+    labels = dnlist_en_data_header()
