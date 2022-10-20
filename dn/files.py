@@ -116,8 +116,6 @@ def picklist_file_headers():
         'picking_status',
         'pick_qty',
         'picked_qty',
-        'creater',
-        'openid',
         'create_time',
         'update_time'
     ]
@@ -130,7 +128,6 @@ def picklist_cn_data_header():
         (['picking_status', u'发货单状态']),
         (['pick_qty', u'待拣货数量']),
         (['picked_qty', u'已拣货数量']),
-        (['creater', u'创建者']),
         (['create_time', u'创建时间']),
         (['update_time', u'更新时间']),
     ])
@@ -143,7 +140,6 @@ def picklist_en_data_header():
         (['picking_status', u'picking_status']),
         (['pick_qty', u'pick_qty']),
         (['picked_qty', u'picked_qty']),
-        (['creater', u'creater']),
         (['create_time', u'create_time']),
         (['update_time', u'update_time']),
     ])

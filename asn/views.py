@@ -1316,7 +1316,7 @@ class PDFDownload(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         if queryset.exists():
-            path = str(settings.BASE_DIR) + f'/media/asn_label/{queryset.first().patch_number}/{queryset.first().patch_number}.pdf'
+            path = os.path.join(settings.BASE_DIR, f'media/asn_label/{queryset.first().patch_number}/{queryset.first().patch_number}.pdf')
             content_type, encoding = mimetypes.guess_type(path)
             response = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
             response['Cache-Control'] = "max-age=864000000000"
