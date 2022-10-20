@@ -113,12 +113,12 @@ class DrawImg:
     def save(self, i=None):
         if self.goods['patch_number'] not in os.listdir(f'{base_dir}/media/asn_label'):
             os.mkdir(self.folder)
-        filename = f'{self.folder}/{self.goods["goods_code"]}{"" if i is None else f"-{i}"}.jpg'
+        filename = f'{self.folder}{self.goods["goods_code"]}{"" if i is None else f"-{i}"}.jpg'.replace('/', '\\')
         self.img_fp.save(filename)
     
     def make(self, data):
         self.goods = data
-        self.folder = f'{base_dir}/media/asn_label/{self.goods["patch_number"]}'.replace('/', '\\')
+        self.folder = f'{base_dir}/media/asn_label/{self.goods["patch_number"]}/'.replace('/', '\\')
         label_file_list = []
         for i in range(data['total']):
             self.img_fp = Image.open(f'{base_dir}/media/asn_label/base_label.jpg')
@@ -133,7 +133,7 @@ class DrawImg:
             self.draw_sku(data['goods_code'])
             self.draw_barcode(data['barcode'])
             self.save(i+1)
-            label_file_list.append(f'{self.folder}/{self.goods["goods_code"]}-{i+1}.jpg'.replace('/', '\\'))
+            label_file_list.append(f'{self.folder}{self.goods["goods_code"]}-{i+1}.jpg'.replace('/', '\\'))
         return label_file_list
 
 

@@ -1190,6 +1190,7 @@ class DnlistfileaddViewSet(views.APIView):
                         data_validate(str(data_list[d]))
                     data = self.request.data
                     print('go')
+                    print(data_list)
                     for i in range(len(data_list)):
                         if str(data_list[i][0]) == 'nan':
                             continue
