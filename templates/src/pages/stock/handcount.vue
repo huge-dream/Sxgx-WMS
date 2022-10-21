@@ -301,9 +301,7 @@ export default {
     },
     getList() {
       var _this = this;
-      getauth(
-        "cyclecount/getgoodscyclecount/" + `?goods_code=${this.handcountVal}`
-      )
+      getauth("cyclecount/manualcyclecount/")
         .then((res) => {
           _this.table_list = res;
           _this.handcountVisible = false;
@@ -339,7 +337,7 @@ export default {
               color: "green",
             });
             _this.table_list = [];
-            //_this.reFresh();
+            _this.reFresh();
           })
           .catch((err) => {
             _this.$q.notify({
@@ -400,13 +398,21 @@ export default {
         });
         return;
       }
-      this.getList();
-      this.handcountVal = "";
-      /* getauth(`goods/cyclecount?goods_code=${this.handcountVal}`).then(
-        (res) => {
-          console.log(res, "--11---");
-        }
-      ); */
+      var _this = this;
+      getauth(
+        "cyclecount/getgoodscyclecount/" + `?goods_code=${this.handcountVal}`
+      )
+        .then((res) => {
+          this.getList();
+          this.handcountVal = "";
+        })
+        .catch((err) => {
+          _this.$q.notify({
+            message: err.detail,
+            icon: "close",
+            color: "negative",
+          });
+        });
     },
   },
   created() {
@@ -425,7 +431,7 @@ export default {
     }
     if (LocalStorage.has("auth")) {
       _this.authin = "1";
-      //_this.getList();
+      _this.getList();
     } else {
       _this.authin = "0";
     }
