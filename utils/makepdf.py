@@ -148,7 +148,7 @@ def generate_label_files(data):
 
 # @app.task
 import funboost
-@funboost.boost('makepdf', broker_kind=funboost.BrokerEnum.REDIS, log_level=21)
+@funboost.boost('makepdf', broker_kind=funboost.BrokerEnum.PERSISTQUEUE, log_level=21)
 def generate_pdf(data, patch):
     patch_file_list = generate_label_files(data)
     images = []

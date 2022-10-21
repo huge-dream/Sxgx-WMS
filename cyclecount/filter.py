@@ -30,5 +30,7 @@ class ManualFilter(FilterSet):
         model = ManualCyclecountModeModel
         fields = {
             "id": ['exact', 'iexact', 'gt', 'gte', 'lt', 'lte', 'isnull', 'in', 'range'],
-            "create_time": ['year', 'month', 'day', 'week_day', 'gt', 'gte', 'lt', 'lte', 'range']
+            "create_time": ['year', 'month', 'day', 'week_day', 'gt', 'gte', 'lt', 'lte', 'range'],
+            "bin_name": ['exact', 'iexact', 'contains', 'icontains'],
+            "goods_code": ['exact', 'iexact', 'contains', 'icontains'],
         }
