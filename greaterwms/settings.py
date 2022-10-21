@@ -340,3 +340,24 @@ POST_THROTTLE = 5
 PUT_THROTTLE = 5
 PATCH_THROTTLE = 5
 DELETE_THROTTLE = 5
+
+
+REDIS_PASSWORD = ''
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+REDIS_URL = f'redis://:{REDIS_PASSWORD or ""}@{REDIS_HOST}:{REDIS_PORT}'
+CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": f'{REDIS_URL}/1',
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            }
+        },
+    }
+BROKER_URL = f'{REDIS_URL}/2'
+CELERY_RESULT_BACKEND = f'{REDIS_URL}/3'
+CELERYBEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+CELERY_RESULT_EXTENDED = True
+CELERY_ENABLE_UTC = False
+DJANGO_CELERY_BEAT_TZ_AWARE = False

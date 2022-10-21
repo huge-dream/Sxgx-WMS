@@ -1101,7 +1101,10 @@ class AsnlistfileAddViewSet(views.APIView):
                             d['address'] = 'EA'
                             d['country'] = 'US'
                             pdf_data.append(d)
-                        makepdf.generate_pdf(pdf_data, i)
+                        # makepdf.generate_pdf.delay(pdf_data, i)
+                        # makepdf.generate_pdf(pdf_data, i)
+                        makepdf.generate_pdf.push(pdf_data, i)
+                        makepdf.generate_pdf.consume()
                     return Response({"detail": "success"}, status=200)
                 except:
                     raise APIException({"detail": "Upload Failed"})
@@ -1290,7 +1293,6 @@ class DnlistfileaddViewSet(views.APIView):
                             total_cost=total_cost, transportation_fee=transportation_res)
                     return Response({"detail": "success"}, status=200)
                 except:
-                    print(format_exc())
                     raise APIException({"detail": "Upload Failed"})
         else:
             raise APIException({"detail": "Please Select One File"})
