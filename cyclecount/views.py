@@ -433,12 +433,14 @@ class ManualCyclecountViewSet(viewsets.ModelViewSet):
         for i in range(len(data)):
             print(f'updating {i}')
             print(self.request.auth.openid, data[i]['t_code'], staff.objects.filter(openid=self.request.auth.openid).first().staff_name)
-            print(ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code']))
+            print('update after', [(i.cyclecount_status, i.physical_inventory, i.difference) for i in ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code'])])
+            ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code']).update(
+                physical_inventory=data[i]['physical_inventory'],
+                cyclecount_status=1,
+                difference=data[i]['physical_inventory'] - data[i]['goods_qty']
+            )
+            print('update before',[(i.cyclecount_status, i.physical_inventory, i.difference) for i in  ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code'])])
             print()
-            ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid,
-                                                  t_code=data[i]['t_code']).update(
-                physical_inventory=data[i]['physical_inventory'], cyclecount_status=1,
-                difference=data[i]['physical_inventory'] - data[i]['goods_qty'])
         return Response({"detail": "success"}, status=200)
 
     def update(self, request, *args, **kwargs):
@@ -470,6 +472,7 @@ class ManualCyclecountRecorderViewSet(viewsets.ModelViewSet):
             return None
 
     def get_queryset(self):
+        print('get all manual cyclecount list')
         id = self.get_project()
         if self.request.user:
             date_choice = self.request.GET.get('create_time', '')
@@ -492,6 +495,7 @@ class ManualCyclecountRecorderViewSet(viewsets.ModelViewSet):
                 query_dict['update_time__lte'] = str(cur_time) + ' 23:59:59'
             if id is not None:
                 query_dict['id'] = id
+            print(ManualCyclecountModeModel.objects.filter(**query_dict), query_dict)
             return ManualCyclecountModeModel.objects.filter(**query_dict)
         else:
             return ManualCyclecountModeModel.objects.none()
