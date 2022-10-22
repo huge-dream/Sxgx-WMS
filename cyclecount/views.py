@@ -430,6 +430,7 @@ class ManualCyclecountViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         print('create function')
         data = self.request.data
+        print('payload is', data)
         for i in range(len(data)):
             print(f'updating {i}')
             print(self.request.auth.openid, data[i]['t_code'], staff.objects.filter(openid=self.request.auth.openid).first().staff_name)
