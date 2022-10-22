@@ -428,6 +428,7 @@ class ManualCyclecountViewSet(viewsets.ModelViewSet):
             return self.http_method_not_allowed(request=self.request)
 
     def create(self, request, *args, **kwargs):
+        print('created')
         data = self.request.data
         for i in range(len(data)):
             ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid,
@@ -437,6 +438,7 @@ class ManualCyclecountViewSet(viewsets.ModelViewSet):
         return Response({"detail": "success"}, status=200)
 
     def update(self, request, *args, **kwargs):
+        print('updated')
         data = self.request.data
         for i in range(len(data)):
             scan_count_data = self.get_queryset().filter(openid=self.request.auth.openid,
