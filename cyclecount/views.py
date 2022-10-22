@@ -444,7 +444,7 @@ class ManualCyclecountViewSet(viewsets.ModelViewSet):
                 cyclecount_status=1,
                 difference=data[i]['physical_inventory'] - data[i]['goods_qty']
             )
-            print('update before',[(i.cyclecount_status, i.physical_inventory, i.difference) for i in  ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code'])])
+            print('update before',[(i.cyclecount_status, i.physical_inventory, i.difference) for i in ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code'])])
             print()
         return Response({"detail": "success"}, status=200)
 
