@@ -1,3 +1,4 @@
+import traceback
 from dateutil.relativedelta import relativedelta
 from django.http import StreamingHttpResponse
 from django.utils import timezone
@@ -429,7 +430,10 @@ class ManualCyclecountViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         print('create function')
-        data = self.request.data
+        try:
+            data = self.request.data
+        except:
+            print(traceback.format_exc())
         print('payload is', data)
         for i in range(len(data)):
             print(f'updating {i}')
