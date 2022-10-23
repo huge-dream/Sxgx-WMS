@@ -1089,16 +1089,27 @@ class AsnlistfileAddViewSet(views.APIView):
                     patch_number_list = set(patch_number_list)
                     for i in patch_number_list:
                         all_data = AsnDetailModel.objects.filter(patch_number=i)
+                        all_goods = {}
+                        for detail in all_data:
+                            if detail.goods_code in all_goods:
+                                all_goods[detail.goods_code] += detail.goods_qty
+                            else:
+                                all_goods[detail.goods_code] = detail.goods_qty
+                        iter_data = []
+                        for k,v in all_goods.items():
+                            d = all_data.filter(goods_code=k).first()
+                            d.goods_qty = v
+                            iter_data.append(d)
                         pdf_data = list()
-                        for j in range(len(all_data)):
-                            warehouse_addr = warehouse.objects.filter(pk=all_data[i].warehouse_id).first().warehouse_city.split('-')
+                        for j in range(len(iter_data)):
+                            warehouse_addr = warehouse.objects.filter(pk=iter_data[i].warehouse_id).first().warehouse_city.split('-')
                             d = dict()
                             d['id'] = j + 1
-                            d['patch_number'] = all_data[j].patch_number
+                            d['patch_number'] = iter_data[j].patch_number
                             d['brand'] = 'MADE IN CHINA'
-                            d['barcode'] = goods.objects.filter(goods_code=all_data[j].goods_code).first().bar_code
-                            d['total'] = all_data[j].goods_qty
-                            d['goods_code'] = all_data[j].goods_code
+                            d['barcode'] = goods.objects.filter(goods_code=iter_data[j].goods_code).first().bar_code
+                            d['total'] = iter_data[j].goods_qty
+                            d['goods_code'] = iter_data[j].goods_code
                             d['address'] = warehouse_addr[1]
                             d['country'] = warehouse_addr[0]
                             pdf_data.append(d)
