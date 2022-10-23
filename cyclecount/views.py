@@ -429,7 +429,6 @@ class ManualCyclecountViewSet(viewsets.ModelViewSet):
             return self.http_method_not_allowed(request=self.request)
 
     def create(self, request, *args, **kwargs):
-        print('create function')
         data = self.request.data
         for i in range(len(data)):
             ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code']).update(
@@ -468,7 +467,6 @@ class ManualCyclecountRecorderViewSet(viewsets.ModelViewSet):
             return None
 
     def get_queryset(self):
-        print('get all manual cyclecount list')
         id = self.get_project()
         if self.request.user:
             date_choice = self.request.GET.get('create_time', '')
@@ -491,7 +489,6 @@ class ManualCyclecountRecorderViewSet(viewsets.ModelViewSet):
                 query_dict['update_time__lte'] = str(cur_time) + ' 23:59:59'
             if id is not None:
                 query_dict['id'] = id
-            print(ManualCyclecountModeModel.objects.filter(**query_dict), query_dict)
             return ManualCyclecountModeModel.objects.filter(**query_dict)
         else:
             return ManualCyclecountModeModel.objects.none()

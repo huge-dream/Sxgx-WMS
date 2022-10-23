@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
-import barcode
+from barcode.codex import Code128
 from barcode.writer import ImageWriter
 from io import BytesIO
 import os
@@ -102,8 +102,7 @@ class DrawImg:
 
     def draw_barcode(self, code, patch):
         self.check_folder()
-        CODE128 = barcode.get_barcode_class('code128')
-        bc = CODE128(code, writer=ImageWriter())
+        bc = Code128(code, writer=ImageWriter())
         ph = os.path.join(base_dir, f'media/asn_label/{patch}/{code}')
         opt = {'write_text': False, 'quiet_zone': 2, 'text_distance': 10}
         bc.save(ph, opt)
@@ -151,20 +150,14 @@ def generate_label_files(data):
 import funboost
 @funboost.boost('makepdf', broker_kind=funboost.BrokerEnum.PERSISTQUEUE, log_level=21)
 def generate_pdf(data, patch):
-    try:
-        print('running makepdf, patch is', patch)
-        patch_file_list = generate_label_files(data)
-        print('label save ok, save pdf')
-        images = []
-        output = None
-        for i in patch_file_list:
-            if output is None:
-                output = Image.open(i[0])
-            for j in i:
-                img = Image.open(j)
-                images.append(img)
-        output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
-        print('pdf save ok')
-    except:
-        print(format_exc())
+    patch_file_list = generate_label_files(data)
+    images = []
+    output = None
+    for i in patch_file_list:
+        if output is None:
+            output = Image.open(i[0])
+        for j in i:
+            img = Image.open(j)
+            images.append(img)
+    output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
 
