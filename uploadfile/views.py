@@ -1102,7 +1102,7 @@ class AsnlistfileAddViewSet(views.APIView):
                             iter_data.append(d)
                         pdf_data = list()
                         for j in range(len(iter_data)):
-                            warehouse_addr = warehouse.objects.filter(pk=iter_data[i].warehouse_id).first().warehouse_city.split('-')
+                            warehouse_addr = warehouse.objects.filter(pk=iter_data[j].warehouse_id).first().warehouse_city.split('-')
                             d = dict()
                             d['id'] = j + 1
                             d['patch_number'] = iter_data[j].patch_number
