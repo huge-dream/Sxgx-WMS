@@ -430,22 +430,13 @@ class ManualCyclecountViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         print('create function')
-        try:
-            data = self.request.data
-        except:
-            print(traceback.format_exc())
-        print('payload is', data)
+        data = self.request.data
         for i in range(len(data)):
-            print(f'updating {i}')
-            print(self.request.auth.openid, data[i]['t_code'], staff.objects.filter(openid=self.request.auth.openid).first().staff_name)
-            print('update after', [(i.cyclecount_status, i.physical_inventory, i.difference) for i in ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code'])])
             ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code']).update(
                 physical_inventory=data[i]['physical_inventory'],
                 cyclecount_status=1,
                 difference=data[i]['physical_inventory'] - data[i]['goods_qty']
             )
-            print('update before',[(i.cyclecount_status, i.physical_inventory, i.difference) for i in ManualCyclecountModeModel.objects.filter(openid=self.request.auth.openid, t_code=data[i]['t_code'])])
-            print()
         return Response({"detail": "success"}, status=200)
 
     def update(self, request, *args, **kwargs):
