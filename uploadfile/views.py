@@ -1091,6 +1091,7 @@ class AsnlistfileAddViewSet(views.APIView):
                         all_data = AsnDetailModel.objects.filter(patch_number=i)
                         pdf_data = list()
                         for j in range(len(all_data)):
+                            warehouse_addr = warehouse.objects.filter(pk=all_data[i].warehouse_id).first().warehouse_city.split('-')
                             d = dict()
                             d['id'] = j + 1
                             d['patch_number'] = all_data[j].patch_number
@@ -1098,8 +1099,8 @@ class AsnlistfileAddViewSet(views.APIView):
                             d['barcode'] = goods.objects.filter(goods_code=all_data[j].goods_code).first().bar_code
                             d['total'] = all_data[j].goods_qty
                             d['goods_code'] = all_data[j].goods_code
-                            d['address'] = 'EA'
-                            d['country'] = 'US'
+                            d['address'] = warehouse_addr[1]
+                            d['country'] = warehouse_addr[0]
                             pdf_data.append(d)
                         # makepdf.generate_pdf.delay(pdf_data, i)
                         # makepdf.generate_pdf(pdf_data, i)
