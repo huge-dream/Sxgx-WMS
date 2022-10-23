@@ -1119,6 +1119,7 @@ class AsnlistfileAddViewSet(views.APIView):
                         makepdf.generate_pdf.consume()
                     return Response({"detail": "success"}, status=200)
                 except:
+                    print(format_exc())
                     raise APIException({"detail": "Upload Failed"})
             else:
                 raise APIException({"detail": "Can Not Support This File Type"})
