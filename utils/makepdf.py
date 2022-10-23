@@ -6,6 +6,7 @@ from io import BytesIO
 import os
 from django.conf import settings
 from greaterwms.celery import app
+from traceback import format_exc
 
 data = [{
     'id': 1,
@@ -150,15 +151,20 @@ def generate_label_files(data):
 import funboost
 @funboost.boost('makepdf', broker_kind=funboost.BrokerEnum.PERSISTQUEUE, log_level=21)
 def generate_pdf(data, patch):
-    patch_file_list = generate_label_files(data)
-    images = []
-    output = None
-    for i in patch_file_list:
-        if output is None:
-            output = Image.open(i[0])
-        for j in i:
-            img = Image.open(j)
-            images.append(img)
-    output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
-
+    try:
+        print('running makepdf, patch is', patch)
+        patch_file_list = generate_label_files(data)
+        print('label save ok, save pdf')
+        images = []
+        output = None
+        for i in patch_file_list:
+            if output is None:
+                output = Image.open(i[0])
+            for j in i:
+                img = Image.open(j)
+                images.append(img)
+        output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
+        print('pdf save ok')
+    except:
+        print(format_exc())
 
