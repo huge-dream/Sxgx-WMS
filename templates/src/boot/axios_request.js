@@ -28,10 +28,10 @@ const axiosInstanceAuthScan = axios.create({
 
 var lang = LocalStorage.getItem("lang");
 if (LocalStorage.has("lang")) {
-  lang = lang || "en-us";
+  lang = lang || "zh-hans";
 } else {
-  LocalStorage.set("lang", "en-us");
-  lang = "en-us";
+  LocalStorage.set("lang", "zh-hans");
+  lang = "zh-hans";
 }
 
 const axiosFile = axios.create({

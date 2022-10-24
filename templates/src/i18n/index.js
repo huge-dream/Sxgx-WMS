@@ -13,10 +13,10 @@ import zhHant from "./zh-hant";
 export default {
   ar: Ar,
   de: De,
-  "en-US": enUS,
+  "en-us": enUS,
   fr: Fr,
   it: It,
-  ja: Ja, 
+  ja: Ja,
   pt: Pt,
   ru: Ru,
   sp: Sp,
