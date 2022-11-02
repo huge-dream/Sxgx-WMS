@@ -15,21 +15,21 @@
         <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="goodsclass" :label="$t('goods.class')" icon="img:statics/goods/goodsclass.png" :to="{ name: 'goodsclass' }" exact/>
         </transition>
-        <transition appear enter-active-class="animated zoomIn">
+        <!-- <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="goodscolor" :label="$t('goods.color')" icon="img:statics/goods/goodscolor.png" :to="{ name: 'goodscolor' }" exact/>
         </transition>
         <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="goodsbrand" :label="$t('goods.brand')" icon="img:statics/goods/goodsbrand.png" :to="{ name: 'goodsbrand' }" exact/>
-        </transition>
+        </transition> -->
         <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="goodsshape" :label="$t('goods.shape')" icon="img:statics/goods/goodsshape.png" :to="{ name: 'goodsshape' }" exact/>
         </transition>
         <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="goodsspecs" :label="$t('goods.specs')" icon="img:statics/goods/goodsspecs.png" :to="{ name: 'goodsspecs' }" exact/>
         </transition>
-        <transition appear enter-active-class="animated zoomIn">
+        <!-- <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="goodsorigin" :label="$t('goods.origin')" icon="img:statics/goods/goodsorigin.png" :to="{ name: 'goodsorigin' }" exact/>
-        </transition>
+        </transition> -->
       </q-tabs>
     </div>
   </div>

@@ -27,12 +27,12 @@
         <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="pickinglist" :label="$t('outbound.pickinglist')" icon="img:statics/outbound/pickinglist.png" :to="{ name: 'pickinglist' }" exact/>
         </transition>
-        <transition appear enter-active-class="animated zoomIn">
+        <!-- <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="shippedstock" :label="$t('outbound.shippedstock')" icon="img:statics/outbound/outbound.png" :to="{ name: 'shippedstock' }" exact/>
         </transition>
         <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="pod" :label="$t('outbound.pod')" icon="img:statics/outbound/receiving.png" :to="{ name: 'pod' }" exact/>
-        </transition>
+        </transition> -->
       </q-tabs>
     </div>
   </div>

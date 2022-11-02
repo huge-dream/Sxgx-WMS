@@ -255,7 +255,7 @@
                   >{{ $t("confirmpicked") }}</q-tooltip
                 >
               </q-btn>
-              <q-btn
+              <!-- <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&
                   $q.localStorage.getItem('staff_type') !== 'Customer' &&
@@ -296,7 +296,7 @@
                   content-style="font-size: 12px"
                   >{{ $t("outbound.pod") }}</q-tooltip
                 >
-              </q-btn>
+              </q-btn> -->
               <q-btn
                 v-show="
                   $q.localStorage.getItem('staff_type') !== 'Supplier' &&

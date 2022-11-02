@@ -397,7 +397,7 @@
             /></q-item-section>
             <q-item-section>{{ $t("menuItem.staff") }}</q-item-section>
           </q-item>
-          <q-item
+          <!-- <q-item
             clickable
             :to="{ name: 'driverlist' }"
             @click="linkChange('driver')"
@@ -410,7 +410,7 @@
               ><q-icon name="transfer_within_a_station"
             /></q-item-section>
             <q-item-section>{{ $t("menuItem.driver") }}</q-item-section>
-          </q-item>
+          </q-item> -->
           <q-separator v-show="device === 0" />
 
           <q-item

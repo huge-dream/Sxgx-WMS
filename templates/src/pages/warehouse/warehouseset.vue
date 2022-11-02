@@ -53,7 +53,7 @@
             </template>
             <template v-else-if="props.row.id !== editid">
               <q-td key="warehouse_name" :props="props">
-                {{ props.row.warehouse_name }}
+                {{ props.row.id + "-" + props.row.warehouse_name }}
               </q-td>
             </template>
             <template v-if="props.row.id === editid">
