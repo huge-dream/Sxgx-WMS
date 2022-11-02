@@ -2177,7 +2177,7 @@ class PickListDownloadView(viewsets.ModelViewSet):
             openid['openid'] = self.request.auth.openid
         context = []
         for i in DnListModel.objects.filter(**openid, dn_status=3):
-            picking_qs = PickingListModel.objects.filter(**openid, dn_code=i.dn_code)
+            picking_qs = PickingListModel.objects.filter(**openid, dn_code=i.dn_code, picking_status=0)
             serializer = serializers.DNPickingListGetSerializer(picking_qs, many=True)
             for j in serializer.data:
                 context.append(j)

@@ -8,22 +8,22 @@ const baseurl = window.g.BaseUrl;
 
 const axiosInstance = axios.create({
   baseURL: baseurl,
-  timeout: 5000,
+  timeout: 60000,
 });
 
 const axiosInstanceVersion = axios.create({
   baseURL: baseurl,
-  timeout: 5000,
+  timeout: 60000,
 });
 
 const axiosInstanceAuth = axios.create({
   baseURL: baseurl,
-  timeout: 5000,
+  timeout: 60000,
 });
 
 const axiosInstanceAuthScan = axios.create({
   baseURL: baseurl,
-  timeout: 5000,
+  timeout: 60000,
 });
 
 var lang = LocalStorage.getItem("lang");
@@ -36,12 +36,12 @@ if (LocalStorage.has("lang")) {
 
 const axiosFile = axios.create({
   baseURL: baseurl,
-  timeout: 5000,
+  timeout: 60000,
 });
 
 const axiospdfFile = axios.create({
   baseURL: baseurl,
-  timeout: 5000,
+  timeout: 60000,
   responseType: "blob",
 });
 
