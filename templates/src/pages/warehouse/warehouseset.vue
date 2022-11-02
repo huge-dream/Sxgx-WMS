@@ -38,6 +38,12 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
+            <template>
+              <q-td key="id" :props="props">
+                {{ props.row.id }}
+              </q-td>
+            </template>
+
             <template v-if="props.row.id === editid">
               <q-td key="warehouse_name" :props="props">
                 <q-input
@@ -53,7 +59,7 @@
             </template>
             <template v-else-if="props.row.id !== editid">
               <q-td key="warehouse_name" :props="props">
-                {{ props.row.id + "-" + props.row.warehouse_name }}
+                {{ props.row.warehouse_name }}
               </q-td>
             </template>
             <template v-if="props.row.id === editid">
@@ -383,6 +389,13 @@ export default {
       height: "",
       table_list: [],
       columns: [
+        {
+          name: "id",
+          required: true,
+          label: "id",
+          align: "left",
+          field: "id",
+        },
         {
           name: "warehouse_name",
           required: true,

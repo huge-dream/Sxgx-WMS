@@ -869,18 +869,18 @@ export default {
           field: "goods_class",
           align: "center",
         },
-        {
+        /* {
           name: "goods_brand",
           label: this.$t("goods.view_goodslist.goods_brand"),
           field: "goods_brand",
           align: "center",
-        },
-        {
+        }, */
+        /* {
           name: "goods_color",
           label: this.$t("goods.view_goodslist.goods_color"),
           field: "goods_color",
           align: "center",
-        },
+        }, */
         {
           name: "goods_shape",
           label: this.$t("goods.view_goodslist.goods_shape"),
@@ -893,12 +893,12 @@ export default {
           field: "goods_specs",
           align: "center",
         },
-        {
+        /* {
           name: "goods_origin",
           label: this.$t("goods.view_goodslist.goods_origin"),
           field: "goods_origin",
           align: "center",
-        },
+        }, */
         {
           name: "goods_cost",
           label: this.$t("goods.view_goodslist.goods_cost"),
