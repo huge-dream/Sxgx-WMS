@@ -1199,8 +1199,8 @@ class DnlistfileaddViewSet(views.APIView):
                         serializer = DNListPostSerializer(data=data)
                         serializer.is_valid(raise_exception=True)
                         serializer.save()
-                        scanner.objects.create(openid=warehouse_openid, mode="DN", code=data['dn_code'], 
-                                            bar_code=data['bar_code'])
+                        print('dnlist saved, dn code is', data['dn_code'], '  |||||   warehouse is', (data['warehouse_id'], data['openid']))
+                        scanner.objects.create(openid=warehouse_openid, mode="DN", code=data['dn_code'], bar_code=data['bar_code'])
                         n = 'N/A'
                         if goodslist.objects.filter(goods_code=str(data_list[i][0]).strip()).exists():
                             pass
@@ -1239,7 +1239,6 @@ class DnlistfileaddViewSet(views.APIView):
                         }
                         serializer = DNDetailPostSerializer(data=check_data)
                         serializer.is_valid(raise_exception=True)
-                        post_data_list = []
                         weight_list = []
                         volume_list = []
                         cost_list = []
@@ -1259,7 +1258,7 @@ class DnlistfileaddViewSet(views.APIView):
                                                     goods_code=str(data_list[i][0]),
                                                     goods_desc=goods_detail.goods_desc,
                                                     dn_stock=int(data_list[i][1]))
-                        post_data = DnDetailModel(openid=warehouse_openid,
+                        DnDetailModel.objects.create(openid=warehouse_openid,
                                                 dn_code=str(data['dn_code']),
                                                 customer=customer_name,
                                                 goods_code=str(data_list[i][0]),
@@ -1272,7 +1271,6 @@ class DnlistfileaddViewSet(views.APIView):
                         weight_list.append(goods_weight)
                         volume_list.append(goods_volume)
                         cost_list.append(goods_cost)
-                        post_data_list.append(post_data)
                         total_weight = sumOfList(weight_list, len(weight_list))
                         total_volume = sumOfList(volume_list, len(volume_list))
                         total_cost = sumOfList(cost_list, len(cost_list))
@@ -1300,7 +1298,6 @@ class DnlistfileaddViewSet(views.APIView):
                                 }
                                 transportation_list.append(transportation_detail)
                             transportation_res['detail'] = transportation_list
-                        DnDetailModel.objects.bulk_create(post_data_list, batch_size=100)
                         DnListModel.objects.filter(openid=warehouse_openid, dn_code=str(data['dn_code'])).update(
                             customer=customer_name, total_weight=total_weight, total_volume=total_volume,
                             total_cost=total_cost, transportation_fee=transportation_res)
