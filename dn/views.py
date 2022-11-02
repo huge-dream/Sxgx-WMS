@@ -73,14 +73,12 @@ class DnListViewSet(viewsets.ModelViewSet):
                 for i in range(len(empty_qs)):
                     if empty_qs[i].create_time <= cur_date - date_check:
                         empty_qs[i].delete()
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
+            vip_level = self.request.auth.vip
             query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
+            if vip_level == 9:
+                pass
+            else:
+                query_dict['openid'] = self.request.auth.openid    
             if id is not None:
                 query_dict['id'] = id
             return DnListModel.objects.filter(Q(**query_dict) & ~Q(customer=''))

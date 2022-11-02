@@ -1199,7 +1199,7 @@ class DnlistfileaddViewSet(views.APIView):
                         serializer = DNListPostSerializer(data=data)
                         serializer.is_valid(raise_exception=True)
                         serializer.save()
-                        print('dnlist saved, dn code is', data['dn_code'], '  |||||   warehouse is', (data['warehouse_id'], data['openid']))
+                        # print('dnlist saved, dn code is', data['dn_code'], '  |||||   warehouse is', (data['warehouse_id'], data['openid']))
                         scanner.objects.create(openid=warehouse_openid, mode="DN", code=data['dn_code'], bar_code=data['bar_code'])
                         n = 'N/A'
                         if goodslist.objects.filter(goods_code=str(data_list[i][0]).strip()).exists():
