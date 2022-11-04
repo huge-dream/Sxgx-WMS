@@ -133,7 +133,8 @@ class DrawImg:
             self.draw_prefix(f'{i+1}/{data["total"]}')
             self.draw_madeinchina(data['brand'])
             self.draw_sku(data['goods_code'])
-            self.draw_barcode(data['barcode'], data['patch_number'])
+            # self.draw_barcode(data['barcode'], data['patch_number'])
+            self.draw_barcode(data['goods_code'], data['patch_number'])
             self.save(i+1)
             label_file_list.append(os.path.join(self.folder, f'{self.goods["goods_code"]}-{i+1}.jpg'))
         return label_file_list
