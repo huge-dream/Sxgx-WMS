@@ -1,3 +1,5 @@
+import traceback
+
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
 from barcode.codex import Code128
@@ -151,14 +153,17 @@ def generate_label_files(data):
 import funboost
 @funboost.boost('makepdf', broker_kind=funboost.BrokerEnum.PERSISTQUEUE, log_level=21)
 def generate_pdf(data, patch):
-    patch_file_list = generate_label_files(data)
-    images = []
-    output = None
-    for i in patch_file_list:
-        if output is None:
-            output = Image.open(i[0])
-        for j in i:
-            img = Image.open(j)
-            images.append(img)
-    output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
+    try:
+        patch_file_list = generate_label_files(data)
+        images = []
+        output = None
+        for i in patch_file_list:
+            if output is None:
+                output = Image.open(i[0])
+            for j in i:
+                img = Image.open(j)
+                images.append(img)
+        output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
+    except:
+        print(traceback.format_exc())
 
