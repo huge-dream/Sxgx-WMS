@@ -109,7 +109,7 @@ class DrawImg:
         codeimg = Image.open(ph+'.png')
         out = codeimg.resize((750,180))
         self.img_fp.paste(out, (int((self.size_x - 750) / 2), 240))
-        # os.remove(ph+'.png')
+
     def check_folder(self):
         if self.goods['patch_number'] not in os.listdir(os.path.join(base_dir, 'media/asn_label/')):
             os.mkdir(self.folder)
