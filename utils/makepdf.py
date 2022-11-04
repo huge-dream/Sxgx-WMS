@@ -158,18 +158,21 @@ def generate_pdf(data, patch):
         images = []
         output = None
         for i in patch_file_list:
-            print('the list length is', len(i))
+            # print('the list length is', len(i))
             if output is None:
                 output = Image.open(i[0])
             for j in i:
-                print(j)
+                # print(j)
                 img = Image.open(j)
                 images.append(img)
-            print('next list')
-        print('all imgs have', len(images)+1)
-        print('generate pdf start, file is', f'media/asn_label/{patch}/{patch}.pdf')
-        output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
-        print('generate pdf end')
+            # print('next list')
+        # print('all imgs have', len(images))
+        # print('generate pdf start, file is', f'media/asn_label/{patch}/{patch}.pdf')
+        output.save(
+            os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'),
+            'pdf', save_all=True, append_images=images[1:]
+        )
+        # print('generate pdf end')
     except:
         print(traceback.format_exc())
 
