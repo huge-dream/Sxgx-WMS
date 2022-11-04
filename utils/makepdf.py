@@ -155,6 +155,7 @@ import funboost
 def generate_pdf(data, patch):
     try:
         patch_file_list = generate_label_files(data)
+        print(patch_file_list, len(patch_file_list))
         images = []
         output = None
         for i in patch_file_list:
@@ -163,7 +164,9 @@ def generate_pdf(data, patch):
             for j in i:
                 img = Image.open(j)
                 images.append(img)
+        print('generate pdf start, file is', f'media/asn_label/{patch}/{patch}.pdf')
         output.save(os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'), 'pdf', save_all=True, append_images=images[1:])
+        print('generate pdf end')
     except:
         print(traceback.format_exc())
 
