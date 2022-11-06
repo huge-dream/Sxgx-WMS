@@ -957,7 +957,7 @@ class AsnlistfileAddViewSet(views.APIView):
                             data_list[i][4] = int(warehouse_id)
                         if str(data_list[i][3]) == 'nan':
                             data_list[i][3] = str(dt.strftime('%Y%m%d%H%M%S%f'))
-                        warehouse_openid = warehouse.objects.filter(pk=int(data_list[i][4])).first().openid
+                        warehouse_openid = warehouse.objects.filter(warehouse_id=int(data_list[i][4])).first().openid
                         supplier_name = supplier.objects.all().first().supplier_name
                         if AsnListModel.objects.filter(openid=warehouse_openid,
                                                     patch_number=str(data_list[i][3])).exists():
@@ -1178,7 +1178,7 @@ class DnlistfileaddViewSet(views.APIView):
                             data_list[i][1] = 0
                         if not is_number(str(data_list[i][2])):
                             data_list[i][2] = int(warehouse_id)
-                        warehouse_openid = warehouse.objects.filter(pk=data_list[i][2]).first().openid
+                        warehouse_openid = warehouse.objects.filter(warehose_id=data_list[i][2]).first().openid
                         customer_name = customer.objects.all().first().customer_name
                         qs_set = DnListModel.objects.filter(openid=warehouse_openid, is_delete=False)
                         order_day = str(timezone.now().strftime('%Y%m%d'))
@@ -1303,6 +1303,7 @@ class DnlistfileaddViewSet(views.APIView):
                             total_cost=total_cost, transportation_fee=transportation_res)
                     return Response({"detail": "success"}, status=200)
                 except:
+                    print(format_exc())
                     raise APIException({"detail": "Upload Failed"})
         else:
             raise APIException({"detail": "Please Select One File"})
