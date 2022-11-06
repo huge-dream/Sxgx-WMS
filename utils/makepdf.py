@@ -47,59 +47,48 @@ class DrawImg:
         return ImageFont.truetype(font=self.font_path, size=size)
 
     def draw_patch(self, text):
-        font = self.get_font(80)
+        font = self.get_font(100)
         text_width, text_height = font.getbbox(text)[2:]
-        char_width = int(text_width / len(text))
         start_x = int((self.size_x - text_width) / 2)
-        start_y = 150
+        start_y = 180
         self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
 
     def draw_pk(self, text):
-        font = self.get_font(100)
+        font = self.get_font(110)
         text_width, text_height = font.getbbox(text)[2:]
-        char_width = int(text_width / len(text))
         start_x = int((self.size_x - text_width) / 2)
-        start_y = 28
+        start_y = 34
         self.draw.text(xy=(start_x, start_y), text=text, fill=(255, 255, 255), font=font)
 
     def draw_address(self, text):
-        font = self.get_font(90)
-        text_width, text_height = font.getbbox(text)[2:]
-        char_width = int(text_width / len(text))
-        start_x = 750
-        start_y = 30
+        font = self.get_font(120)
+        start_x = 880
+        start_y = 34
         self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
 
     def draw_country(self, text):
-        font = self.get_font(90)
-        text_width, text_height = font.getbbox(text)[2:]
-        char_width = int(text_width / len(text))
-        start_x = 120
-        start_y = 30
+        font = self.get_font(120)
+        start_x = 140
+        start_y = 34
         self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
     
     def draw_prefix(self, text):
         font = self.get_font(50)
-        text_width, text_height = font.getbbox(text)[2:]
-        char_width = int(text_width / len(text))
-        start_x = 20
-        start_y = 520
+        start_x = 30
+        start_y = 630
         self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
     
     def draw_madeinchina(self, text):
         font = self.get_font(50)
-        text_width, text_height = font.getbbox(text)[2:]
-        char_width = int(text_width / len(text))
-        start_x = 600
-        start_y = 520
+        start_x = 770
+        start_y = 630
         self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
 
     def draw_sku(self, text):
-        font = ImageFont.truetype(font=self.font_path, size=80)
+        font = ImageFont.truetype(font=self.font_path, size=110)
         text_width, text_height = font.getbbox(text)[2:]
-        char_width = int(text_width / len(text))
         start_x = int((self.size_x - text_width) / 2)
-        start_y = 420
+        start_y = 490
         self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
 
     def draw_barcode(self, code, patch):
@@ -109,8 +98,8 @@ class DrawImg:
         opt = {'write_text': False, 'quiet_zone': 2, 'text_distance': 10}
         bc.save(ph, opt)
         codeimg = Image.open(ph+'.png')
-        out = codeimg.resize((750,180))
-        self.img_fp.paste(out, (int((self.size_x - 750) / 2), 240))
+        out = codeimg.resize((900,200))
+        self.img_fp.paste(out, (int((self.size_x - 900) / 2), 290))
 
     def check_folder(self):
         if self.goods['patch_number'] not in os.listdir(os.path.join(base_dir, 'media/asn_label/')):
