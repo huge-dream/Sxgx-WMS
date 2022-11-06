@@ -564,7 +564,7 @@ class GoodlistfileAddViewSet(views.APIView):
                                                     )
                             scanner.objects.create(openid=self.request.auth.openid, mode="GOODS",
                                                    code=str(data_list[i][0]).strip(),
-                                                   bar_code=bar_code)
+                                                   bar_code=str(data_list[i][0]).strip())
                 goods_supplier_list = df.drop_duplicates(subset=[data_header.get('goods_supplier')], keep='first').loc[:,
                                       data_header.get('goods_supplier')].values
                 for i in goods_supplier_list:
