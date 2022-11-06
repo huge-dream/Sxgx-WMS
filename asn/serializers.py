@@ -7,7 +7,7 @@ class ASNListGetSerializer(serializers.ModelSerializer):
     asn_status = serializers.IntegerField(read_only=True, required=False)
     supplier = serializers.CharField(read_only=True, required=False)
     patch_number = serializers.CharField(read_only=True, required=False)
-    warehouse_id = serializers.IntegerField(read_only=True, required=False)
+    warehouse_id = serializers.SerializerMethodField()
     bar_code = serializers.CharField(read_only=True, required=False)
     creater = serializers.CharField(read_only=True, required=False)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
@@ -16,6 +16,9 @@ class ASNListGetSerializer(serializers.ModelSerializer):
         model = AsnListModel
         exclude = ['openid', 'is_delete', ]
         read_only_fields = ['id', 'openid', ]
+
+    def get_warehouse_id(self, obj):
+        return obj.warehouse_id
 
 class ASNListPostSerializer(serializers.ModelSerializer):
     openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])
@@ -57,7 +60,6 @@ class ASNDetailGetSerializer(serializers.ModelSerializer):
     goods_shortage_qty = serializers.IntegerField(read_only=True, required=False)
     goods_more_qty = serializers.IntegerField(read_only=True, required=False)
     goods_damage_qty = serializers.IntegerField(read_only=True, required=False)
-    goods_qty = serializers.IntegerField(read_only=True, required=False)
     patch_number = serializers.CharField(read_only=True, required=False)
     creater = serializers.CharField(read_only=True, required=False)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')

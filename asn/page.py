@@ -60,7 +60,9 @@ class MyPageNumberPaginationASNList(PageNumberPagination):
         for i in range(len(warehouse_list_data)):
             warehouse_dict = {
                 "id": warehouse_list_data[i].pk,
-                "warehosue_name": warehouse_list_data[i].warehouse_name}
+                "warehosue_name": warehouse_list_data[i].warehouse_name,
+                "warehouse_id": warehouse_list_data[i].warehouse_id
+            }
             warehouse_list.append(warehouse_dict)
         return Response(OrderedDict([
             ('supplier_list', supplier_list),

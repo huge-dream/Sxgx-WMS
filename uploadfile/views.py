@@ -960,9 +960,9 @@ class AsnlistfileAddViewSet(views.APIView):
                         warehouse_openid = warehouse.objects.filter(warehouse_id=int(data_list[i][4])).first().openid
                         supplier_name = supplier.objects.all().first().supplier_name
                         if AsnListModel.objects.filter(openid=warehouse_openid,
-                                                    patch_number=str(data_list[i][3])).exists():
-                            data['asn_code'] = str(AsnListModel.objects.filter(openid=warehouse_openid,
-                                                                            patch_number=str(data_list[i][3])).first().asn_code)
+                                                    patch_number=str(data_list[i][3]), is_delete=False).exists():
+                            data['asn_code'] = str(AsnListModel.objects.filter(openid=warehouse_openid, patch_number=str(data_list[i][3]),
+                                                                               id_delete=False).first().asn_code)
                         else:
                             qs_set = AsnListModel.objects.filter(is_delete=False)
                             order_day = str(timezone.now().strftime('%Y%m%d'))
@@ -985,7 +985,7 @@ class AsnlistfileAddViewSet(views.APIView):
                             scanner.objects.create(openid=warehouse_openid, mode="ASN", code=data['asn_code'], 
                                                 bar_code=data['bar_code'])
                         n = 'N/A'
-                        if goodslist.objects.filter(goods_code=str(data_list[i][1]).strip()).exists():
+                        if goodslist.objects.filter(goods_code=str(data_list[i][1]).strip(), is_delete=False).exists():
                             pass
                         else:
                             bar_code = Md5.md5(str(data_list[i][1]).strip())
@@ -1081,14 +1081,14 @@ class AsnlistfileAddViewSet(views.APIView):
                                 transportation_list.append(transportation_detail)
                             transportation_res['detail'] = transportation_list
                         AsnDetailModel.objects.bulk_create(post_data_list, batch_size=100)
-                        AsnListModel.objects.filter(openid=warehouse_openid, asn_code=data['asn_code']).update(
+                        AsnListModel.objects.filter(openid=warehouse_openid, asn_code=data['asn_code'], is_delete=False).update(
                             supplier=supplier_name, total_weight=total_weight, total_volume=total_volume,
                             total_cost=total_cost, transportation_fee=transportation_res,
                             patch_number=str(data_list[i][3]), warehouse_id=int(data_list[i][4]))
                         patch_number_list.append(data_list[i][3])
                     patch_number_list = set(patch_number_list)
                     for i in patch_number_list:
-                        all_data = AsnDetailModel.objects.filter(patch_number=i)
+                        all_data = AsnDetailModel.objects.filter(patch_number=i, is_delete=False)
                         all_goods = {}
                         for detail in all_data:
                             if detail.goods_code in all_goods:
@@ -1125,7 +1125,6 @@ class AsnlistfileAddViewSet(views.APIView):
                 raise APIException({"detail": "Can Not Support This File Type"})
         else:
             raise APIException({"detail": "Please Select One File"})
-        return Response({"detail": "success"})
 
 class DnlistfileaddViewSet(views.APIView):
     """
@@ -1305,6 +1304,7 @@ class DnlistfileaddViewSet(views.APIView):
                 except:
                     print(format_exc())
                     raise APIException({"detail": "Upload Failed"})
+            else:
+                raise APIException({"detail": "Can Not Support This File Type"})
         else:
             raise APIException({"detail": "Please Select One File"})
-        return Response({"detail": "success"})

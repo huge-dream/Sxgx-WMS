@@ -116,7 +116,13 @@ def transportation_calculate(weight, volume, weight_fee, volume_fee, min_fee):
     return data
 
 def warehouse_validate(data):
-    if warehouse.objects.filter(id=data).exists():
+    if warehouse.objects.filter(warehouse_id=data).exists():
         return data
     else:
         raise APIException({'detail': 'Warehouse "{}" dose not exists'.format(data)})
+
+def warehouse_validate2(data):
+    if warehouse.objects.filter(warehouse_id=data).exists():
+        raise APIException({'detail': 'Warehosue "{}" exists'.format(data)})
+    else:
+        return data
