@@ -1,3 +1,5 @@
+import traceback
+
 from rest_framework import viewsets
 from .models import ListModel
 from . import serializers
@@ -92,17 +94,17 @@ class APIViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk):
         qs = self.get_object()
-        if qs.openid != self.request.auth.openid:
-            raise APIException({"detail": "Cannot update data which not yours"})
-        else:
-            data = self.request.data
-            if len(data['warehouse_name']) > 45:
-                raise APIException({"detail": "The warehouse name is set to more than 45 characters"})
-            serializer = self.get_serializer(qs, data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=200, headers=headers)
+        # if qs.openid != self.request.auth.openid:
+        #     raise APIException({"detail": "Cannot update data which not yours"})
+        # else:
+        data = self.request.data
+        if len(data['warehouse_name']) > 45:
+            raise APIException({"detail": "The warehouse name is set to more than 45 characters"})
+        serializer = self.get_serializer(qs, data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=200, headers=headers)
 
     def partial_update(self, request, pk):
         qs = self.get_object()

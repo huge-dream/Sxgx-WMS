@@ -6,7 +6,7 @@ class ListModel(models.Model):
     warehouse_address = models.CharField(max_length=255, verbose_name="Warehouse Address")
     warehouse_contact = models.CharField(max_length=255, verbose_name="Warehouse Contact")
     warehouse_manager = models.CharField(max_length=255, verbose_name="Warehouse Manager")
-    warehouse_id = models.CharField(max_length=255, verbose_name="Warehouse ID")
+    warehouse_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Warehouse ID")
     creater = models.CharField(max_length=255, verbose_name="Who Created")
     openid = models.CharField(max_length=255, verbose_name="Openid")
     is_delete = models.BooleanField(default=False, verbose_name='Delete Label')

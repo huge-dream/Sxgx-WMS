@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import AsnListModel, AsnDetailModel
 from utils import datasolve
+from warehouse.models import ListModel as warehouse
 
 class ASNListGetSerializer(serializers.ModelSerializer):
     asn_code = serializers.CharField(read_only=True, required=False)
@@ -19,7 +20,7 @@ class ASNListGetSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'openid', ]
 
     def get_warehouse_id(self, obj):
-        return obj.warehouse_id
+        return warehouse.objects.filter(pk=obj.warehouse_id).first().warehouse_id
 
 class ASNListPostSerializer(serializers.ModelSerializer):
     openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])
@@ -63,6 +64,7 @@ class ASNDetailGetSerializer(serializers.ModelSerializer):
     goods_more_qty = serializers.IntegerField(read_only=True, required=False)
     goods_damage_qty = serializers.IntegerField(read_only=True, required=False)
     patch_number = serializers.CharField(read_only=True, required=False)
+    warehouse_id = serializers.SerializerMethodField()
     box_number = serializers.CharField(read_only=True, required=False)
     creater = serializers.CharField(read_only=True, required=False)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
@@ -71,6 +73,9 @@ class ASNDetailGetSerializer(serializers.ModelSerializer):
         model = AsnDetailModel
         exclude = ['openid', 'is_delete', ]
         read_only_fields = ['id', 'openid']
+
+    def get_warehouse_id(self, obj):
+        return warehouse.objects.filter(pk=obj.warehouse_id).first().warehouse_id
 
 class ASNDetailPostSerializer(serializers.ModelSerializer):
     openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])

@@ -1,7 +1,10 @@
 from rest_framework import serializers
+from rest_framework.exceptions import APIException
+
 from .models import ListModel
 from utils import datasolve
 from userprofile.models import Users
+from warehouse.models import ListModel as warehouse
 
 
 class WarehouseGetSerializer(serializers.ModelSerializer):
@@ -33,7 +36,7 @@ class WarehousePostSerializer(serializers.ModelSerializer):
     warehouse_address = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     warehouse_contact = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     warehouse_manager = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
-    warehouse_id = serializers.CharField(read_only=False, required=True, validators=[datasolve.warehouse_validate2])
+    warehouse_id = serializers.CharField(read_only=False, required=False, validators=[datasolve.warehouse_validate2])
     creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
 
     class Meta:
@@ -49,13 +52,18 @@ class WarehouseUpdateSerializer(serializers.ModelSerializer):
     warehouse_address = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     warehouse_contact = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     warehouse_manager = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
-    warehouse_id = serializers.CharField(read_only=False, required=True, validators=[datasolve.warehouse_validate2])
+    # warehouse_id = serializers.CharField(read_only=False, required=False, validators=[datasolve.warehouse_validate2])
     creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
 
     class Meta:
         model = ListModel
         exclude = ['openid', 'is_delete', ]
-        read_only_fields = ['id', 'create_time', 'update_time', ]
+        read_only_fields = ['id', 'create_time', 'update_time',]
+
+    def update(self, instance, validated_data):
+        if validated_data.get('warehouse_id') and warehouse.objects.filter(warehouse_id=validated_data.get('warehouse_id')).exists():
+            raise APIException({'detail': 'Warehosue "{}" exists'.format(validated_data.get('warehouse_id'))})
+        return super().update(instance, validated_data)
 
 
 class WarehousePartialUpdateSerializer(serializers.ModelSerializer):
@@ -65,7 +73,7 @@ class WarehousePartialUpdateSerializer(serializers.ModelSerializer):
     warehouse_address = serializers.CharField(read_only=False, required=False, validators=[datasolve.data_validate])
     warehouse_contact = serializers.CharField(read_only=False, required=False, validators=[datasolve.data_validate])
     warehouse_manager = serializers.CharField(read_only=False, required=False, validators=[datasolve.data_validate])
-    warehouse_id = serializers.CharField(read_only=False, required=True, validators=[datasolve.warehouse_validate2])
+    warehouse_id = serializers.CharField(read_only=False, required=False, validators=[datasolve.warehouse_validate2])
     creater = serializers.CharField(read_only=False, required=False, validators=[datasolve.data_validate])
 
     class Meta:

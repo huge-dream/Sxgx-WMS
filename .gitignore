@@ -18,3 +18,5 @@ logs/
 !/media/asn_label/*.ttf
 aaaaa
 ~*
+pythonlogs/
+sqllite_queues/

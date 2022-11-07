@@ -1,6 +1,5 @@
-from rest_framework import viewsets, views
+from rest_framework import views
 import pandas as pd
-import numpy as np
 from django.utils import timezone
 from django.db.models import Q
 from utils.datasolve import data_validate
@@ -43,6 +42,7 @@ from dn.serializers import DNDetailPostSerializer
 from dn import files as dnfiles
 from utils import makepdf
 from traceback import format_exc
+import os
 
 
 class GoodlistfileViewSet(views.APIView):
@@ -953,12 +953,19 @@ class AsnlistfileAddViewSet(views.APIView):
                             continue
                         if not is_number(str(data_list[i][2])):
                             data_list[i][2] = 0
-                        if not is_number(str(data_list[i][4])):
-                            data_list[i][4] = int(warehouse_id)
+                        if not str(data_list[i][4]):
+                            raise APIException({"detail": "Warehouse Id is not exists"})
                         if str(data_list[i][3]) == 'nan':
                             data_list[i][3] = str(dt.strftime('%Y%m%d%H%M%S%f'))
-                        warehouse_openid = warehouse.objects.filter(warehouse_id=int(data_list[i][4])).first().openid
-                        supplier_name = supplier.objects.all().first().supplier_name
+                        if (w:=warehouse.objects.filter(warehouse_id=str(data_list[i][4]))).exists():
+                            warehouse_openid = w.first().openid
+                            warehouse_pk = w.first().pk
+                        else:
+                            raise APIException({"detail": "Warehouse Id {} is not exists".format(str(data_list[i][4]))})
+                        if (s:=supplier.objects.all()).exists():
+                            supplier_name = s.first().supplier_name
+                        else:
+                            raise APIException({"detail": "No Suppliers"})
                         if AsnListModel.objects.filter(openid=warehouse_openid,
                                                     patch_number=str(data_list[i][3]), is_delete=False).exists():
                             data['asn_code'] = str(AsnListModel.objects.filter(openid=warehouse_openid, patch_number=str(data_list[i][3]),
@@ -1018,7 +1025,7 @@ class AsnlistfileAddViewSet(views.APIView):
                             'goods_code': str(data_list[i][1]).strip(),
                             'goods_qty': int(data_list[i][2]),
                             'patch_number': str(data_list[i][3]),
-                            'warehouse_id': int(data_list[i][4]),
+                            'warehouse_id': warehouse_pk,
                             'creater': str(staff_name)
                         }
                         serializer = ASNDetailPostSerializer(data=check_data)
@@ -1084,7 +1091,7 @@ class AsnlistfileAddViewSet(views.APIView):
                         AsnListModel.objects.filter(openid=warehouse_openid, asn_code=data['asn_code'], is_delete=False).update(
                             supplier=supplier_name, total_weight=total_weight, total_volume=total_volume,
                             total_cost=total_cost, transportation_fee=transportation_res,
-                            patch_number=str(data_list[i][3]), warehouse_id=int(data_list[i][4]))
+                            patch_number=str(data_list[i][3]), warehouse_id=warehouse_pk)
                         patch_number_list.append(data_list[i][3])
                     patch_number_list = set(patch_number_list)
                     for i in patch_number_list:
@@ -1113,10 +1120,7 @@ class AsnlistfileAddViewSet(views.APIView):
                             d['address'] = warehouse_addr[1]
                             d['country'] = warehouse_addr[0]
                             pdf_data.append(d)
-                        # makepdf.generate_pdf.delay(pdf_data, i)
-                        # makepdf.generate_pdf(pdf_data, i)
-                        makepdf.generate_pdf.push(pdf_data, i)
-                        makepdf.generate_pdf.consume()
+                        makepdf.Draw(pdf_data, os.path.join(makepdf.base_dir, f'{i}/{i}.pdf')).main()
                     return Response({"detail": "success"}, status=200)
                 except:
                     print(format_exc())

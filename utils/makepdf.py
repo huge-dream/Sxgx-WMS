@@ -9,6 +9,8 @@ import os
 from django.conf import settings
 from greaterwms.celery import app
 from traceback import format_exc
+import barcode
+from fpdf import FPDF
 
 data = [{
     'id': 1,
@@ -31,137 +33,84 @@ data = [{
 },
 ]
 
-base_dir = settings.BASE_DIR
+base_dir = os.path.join(settings.BASE_DIR, 'media/asn_label/')
 
-class DrawImg:
+class Draw:
+    def __init__(self, data, pdf_file_name):
+        self.data = data
+        self.pdf_file_name = pdf_file_name
+        self.pdf = FPDF(format=(83, 48))
+        self.pdf.set_auto_page_break(False)
+        self.pdf.set_display_mode('real', 'default')
 
-    def __init__(self, img_fp=None):
-        self.img_fp = img_fp
-        self.draw = None
-        self.size_x, self.size_y = None, None
-        self.font_path = os.path.join(base_dir, 'media/asn_label/arial.ttf')
-        self.goods = {}
-        self.folder = ''
-
-    def get_font(self, size):
-        return ImageFont.truetype(font=self.font_path, size=size)
-
-    def draw_patch(self, text):
-        font = self.get_font(100)
-        text_width, text_height = font.getbbox(text)[2:]
-        start_x = int((self.size_x - text_width) / 2)
-        start_y = 180
-        self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
-
-    def draw_pk(self, text):
-        font = self.get_font(110)
-        text_width, text_height = font.getbbox(text)[2:]
-        start_x = int((self.size_x - text_width) / 2)
-        start_y = 34
-        self.draw.text(xy=(start_x, start_y), text=text, fill=(255, 255, 255), font=font)
-
-    def draw_address(self, text):
-        font = self.get_font(120)
-        start_x = 880
-        start_y = 34
-        self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
-
-    def draw_country(self, text):
-        font = self.get_font(120)
-        start_x = 140
-        start_y = 34
-        self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
-    
-    def draw_prefix(self, text):
-        font = self.get_font(50)
-        start_x = 30
-        start_y = 630
-        self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
-    
-    def draw_madeinchina(self, text):
-        font = self.get_font(50)
-        start_x = 770
-        start_y = 630
-        self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
-
-    def draw_sku(self, text):
-        font = ImageFont.truetype(font=self.font_path, size=110)
-        text_width, text_height = font.getbbox(text)[2:]
-        start_x = int((self.size_x - text_width) / 2)
-        start_y = 490
-        self.draw.text(xy=(start_x, start_y), text=text, fill=(0, 0, 0), font=font)
-
-    def draw_barcode(self, code, patch):
-        self.check_folder()
-        bc = Code128(code, writer=ImageWriter())
-        ph = os.path.join(base_dir, f'media/asn_label/{patch}/{code}')
+    def draw_barcode(self, patch_number, code):
+        folder = os.path.join(base_dir, patch_number)
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+        ph = os.path.join(folder, f'{code}')
+        if os.path.exists(f"{ph}.png"):
+            return f"{ph}.png"
+        CODE128 = barcode.get_barcode_class('code128')
+        bc = CODE128(code, writer=ImageWriter())
         opt = {'write_text': False, 'quiet_zone': 2, 'text_distance': 10}
         bc.save(ph, opt)
-        codeimg = Image.open(ph+'.png')
-        out = codeimg.resize((900,200))
-        self.img_fp.paste(out, (int((self.size_x - 900) / 2), 290))
+        return f"{ph}.png"
 
-    def check_folder(self):
-        if self.goods['patch_number'] not in os.listdir(os.path.join(base_dir, 'media/asn_label/')):
-            os.mkdir(self.folder)
+    def generate(self, data_index, page_number, page_data, barcode_path):
+        # 绘制矩形
+        self.pdf.rect(1, 1, self.pdf.w - 2, self.pdf.h - 2, )
+        self.pdf.t_margin = 0
+        self.pdf.b_margin = 0
+        self.pdf.y = 3
+        # 第一行内容
+        self.pdf.set_font('arial', 'B', 22)
+        self.pdf.cell(20, 8, f"{page_data.get('country')}")
+        # 第一行中间文字
+        self.pdf.set_fill_color(0, 0, 0)
+        self.pdf.set_text_color(255, 255, 255)
+        self.pdf.set_font('arial', '', 22)
+        self.pdf.cell(20, 8, f"{data_index}", fill=True, align='C')
+        # 第一行最后文字
+        self.pdf.set_fill_color(255, 255, 255)
+        self.pdf.set_text_color(0, 0, 0)
+        self.pdf.set_font('arial', 'B', 22)
+        self.pdf.cell(0, 8, f"{page_data.get('address')}", align="R")
+        # 第二行
+        self.pdf.ln(9)
+        self.pdf.set_font('arial', 'B', 20)
+        self.pdf.cell(0, 8, f"{page_data.get('patch_number')}", fill=True, align='C')
+        # 第三行
+        self.pdf.ln()
+        self.pdf.image(barcode_path, 5, 20, 73, h=10, type='png')
+        # 第四行
+        self.pdf.ln(12)
+        self.pdf.set_font('arial', '', 18)
+        self.pdf.cell(0, 8, f"{page_data.get('goods_code')}", align="C")
+        # 第五行
+        self.pdf.ln()
+        self.old_pdf_l_margin = self.pdf.l_margin
+        self.old_pdf_r_margin = self.pdf.r_margin
+        self.old_pdf_x = self.pdf.x
+        self.pdf.x = 3
+        self.pdf.r_margin = 3
+        self.pdf.l_margin = 0
+        self.pdf.set_font('arial', '', 14)
+        self.pdf.cell(0, 8, f"{page_number}/{page_data.get('total')}")
+        self.pdf.cell(0, 8, f"{page_data.get('brand')}", align="R")
+        self.pdf.l_margin = self.old_pdf_l_margin
+        self.pdf.r_margin = self.old_pdf_r_margin
+        self.pdf.x = self.old_pdf_x
+        # self.pdf.cell(3, 0, f"{data_index}", align='R')
+        # self.pdf.cell(5, 0, f"{data_index}", align='')
+        # self.pdf.cell(0, 0, f"{page_data.get('country')}", align='R')
+        # pdf.set_font('simsunb', '', 20)
+        # pdf.cell(40, 10, 'Hello, World!')
 
-    def save(self, i=None):
-        filename = os.path.join(self.folder, f'{self.goods["goods_code"]}{"" if i is None else f"-{i}"}.jpg')
-        self.img_fp.save(filename)
-    
-    def make(self, data):
-        self.goods = data
-        self.folder = os.path.join(base_dir, f'media/asn_label/{self.goods["patch_number"]}/')
-        label_file_list = []
-        for i in range(data['total']):
-            self.img_fp = Image.open(os.path.join(base_dir, 'media/asn_label/base_label.jpg'))
-            self.draw = ImageDraw.Draw(self.img_fp)
-            self.size_x, self.size_y = self.img_fp.size
-            self.draw_patch(data['patch_number'])
-            self.draw_pk(str(data['id']))
-            self.draw_address(data['address'])
-            self.draw_country(data['country'])
-            self.draw_prefix(f'{i+1}/{data["total"]}')
-            self.draw_madeinchina(data['brand'])
-            self.draw_sku(data['goods_code'])
-            self.draw_barcode(data['barcode'], data['patch_number'])
-            # self.draw_barcode(data['goods_code'], data['patch_number'])
-            self.save(i+1)
-            label_file_list.append(os.path.join(self.folder, f'{self.goods["goods_code"]}-{i+1}.jpg'))
-        return label_file_list
-
-
-def generate_label_files(data):
-    draw = DrawImg()
-    patch_file_list = list()
-    for i in data:
-        patch_file_list.append(draw.make(i))
-    return patch_file_list
-
-# @app.task
-import funboost
-@funboost.boost('makepdf', broker_kind=funboost.BrokerEnum.PERSISTQUEUE, log_level=21)
-def generate_pdf(data, patch):
-    try:
-        patch_file_list = generate_label_files(data)
-        images = []
-        output = None
-        for i in patch_file_list:
-            # print('the list length is', len(i))
-            if output is None:
-                output = Image.open(i[0])
-            for j in i:
-                # print(j)
-                img = Image.open(j)
-                images.append(img)
-            # print('next list')
-        # print('all imgs have', len(images))
-        # print('generate pdf start, file is', f'media/asn_label/{patch}/{patch}.pdf')
-        output.save(
-            os.path.join(base_dir, f'media/asn_label/{patch}/{patch}.pdf'),
-            'pdf', save_all=True, append_images=images[1:]
-        )
-        # print('generate pdf end')
-    except:
-        print(traceback.format_exc())
-
+    def main(self):
+        for data_index, ele in enumerate(self.data):
+            # 生成对应的二维码
+            barcode_path = self.draw_barcode(ele.get('patch_number'), ele.get('barcode'))
+            for page_number, page in enumerate(range(ele.get('total'))):
+                self.pdf.add_page()
+                self.generate(data_index + 1, page_number + 1, page_data=ele, barcode_path=barcode_path)
+        self.pdf.output(self.pdf_file_name, 'F')
