@@ -966,10 +966,11 @@ class AsnlistfileAddViewSet(views.APIView):
                             supplier_name = s.first().supplier_name
                         else:
                             raise APIException({"detail": "No Suppliers"})
-                        if AsnListModel.objects.filter(openid=warehouse_openid,
-                                                    patch_number=str(data_list[i][3]), is_delete=False).exists():
-                            data['asn_code'] = str(AsnListModel.objects.filter(openid=warehouse_openid, patch_number=str(data_list[i][3]),
-                                                                               id_delete=False).first().asn_code)
+                        if AsnListModel.objects.filter(openid=warehouse_openid, patch_number=str(data_list[i][3]),
+                                                       is_delete=False).exists():
+                            data['asn_code'] = str(AsnListModel.objects.filter(openid=warehouse_openid,
+                                                                               patch_number=str(data_list[i][3]),
+                                                                               is_delete=False).first().asn_code)
                         else:
                             qs_set = AsnListModel.objects.filter(is_delete=False)
                             order_day = str(timezone.now().strftime('%Y%m%d'))
