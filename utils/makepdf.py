@@ -1,15 +1,11 @@
 import traceback
+from traceback import format_exc
 
-from PIL import Image, ImageDraw, ImageFont
-from datetime import datetime
+import barcode
 from barcode.codex import Code128
 from barcode.writer import ImageWriter
-from io import BytesIO
 import os
 from django.conf import settings
-from greaterwms.celery import app
-from traceback import format_exc
-import barcode
 from fpdf import FPDF
 
 data = [{
@@ -51,6 +47,7 @@ class Draw:
         if os.path.exists(f"{ph}.png"):
             return f"{ph}.png"
         CODE128 = barcode.get_barcode_class('code128')
+        # CODE128 = Code128
         bc = CODE128(code, writer=ImageWriter())
         opt = {'write_text': False, 'quiet_zone': 2, 'text_distance': 10}
         bc.save(ph, opt)
