@@ -302,10 +302,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                     d['address'] = warehouse_addr[1]
                     d['country'] = warehouse_addr[0]
                     pdf_data.append(d)
-                # makepdf.generate_pdf.delay(pdf_data, data['patch_number'])
-                # makepdf.generate_pdf(pdf_data, data['patch_number'])
-                makepdf.generate_pdf.push(pdf_data, data['patch_number'])
-                makepdf.generate_pdf.consume()
+                makepdf.Draw(pdf_data, os.path.join(makepdf.base_dir, f"{data['patch_number']}/{data['patch_number']}.pdf")).main()
                 return Response({"detail": "success"}, status=200)
             else:
                 raise APIException({"detail": "Supplier does not exists"})
@@ -1322,7 +1319,38 @@ class PDFDownload(viewsets.ModelViewSet):
         if queryset.exists():
             path = os.path.join(settings.BASE_DIR, f'media/asn_label/{queryset.first().patch_number}/{queryset.first().patch_number}.pdf')
             content_type, encoding = mimetypes.guess_type(path)
-            response = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
+            try:
+                response = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
+            except FileNotFoundError:
+                patch_number = queryset.first().patch_number
+                all_data = AsnDetailModel.objects.filter(patch_number=patch_number, is_delete=False)
+                all_goods = {}
+                for detail in all_data:
+                    if detail.goods_code in all_goods:
+                        all_goods[detail.goods_code] += detail.goods_qty
+                    else:
+                        all_goods[detail.goods_code] = detail.goods_qty
+                iter_data = []
+                for k, v in all_goods.items():
+                    d = all_data.filter(goods_code=k).first()
+                    d.goods_qty = v
+                    iter_data.append(d)
+                pdf_data = list()
+                for j in range(len(iter_data)):
+                    warehouse_addr = warehouse.objects.filter(
+                        pk=iter_data[j].warehouse_id).first().warehouse_city.split('-')
+                    d = dict()
+                    d['id'] = j + 1
+                    d['patch_number'] = iter_data[j].patch_number
+                    d['brand'] = 'MADE IN CHINA'
+                    d['barcode'] = goods.objects.filter(goods_code=iter_data[j].goods_code).first().bar_code
+                    d['total'] = iter_data[j].goods_qty
+                    d['goods_code'] = iter_data[j].goods_code
+                    d['address'] = warehouse_addr[1]
+                    d['country'] = warehouse_addr[0]
+                    pdf_data.append(d)
+                makepdf.Draw(pdf_data, os.path.join(makepdf.base_dir, f'{patch_number}/{patch_number}.pdf')).main()
+                response = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
             response['Cache-Control'] = "max-age=864000000000"
             return response
         raise APIException({"detail": "This ASN PDF File Is Not Exists"})
