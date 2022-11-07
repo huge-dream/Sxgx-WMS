@@ -95,7 +95,7 @@ class Draw:
         self.pdf.r_margin = 3
         self.pdf.l_margin = 0
         self.pdf.set_font('arial', '', 14)
-        self.pdf.cell(0, 8, f"{page_number}/{page_data.get('total')}")
+        # self.pdf.cell(0, 8, f"{page_number}/{page_data.get('total')}")
         self.pdf.cell(0, 8, f"{page_data.get('brand')}", align="R")
         self.pdf.l_margin = self.old_pdf_l_margin
         self.pdf.r_margin = self.old_pdf_r_margin
