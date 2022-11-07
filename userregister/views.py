@@ -101,7 +101,7 @@ def register(request, *args, **kwargs):
                             transaction_code = Md5.md5(data['name'])
                             user = User.objects.create_user(username=str(data['name']),
                                                             password=str(data['password1']))
-                            Users.objects.create(user_id=user.id, name=str(data['name']),
+                            system_user = Users.objects.create(user_id=user.id, name=str(data['name']),
                                                  openid=transaction_code, appid=Md5.md5(data['name'] + '1'),
                                                  t_code=Md5.md5(str(timezone.now())),
                                                  developer=1, ip=ip)
@@ -134,7 +134,7 @@ def register(request, *args, **kwargs):
                                                    company_address='People’s Square # 666 Room 1F',
                                                    company_contact=str(randomPhone()),
                                                    company_manager='Elvis.Shi',
-                                                   creater='DemoData'
+                                                   creater=system_user.name
                                                    )
                             from warehouse.models import ListModel as warehouse
                             warehouse.objects.create(openid=transaction_code,
@@ -143,7 +143,7 @@ def register(request, *args, **kwargs):
                                                      warehouse_address='People’s Square # 666 Room 2F',
                                                      warehouse_contact=str(randomPhone()),
                                                      warehouse_manager='Tim.Yao',
-                                                     creater='DemoData'
+                                                     creater=system_user.name
                                                      )
                             from supplier.models import ListModel as supplier
                             supplier_data_list = []
@@ -154,7 +154,7 @@ def register(request, *args, **kwargs):
                                                      supplier_address='Address-' + str(supplier_data),
                                                      supplier_contact=str(randomPhone()),
                                                      supplier_manager=str(random.choice(randomname)),
-                                                     creater='DemoData'
+                                                     creater=system_user.name
                                                      )
                                 supplier_data_list.append(demo_data)
                             # supplier.objects.bulk_create(supplier_data_list, batch_size=100)
@@ -167,7 +167,7 @@ def register(request, *args, **kwargs):
                                                      customer_address='Address-' + str(customer_data),
                                                      customer_contact=str(randomPhone()),
                                                      customer_manager=str(random.choice(randomname)),
-                                                     creater='DemoData'
+                                                     creater=system_user.name
                                                      )
                                 customer_data_list.append(demo_data)
                             # customer.objects.bulk_create(customer_data_list, batch_size=100)
@@ -187,7 +187,7 @@ def register(request, *args, **kwargs):
                                                    driver_name='Driver Name-' + str(driver_data),
                                                    license_plate="".join(random.choice("0123456789") for i in range(8)),
                                                    contact=str(randomPhone()),
-                                                   creater='DemoData'
+                                                   creater=system_user.name
                                                    )
                                 driver_data_list.append(demo_data)
                             # driver.objects.bulk_create(driver_data_list, batch_size=100)
@@ -198,7 +198,7 @@ def register(request, *args, **kwargs):
                                                     capital_name='Capital Name-' + str(capital_data),
                                                     capital_qty=random.randint(1, 100),
                                                     capital_cost=random.randint(100, 10000),
-                                                    creater='DemoData'
+                                                    creater=system_user.name
                                                     )
                                 capital_data_list.append(demo_data)
                             capital.objects.bulk_create(capital_data_list, batch_size=100)
@@ -209,28 +209,28 @@ def register(request, *args, **kwargs):
                                         bin_size_w=1100,
                                         bin_size_d=1200,
                                         bin_size_h=1800,
-                                        creater='DemoData'
+                                        creater=system_user.name
                                         ),
                                 binsize(openid=transaction_code,
                                         bin_size='Floor',
                                         bin_size_w=10000,
                                         bin_size_d=10000,
                                         bin_size_h=10000,
-                                        creater='DemoData'
+                                        creater=system_user.name
                                         ),
                                 binsize(openid=transaction_code,
                                         bin_size='Small',
                                         bin_size_w=800,
                                         bin_size_d=1000,
                                         bin_size_h=1200,
-                                        creater='DemoData'
+                                        creater=system_user.name
                                         ),
                                 binsize(openid=transaction_code,
                                         bin_size='Tiny',
                                         bin_size_w=200,
                                         bin_size_d=250,
                                         bin_size_h=300,
-                                        creater='DemoData'
+                                        creater=system_user.name
                                         )
                             ]
                             binsize.objects.bulk_create(binsize_data_list, batch_size=100)
@@ -253,7 +253,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Normal",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code1
                                        ),
                                 binset(openid=transaction_code,
@@ -261,7 +261,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Normal",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code2
                                        ),
                                 binset(openid=transaction_code,
@@ -269,7 +269,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Normal",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code3
                                        ),
                                 binset(openid=transaction_code,
@@ -277,7 +277,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Inspection",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code4
                                        ),
                                 binset(openid=transaction_code,
@@ -285,7 +285,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Inspection",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code5
                                        ),
                                 binset(openid=transaction_code,
@@ -293,7 +293,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Inspection",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code6
                                        ),
                                 binset(openid=transaction_code,
@@ -301,7 +301,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Holding",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code7
                                        ),
                                 binset(openid=transaction_code,
@@ -309,7 +309,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Holding",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code8
                                        ),
                                 binset(openid=transaction_code,
@@ -317,7 +317,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Holding",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code9
                                        ),
                                 binset(openid=transaction_code,
@@ -325,7 +325,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Damage",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code10
                                        ),
                                 binset(openid=transaction_code,
@@ -333,7 +333,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Damage",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code11
                                        ),
                                 binset(openid=transaction_code,
@@ -341,7 +341,7 @@ def register(request, *args, **kwargs):
                                        bin_size=str(random.choice(randombinsize)),
                                        bin_property="Damage",
                                        empty_label=True,
-                                       creater='DemoData',
+                                       creater=system_user.name,
                                        bar_code=bar_code12
                                        ),
                             ]
@@ -386,26 +386,26 @@ def register(request, *args, **kwargs):
                             demo_data = []
                             for goods_unit in randomunit:
                                 demo_data.append(goodsunit(openid='init_data', goods_unit=goods_unit,
-                                                           creater='DemoData'))
+                                                           creater=system_user.name))
                             # goodsunit.objects.bulk_create(demo_data, batch_size=100)
                             from goodsclass.models import ListModel as goodsclass
                             demo_data = []
                             for goods_class in randomclass:
                                 demo_data.append(goodsclass(openid='init_data', goods_class=goods_class,
-                                                            creater='DemoData'))
+                                                            creater=system_user.name))
                             # goodsclass.objects.bulk_create(demo_data, batch_size=100)
                             from goodscolor.models import ListModel as goodscolor
                             demo_data = []
                             for goods_color in randomcolor:
                                 demo_data.append(goodscolor(openid='init_data', goods_color=goods_color,
-                                                            creater='DemoData'))
+                                                            creater=system_user.name))
                             # goodscolor.objects.bulk_create(demo_data, batch_size=100)
                             from goodsbrand.models import ListModel as goodsbrand
                             goodsbrand_data_list = []
                             for goodsbrand_data in range(1, 42):
                                 demo_data = goodsbrand(openid='init_data',
                                                        goods_brand='Brand Name-' + str(goodsbrand_data),
-                                                       creater='DemoData'
+                                                       creater=system_user.name
                                                        )
                                 goodsbrand_data_list.append(demo_data)
                             # goodsbrand.objects.bulk_create(goodsbrand_data_list, batch_size=100)
@@ -413,20 +413,20 @@ def register(request, *args, **kwargs):
                             demo_data = []
                             for goods_shape in randomshape:
                                 demo_data.append(goodsshape(openid='init_data', goods_shape=goods_shape,
-                                                            creater='DemoData'))
+                                                            creater=system_user.name))
                             # goodsshape.objects.bulk_create(demo_data, batch_size=100)
                             from goodsspecs.models import ListModel as goodsspecs
                             demo_data = []
                             for goods_specs in randomspecs:
                                 demo_data.append(goodsspecs(openid='init_data', goods_specs=goods_specs,
-                                                            creater='DemoData'))
+                                                            creater=system_user.name))
                             # goodsspecs.objects.bulk_create(demo_data, batch_size=100)
                             from goodsorigin.models import ListModel as goodsorigin
                             goodsorigin_data_list = []
                             for city in randomcity:
                                 demo_data = goodsorigin(openid='init_data',
                                                         goods_origin=city,
-                                                        creater='DemoData'
+                                                        creater=system_user.name
                                                         )
                                 goodsorigin_data_list.append(demo_data)
                             # goodsorigin.objects.bulk_create(goodsorigin_data_list, batch_size=100)
@@ -464,7 +464,7 @@ def register(request, *args, **kwargs):
                                                   goods_cost=goods_cost[0],
                                                   goods_price=goods_price[0],
                                                   bar_code=bar_code,
-                                                  creater='DemoData'
+                                                  creater=system_user.name
                                                   )
                                 goods_data_list.append(demo_data)
                             #     scanner.objects.create(openid=transaction_code, mode="GOODS",

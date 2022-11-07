@@ -94,9 +94,6 @@ class APIViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk):
         qs = self.get_object()
-        # if qs.openid != self.request.auth.openid:
-        #     raise APIException({"detail": "Cannot update data which not yours"})
-        # else:
         data = self.request.data
         if len(data['warehouse_name']) > 45:
             raise APIException({"detail": "The warehouse name is set to more than 45 characters"})

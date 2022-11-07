@@ -34,6 +34,8 @@ services:
       #- ./supervisord.conf:/etc/supervisor/supervisord.conf
     ports:
       - '8008:8008'
+    environment:
+      PYTHONUNBUFFERED: 1
     command:
       - /bin/bash
       - -c
@@ -41,21 +43,21 @@ services:
         bash backend_start.sh
     networks:
       - basic
-  dvadmin-redis:
-    image: redis:6.0.6
-    container_name: dvadmin-redis
-    privileged: true
-    ports:
-      - 6379:6379
-    command: redis-server /etc/redis/redis.conf --appendonly yes
-    environment:
-      TZ: Asia/Shanghai
-    volumes:
-      - ./docker/redis/data:/data
-      - ./docker/redis/conf/redis.conf:/etc/redis/redis.conf
-    restart: always
-    networks:
-      - basic
+#  dvadmin-redis:
+#    image: redis:6.0.6
+#    container_name: dvadmin-redis
+#    privileged: true
+#    ports:
+#      - 6379:6379
+#    command: redis-server /etc/redis/redis.conf --appendonly yes
+#    environment:
+#      TZ: Asia/Shanghai
+#    volumes:
+#      - ./docker/redis/data:/data
+#      - ./docker/redis/conf/redis.conf:/etc/redis/redis.conf
+#    restart: always
+#    networks:
+#      - basic
 #    networks:
 #      - basic
 #   nginx:

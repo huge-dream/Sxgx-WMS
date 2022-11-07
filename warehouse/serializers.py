@@ -53,7 +53,7 @@ class WarehouseUpdateSerializer(serializers.ModelSerializer):
     warehouse_contact = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     warehouse_manager = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     # warehouse_id = serializers.CharField(read_only=False, required=False, validators=[datasolve.warehouse_validate2])
-    creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
+    creater = serializers.CharField(read_only=True, required=False, validators=[datasolve.data_validate])
 
     class Meta:
         model = ListModel
