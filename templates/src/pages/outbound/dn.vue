@@ -1674,7 +1674,7 @@ export default {
 
     switchWarehouse(record) {
       const filterItem = this.warehouse_list.find(
-        (item) => (item.id = record.warehouse_id)
+        (item) => (item.warehouse_id = record.warehouse_id)
       );
       return record.warehouse_id + "-" + filterItem.warehosue_name || "";
     },

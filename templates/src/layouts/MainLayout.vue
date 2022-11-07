@@ -130,7 +130,7 @@
                   @click="warehouseChange(item)"
                 >
                   <q-item-section>{{
-                    item.id + "-" + item.warehouse_name
+                    item.warehouse_id + "-" + item.warehouse_name
                   }}</q-item-section>
                 </q-item>
               </q-list>
