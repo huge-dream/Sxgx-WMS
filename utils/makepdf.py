@@ -106,7 +106,7 @@ class Draw:
     def main(self):
         for data_index, ele in enumerate(self.data):
             # 生成对应的二维码
-            barcode_path = self.draw_barcode(ele.get('patch_number'), ele.get('barcode'))
+            barcode_path = self.draw_barcode(ele.get('patch_number'), ele.get('goods_code'))
             for page_number, page in enumerate(range(ele.get('total'))):
                 self.pdf.add_page()
                 self.generate(data_index + 1, page_number + 1, page_data=ele, barcode_path=barcode_path)
