@@ -1317,12 +1317,12 @@ class PDFDownload(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         if queryset.exists():
-            path = os.path.join(settings.BASE_DIR, f'media/asn_label/{queryset.first().patch_number}/{queryset.first().patch_number}.pdf')
+            patch_number = queryset.first().patch_number
+            path = os.path.join(settings.BASE_DIR, f'media/asn_label/{patch_number}/{patch_number}.pdf')
             content_type, encoding = mimetypes.guess_type(path)
             try:
                 response = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
             except FileNotFoundError:
-                patch_number = queryset.first().patch_number
                 all_data = AsnDetailModel.objects.filter(patch_number=patch_number, is_delete=False)
                 all_goods = {}
                 for detail in all_data:
