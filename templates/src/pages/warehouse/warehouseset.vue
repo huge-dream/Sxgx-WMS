@@ -38,9 +38,27 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
-            <template>
-              <q-td key="id" :props="props">
-                {{ props.row.id }}
+            <!-- <template>
+              <q-td key="warehouse_id" :props="props">
+                {{ props.row.warehouse_id }}
+              </q-td>
+            </template> -->
+
+            <template v-if="props.row.id === editid">
+              <q-td key="warehouse_id" :props="props">
+                <q-input
+                  dense
+                  outlined
+                  square
+                  v-model="editFormData.warehouse_id"
+                  label="ID"
+                  :style="{ width: '60px' }"
+                />
+              </q-td>
+            </template>
+            <template v-else-if="props.row.id !== editid">
+              <q-td key="warehouse_id" :props="props">
+                {{ props.row.warehouse_id }}
               </q-td>
             </template>
 
@@ -390,11 +408,11 @@ export default {
       table_list: [],
       columns: [
         {
-          name: "id",
+          name: "warehouse_id",
           required: true,
-          label: "id",
+          label: "ID",
           align: "left",
-          field: "id",
+          field: "warehouse_id",
         },
         {
           name: "warehouse_name",
@@ -614,6 +632,7 @@ export default {
       _this.editMode = true;
       _this.editid = e.id;
       _this.editFormData = {
+        warehouse_id: e.warehouse_id,
         warehouse_name: e.warehouse_name,
         warehouse_city: e.warehouse_city,
         warehouse_address: e.warehouse_address,
@@ -647,6 +666,7 @@ export default {
       _this.editMode = false;
       _this.editid = 0;
       _this.editFormData = {
+        warehouse_id: "",
         warehouse_name: "",
         warehouse_city: "",
         warehouse_address: "",
