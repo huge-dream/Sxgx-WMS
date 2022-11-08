@@ -1018,7 +1018,7 @@ class AsnlistfileAddViewSet(views.APIView):
                                                     creater=str(staff_name))
                             scanner.objects.create(openid=warehouse_openid,
                                                 code=str(data_list[i][1]).strip(),
-                                                bar_code=bar_code)
+                                                bar_code=str(data_list[i][1]).strip())
                         check_data = {
                             'openid': warehouse_openid,
                             'asn_code': data['asn_code'],
