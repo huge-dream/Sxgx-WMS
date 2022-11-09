@@ -20,6 +20,7 @@
     "echarts": "^5.2.1",
     "glob-parent": "^6.0.2",
     "highlight.js": "^11.2.0",
+    "jsbarcode": "^3.11.5",
     "jszip": "^3.7.1",
     "lottie-web": "^5.7.11",
     "normalize-url": "^6.0.1",

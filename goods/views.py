@@ -147,56 +147,18 @@ class APIViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = self.request.data
         data['openid'] = self.request.auth.openid
-        data['unit_volume'] = round(
-            (float(data['goods_w']) * float(data['goods_d']) * float(data['goods_h'])) / 1000000000, 4)
         if ListModel.objects.filter(openid=data['openid'], goods_code=data['goods_code'], is_delete=False).exists():
             raise APIException({"detail": "Data Exists"})
         else:
-            if supplier.objects.filter(openid=data['openid'], supplier_name=data['goods_supplier'],
-                                        is_delete=False).exists():
-                if goods_unit.objects.filter(openid=data['openid'], goods_unit=data['goods_unit'],
-                                           is_delete=False).exists():
-                    if goods_class.objects.filter(openid=data['openid'], goods_class=data['goods_class'],
-                                                 is_delete=False).exists():
-                        if goods_brand.objects.filter(openid=data['openid'], goods_brand=data['goods_brand'],
-                                                     is_delete=False).exists():
-                            if goods_color.objects.filter(openid=data['openid'], goods_color=data['goods_color'],
-                                                         is_delete=False).exists():
-                                if goods_shape.objects.filter(openid=data['openid'], goods_shape=data['goods_shape'],
-                                                             is_delete=False).exists():
-                                    if goods_specs.objects.filter(openid=data['openid'],
-                                                                 goods_specs=data['goods_specs'],
-                                                                 is_delete=False).exists():
-                                        if goods_origin.objects.filter(openid=data['openid'],
-                                                                     goods_origin=data['goods_origin'],
-                                                                     is_delete=False).exists():
-                                            data['bar_code'] = Md5.md5(data['goods_code'])
-                                            serializer = self.get_serializer(data=data)
-                                            serializer.is_valid(raise_exception=True)
-                                            serializer.save()
-                                            scanner.objects.create(openid=self.request.auth.openid, mode="GOODS",
-                                                                   code=data['goods_code'],
-                                                                   bar_code=data['bar_code'])
-                                            headers = self.get_success_headers(serializer.data)
-                                            return Response(serializer.data, status=200, headers=headers)
-                                        else:
-                                            raise APIException(
-                                                {"detail": "Goods Origin does not exists or it has been changed"})
-                                    else:
-                                        raise APIException(
-                                            {"detail": "Goods Specs does not exists or it has been changed"})
-                                else:
-                                    raise APIException({"detail": "Goods Shape does not exists or it has been changed"})
-                            else:
-                                raise APIException({"detail": "Goods Color does not exists or it has been changed"})
-                        else:
-                            raise APIException({"detail": "Goods Brand does not exists or it has been changed"})
-                    else:
-                        raise APIException({"detail": "Goods Class does not exists or it has been changed"})
-                else:
-                    raise APIException({"detail": "Goods Unit does not exists or it has been changed"})
-            else:
-                raise APIException({"detail": "Supplier does not exists or it has been changed"})
+            data['bar_code'] = Md5.md5(data['goods_code'])
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            scanner.objects.create(openid=self.request.auth.openid, mode="GOODS",
+                                   code=data['goods_code'],
+                                   bar_code=data['bar_code'])
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=200, headers=headers)
 
     def update(self, request, pk):
         qs = self.get_object()

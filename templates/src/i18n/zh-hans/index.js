@@ -267,6 +267,7 @@ export default {
       goods_code: '商品编码',
       goods_desc: '商品描述',
       goods_name: '商品名称',
+      light_guidance: '是否光指引',
       goods_supplier: '供应商',
       goods_weight: '商品重量(单位:克)',
       goods_w: '商品长度(单位:毫米)',
