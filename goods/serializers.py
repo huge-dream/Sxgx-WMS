@@ -33,7 +33,7 @@ class GoodsGetSerializer(serializers.ModelSerializer):
 
 
 class GoodsPostSerializer(serializers.ModelSerializer):
-    openid = serializers.CharField(read_only=False, required=False)
+    openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])
     goods_code = serializers.CharField(read_only=False, required=True, min_length=1,
                                        validators=[datasolve.data_validate])
     goods_desc = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])

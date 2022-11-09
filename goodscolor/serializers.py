@@ -13,7 +13,7 @@ class GoodscolorGetSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'openid', 'appid', 'create_time', 'update_time', ]
 
 class GoodscolorPostSerializer(serializers.ModelSerializer):
-    openid = serializers.CharField(read_only=False, required=False)
+    openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])
     goods_color = serializers.CharField(read_only=False,  required=True, validators=[datasolve.data_validate])
     creater = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])
     class Meta:

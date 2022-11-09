@@ -2,7 +2,7 @@ from rest_framework_csv.renderers import CSVStreamingRenderer
 
 def file_headers():
     return [
-        'SKU',
+        'goods_code',
         'goods_desc',
         'goods_supplier',
         'goods_weight',
@@ -26,7 +26,7 @@ def file_headers():
 
 def cn_data_header():
     return dict([
-        ('SKU', u'SKU'),
+        ('goods_code', u'商品编码'),
         ('goods_desc', u'商品描述'),
         ('goods_supplier', u'商品供应商'),
         ('goods_weight', u'商品单位重量'),
@@ -35,7 +35,7 @@ def cn_data_header():
         ('goods_h', u'商品单位高度'),
         ('unit_volume', u'最小单位体积'),
         ('goods_unit', u'商品单位'),
-        ('goods_class', u'商品品类'),
+        ('goods_class', u'商品类别'),
         ('goods_brand', u'商品品牌'),
         ('goods_color', u'商品颜色'),
         ('goods_shape', u'商品形状'),
@@ -50,7 +50,7 @@ def cn_data_header():
 
 def en_data_header():
     return dict([
-        ('SKU', u'SKU'),
+        ('goods_code', u'Goods Code'),
         ('goods_desc', u'Goods Description'),
         ('goods_supplier', u'Goods Supplier'),
         ('goods_weight', u'Goods Weight'),

@@ -14,7 +14,6 @@ from .serializers import FileListRenderSerializer, FileBinListRenderSerializer
 from django.http import StreamingHttpResponse
 from .files import FileListRenderCN, FileListRenderEN, FileBinListRenderCN, FileBinListRenderEN
 from rest_framework.settings import api_settings
-from userprofile.models import Users
 
 class StockListViewSet(viewsets.ModelViewSet):
     """
@@ -36,17 +35,10 @@ class StockListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return StockListModel.objects.filter(openid=self.request.auth.openid)
             else:
-                superopenid = u.openid
-            query_dict = {}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return StockListModel.objects.filter(**query_dict)
+                return StockListModel.objects.filter(openid=self.request.auth.openid, id=id)
         else:
             return StockListModel.objects.none()
 
@@ -76,17 +68,10 @@ class StockBinViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return StockBinModel.objects.filter(openid=self.request.auth.openid)
             else:
-                superopenid = u.openid
-            query_dict = {}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return StockBinModel.objects.filter(**query_dict)
+                return StockBinModel.objects.filter(openid=self.request.auth.openid, id=id)
         else:
             return StockBinModel.objects.none()
 
@@ -468,17 +453,10 @@ class FileListDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return StockListModel.objects.filter(openid=self.request.auth.openid)
             else:
-                superopenid = u.openid
-            query_dict = {}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return StockListModel.objects.filter(**query_dict)
+                return StockListModel.objects.filter(openid=self.request.auth.openid, id=id)
         else:
             return StockListModel.objects.none()
 
@@ -529,17 +507,10 @@ class FileBinListDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return StockBinModel.objects.filter(openid=self.request.auth.openid)
             else:
-                superopenid = u.openid
-            query_dict = {}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return StockBinModel.objects.filter(**query_dict)
+                return StockBinModel.objects.filter(openid=self.request.auth.openid, id=id)
         else:
             return StockBinModel.objects.none()
 

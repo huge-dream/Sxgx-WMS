@@ -12,7 +12,6 @@ class DnListModel(models.Model):
     back_order_label = models.BooleanField(default=False, verbose_name='Back Order Label')
     openid = models.CharField(max_length=255, verbose_name="Openid")
     transportation_fee = models.JSONField(default=dict, verbose_name="Transportation Fee")
-    warehouse_id = models.BigIntegerField(default=1, verbose_name='Warehouse ID')
     is_delete = models.BooleanField(default=False, verbose_name='Delete Label')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="Create Time")
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="Update Time")
@@ -22,9 +21,6 @@ class DnListModel(models.Model):
         verbose_name = 'DN List'
         verbose_name_plural = "DN List"
         ordering = ['-id']
-
-    def __int__(self):
-        return self.pk
 
 class DnDetailModel(models.Model):
     dn_code = models.CharField(max_length=255, verbose_name="DN Code")
@@ -46,7 +42,6 @@ class DnDetailModel(models.Model):
     creater = models.CharField(max_length=255, verbose_name="Who Created")
     back_order_label = models.BooleanField(default=False, verbose_name='Back Order Label')
     openid = models.CharField(max_length=255, verbose_name="Openid")
-    warehouse_id = models.BigIntegerField(default=1, verbose_name='Warehouse ID')
     is_delete = models.BooleanField(default=False, verbose_name='Delete Label')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="Create Time")
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="Update Time")
@@ -56,9 +51,6 @@ class DnDetailModel(models.Model):
         verbose_name = 'DN Detail'
         verbose_name_plural = "DN Detail"
         ordering = ['-id']
-
-    def __int__(self):
-        return self.pk
 
 class PickingListModel(models.Model):
     dn_code = models.CharField(max_length=255, verbose_name="DN Code")
@@ -78,6 +70,3 @@ class PickingListModel(models.Model):
         verbose_name = 'Picking List'
         verbose_name_plural = "Picking List"
         ordering = ['-id']
-
-    def __int__(self):
-        return self.pk

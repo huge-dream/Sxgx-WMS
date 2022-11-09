@@ -7,13 +7,10 @@ class AsnListModel(models.Model):
     total_volume = models.FloatField(default=0, verbose_name="Total Volume")
     total_cost = models.FloatField(default=0, verbose_name="Total Cost")
     supplier = models.CharField(max_length=255, verbose_name="ASN Supplier")
-    patch_number = models.CharField(max_length=255, verbose_name='Patch Number')
-    warehouse_id = models.BigIntegerField(default=1, verbose_name='Warehouse ID')
     creater = models.CharField(max_length=255, verbose_name="Who Created")
     bar_code = models.CharField(max_length=255, verbose_name="Bar Code")
     openid = models.CharField(max_length=255, verbose_name="Openid")
     transportation_fee = models.JSONField(default=dict, verbose_name="Transportation Fee")
-    box_number = models.CharField(max_length=255, verbose_name="Box Number")
     is_delete = models.BooleanField(default=False, verbose_name='Delete Label')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="Create Time")
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="Update Time")
@@ -23,9 +20,6 @@ class AsnListModel(models.Model):
         verbose_name = 'ASN List'
         verbose_name_plural = "ASN List"
         ordering = ['-id']
-
-    def __int__(self):
-        return self.pk
 
 class AsnDetailModel(models.Model):
     asn_code = models.CharField(max_length=255, verbose_name="ASN Code")
@@ -42,9 +36,6 @@ class AsnDetailModel(models.Model):
     goods_weight = models.FloatField(default=0, verbose_name="Goods Weight")
     goods_volume = models.FloatField(default=0, verbose_name="Goods Volume")
     goods_cost = models.FloatField(default=0, verbose_name="Goods Cost")
-    patch_number = models.CharField(max_length=255, verbose_name='Patch Number')
-    box_number = models.CharField(max_length=255, verbose_name="Box Number")
-    warehouse_id = models.BigIntegerField(default=1, verbose_name='Warehouse ID')
     creater = models.CharField(max_length=255, verbose_name="Who Created")
     openid = models.CharField(max_length=255, verbose_name="Openid")
     is_delete = models.BooleanField(default=False, verbose_name='Delete Label')
@@ -56,7 +47,4 @@ class AsnDetailModel(models.Model):
         verbose_name = 'ASN Detail'
         verbose_name_plural = "ASN Detail"
         ordering = ['-id']
-
-    def __int__(self):
-        return self.pk
 

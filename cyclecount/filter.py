@@ -2,6 +2,7 @@ from django_filters import FilterSet
 from .models import CyclecountModeDayModel
 from .models import QTYRecorder
 from .models import ManualCyclecountModeModel
+
 class Filter(FilterSet):
     class Meta:
         model = CyclecountModeDayModel

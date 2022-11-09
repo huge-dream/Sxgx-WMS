@@ -18,7 +18,7 @@ class CustomerGetSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', ]
 
 class CustomerPostSerializer(serializers.ModelSerializer):
-    openid = serializers.CharField(read_only=False, required=False)
+    openid = serializers.CharField(read_only=False, required=False, validators=[datasolve.openid_validate])
     customer_name = serializers.CharField(read_only=False,  required=True, validators=[datasolve.data_validate])
     customer_city = serializers.CharField(read_only=False,  required=True, validators=[datasolve.data_validate])
     customer_address = serializers.CharField(read_only=False, required=True, validators=[datasolve.data_validate])

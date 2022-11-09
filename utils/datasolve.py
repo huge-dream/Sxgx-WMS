@@ -1,5 +1,4 @@
 from userprofile.models import Users
-from warehouse.models import ListModel as warehouse
 import re, base64, json
 from rest_framework.exceptions import APIException
 
@@ -114,15 +113,3 @@ def transportation_calculate(weight, volume, weight_fee, volume_fee, min_fee):
                                                                            else volume_cost) > min_fee else min_fee
     data = round(max_, 2)
     return data
-
-def warehouse_validate(data):
-    if warehouse.objects.filter(pk=data).exists():
-        return data
-    else:
-        raise APIException({'detail': 'Warehouse "{}" dose not exists'.format(data)})
-
-def warehouse_validate2(data):
-    if warehouse.objects.filter(warehouse_id=data).exists():
-        raise APIException({'detail': 'Warehosue "{}" exists'.format(data)})
-    else:
-        return data

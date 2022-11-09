@@ -19,35 +19,35 @@ class MyPageNumberPagination(PageNumberPagination):
     page_query_param = 'page'
 
     def get_paginated_response(self, data):
-        goods_unit_list_data = goods_unit.objects.filter(is_delete=False)
+        goods_unit_list_data = goods_unit.objects.filter(openid=self.request.auth.openid, is_delete=False)
         goods_unit_list = []
         for i in range(len(goods_unit_list_data)):
             goods_unit_list.append(goods_unit_list_data[i].goods_unit)
-        goods_class_list_data = goods_class.objects.filter(is_delete=False)
+        goods_class_list_data = goods_class.objects.filter(openid=self.request.auth.openid, is_delete=False)
         goods_class_list = []
         for i in range(len(goods_class_list_data)):
             goods_class_list.append(goods_class_list_data[i].goods_class)
-        goods_brand_list_data = goods_brand.objects.filter(is_delete=False)
+        goods_brand_list_data = goods_brand.objects.filter(openid=self.request.auth.openid, is_delete=False)
         goods_brand_list = []
         for i in range(len(goods_brand_list_data)):
             goods_brand_list.append(goods_brand_list_data[i].goods_brand)
-        goods_color_list_data = goods_color.objects.filter(is_delete=False)
+        goods_color_list_data = goods_color.objects.filter(openid=self.request.auth.openid, is_delete=False)
         goods_color_list = []
         for i in range(len(goods_color_list_data)):
             goods_color_list.append(goods_color_list_data[i].goods_color)
-        goods_shape_list_data = goods_shape.objects.filter(is_delete=False)
+        goods_shape_list_data = goods_shape.objects.filter(openid=self.request.auth.openid, is_delete=False)
         goods_shape_list = []
         for i in range(len(goods_shape_list_data)):
             goods_shape_list.append(goods_shape_list_data[i].goods_shape)
-        goods_specs_list_data = goods_specs.objects.filter(is_delete=False)
+        goods_specs_list_data = goods_specs.objects.filter(openid=self.request.auth.openid, is_delete=False)
         goods_specs_list = []
         for i in range(len(goods_specs_list_data)):
             goods_specs_list.append(goods_specs_list_data[i].goods_specs)
-        goods_origin_list_data = goods_origin.objects.filter(is_delete=False)
+        goods_origin_list_data = goods_origin.objects.filter(openid=self.request.auth.openid, is_delete=False)
         goods_origin_list = []
         for i in range(len(goods_origin_list_data)):
             goods_origin_list.append(goods_origin_list_data[i].goods_origin)
-        supplier_list_data = supplier.objects.filter(is_delete=False)
+        supplier_list_data = supplier.objects.filter(openid=self.request.auth.openid, is_delete=False)
         supplier_list = []
         for i in range(len(supplier_list_data)):
             supplier_list.append(supplier_list_data[i].supplier_name)

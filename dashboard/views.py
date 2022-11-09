@@ -22,8 +22,6 @@ from django.db.models import Q
 from django.db.models import Sum
 import re
 from django.utils import timezone
-from userprofile.models import Users
-
 
 class ReceiptsViewSet(viewsets.ModelViewSet):
     """
@@ -45,21 +43,14 @@ class ReceiptsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnDetailModel.objects.filter(openid=self.request.auth.openid, asn_status__gte=4,
+                                                     create_time__gte=timezone.now().date() - relativedelta(days=14),
+                                                     is_delete=False)
             else:
-                superopenid = u.openid
-            query_dict = {
-                'asn_status__gte': 4,
-                'create_time__gte': timezone.now().date() - relativedelta(days=14),
-                'is_delete': False
-            }
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnDetailModel.objects.filter(**query_dict)
+                return AsnDetailModel.objects.filter(openid=self.request.auth.openid, asn_status__gte=4,
+                                                     create_time__gte=timezone.now().date() - relativedelta(days=14),
+                                                     id=id, is_delete=False)
         else:
             return AsnDetailModel.objects.none()
 
@@ -141,21 +132,14 @@ class SalesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return DnDetailModel.objects.filter(openid=self.request.auth.openid, dn_status__gte=4,
+                                                    create_time__gte=timezone.now().date() - relativedelta(days=14),
+                                                    is_delete=False)
             else:
-                superopenid = u.openid
-            query_dict = {
-                'dn_status__gte': 4,
-                'create_time__gte': timezone.now().date() - relativedelta(days=14),
-                'is_delete': False
-            }
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return DnDetailModel.objects.filter(**query_dict)
+                return DnDetailModel.objects.filter(openid=self.request.auth.openid, dn_status__gte=4,
+                                                    create_time__gte=timezone.now().date() - relativedelta(days=14),
+                                                    id=id, is_delete=False)
         else:
             return DnDetailModel.objects.none()
 

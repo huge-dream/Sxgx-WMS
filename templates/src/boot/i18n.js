@@ -7,10 +7,10 @@ Vue.use(VueI18n)
 
 var lang = LocalStorage.getItem('lang')
 if (LocalStorage.has('lang')) {
-  lang = lang || 'zh-hans'
+  lang = lang || 'en-US'
 } else {
-  LocalStorage.set('lang', 'zh-hans')
-  lang = 'zh-hans'
+  LocalStorage.set('lang', 'en-US')
+  lang = 'en-US'
 }
 
 const i18n = new VueI18n({

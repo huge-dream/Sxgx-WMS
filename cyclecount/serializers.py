@@ -72,7 +72,6 @@ class QTYRecorderSerializer(serializers.ModelSerializer):
         ref_name = 'QTYRecorderSerializer'
         exclude = ['openid']
 
-        
 class ManualCyclecountGetSerializer(serializers.ModelSerializer):
     creater = serializers.CharField(read_only=True, required=False)
     create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d')

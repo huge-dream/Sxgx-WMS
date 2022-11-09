@@ -8,7 +8,6 @@ path(r'filecyclecountday/', views.FileDownloadView.as_view({"get": "list"}), nam
 path(r'filecyclecountall/', views.FileDownloadAllView.as_view({"get": "list"}), name="filecyclecountall"),
 
 path(r'qtyrecorviewset/', views.QTYRecorderViewSet.as_view({"get": "list"}), name="qtyrecorviewset"),
-
 path(r'getgoodscyclecount/', views.GetGoodsCyclecountViewSet.as_view({"get": "list"}), name="getgoodscyclecount"),
 path(r'manualcyclecount/', views.ManualCyclecountViewSet.as_view({"post": "create", "get": "list"}), name="manualcyclecount"),
 path(r'manualfilecyclecount/', views.ManualFileDownloadView.as_view({"get": "list"}), name="manualfilecyclecount"),

@@ -30,11 +30,6 @@ from .files import FileListRenderCN, FileListRenderEN, FileDetailRenderCN, FileD
 from rest_framework.settings import api_settings
 from dateutil.relativedelta import relativedelta
 from staff.models import ListModel as staff
-from userprofile.models import Users
-from wsgiref.util import FileWrapper
-import mimetypes, os
-from django.conf import settings
-from utils import makepdf
 
 class AsnListViewSet(viewsets.ModelViewSet):
     """
@@ -71,17 +66,10 @@ class AsnListViewSet(viewsets.ModelViewSet):
                 for i in range(len(empty_qs)):
                     if empty_qs[i].create_time <= cur_date - date_check:
                         empty_qs[i].delete()
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnListModel.objects.filter(Q(openid=self.request.auth.openid, is_delete=False) & ~Q(supplier=''))
             else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnListModel.objects.filter(Q(**query_dict) & ~Q(supplier=''))
+                return AsnListModel.objects.filter(Q(openid=self.request.auth.openid, id=id, is_delete=False) & ~Q(supplier=''))
         else:
             return AsnListModel.objects.none()
 
@@ -178,17 +166,10 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnDetailModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
             else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnDetailModel.objects.filter(**query_dict)
+                return AsnDetailModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
         else:
             return AsnDetailModel.objects.none()
 
@@ -205,7 +186,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = self.request.data
         if AsnListModel.objects.filter(openid=self.request.auth.openid, asn_code=str(data['asn_code']), is_delete=False).exists():
-            if supplier.objects.filter(supplier_name=str(data['supplier']), is_delete=False).exists():
+            if supplier.objects.filter(openid=self.request.auth.openid, supplier_name=str(data['supplier']), is_delete=False).exists():
                 staff_name = staff.objects.filter(openid=self.request.auth.openid, id=self.request.META.get('HTTP_OPERATOR')).first().staff_name
                 for i in range(len(data['goods_code'])):
                     check_data = {
@@ -214,9 +195,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                         'supplier': str(data['supplier']),
                         'goods_code': str(data['goods_code'][i]),
                         'goods_qty': int(data['goods_qty'][i]),
-                        'patch_number': str(data['patch_number']),
-                        'warehouse_id': int(data['warehouse_id']),
-                        'creater': str(staff_name),
+                        'creater': str(staff_name)
                     }
                     serializer = self.get_serializer(data=check_data)
                     serializer.is_valid(raise_exception=True)
@@ -225,7 +204,9 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 volume_list = []
                 cost_list = []
                 for j in range(len(data['goods_code'])):
-                    goods_detail = goods.objects.filter(goods_code=str(data['goods_code'][j]), is_delete=False).first()
+                    goods_detail = goods.objects.filter(openid=self.request.auth.openid,
+                                                        goods_code=str(data['goods_code'][j]),
+                                                        is_delete=False).first()
                     goods_weight = round(goods_detail.goods_weight * int(data['goods_qty'][j]) / 1000, 4)
                     goods_volume = round(goods_detail.unit_volume * int(data['goods_qty'][j]), 4)
                     goods_cost = round(goods_detail.goods_cost * int(data['goods_qty'][j]), 2)
@@ -250,8 +231,6 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                                                goods_weight=goods_weight,
                                                goods_volume=goods_volume,
                                                goods_cost=goods_cost,
-                                               patch_number=str(data['patch_number']),
-                                               warehouse_id=int(data['warehouse_id']),
                                                creater=str(staff_name))
                     post_data_list.append(post_data)
                     weight_list.append(goods_weight)
@@ -260,7 +239,9 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 total_weight = sumOfList(weight_list, len(weight_list))
                 total_volume = sumOfList(volume_list, len(volume_list))
                 total_cost = sumOfList(cost_list, len(cost_list))
-                supplier_city = supplier.objects.filter(supplier_name=str(data['supplier']), is_delete=False).first().supplier_city
+                supplier_city = supplier.objects.filter(openid=self.request.auth.openid,
+                                                        supplier_name=str(data['supplier']),
+                                                        is_delete=False).first().supplier_city
                 warehouse_city = warehouse.objects.filter(openid=self.request.auth.openid).first().warehouse_city
                 transportation_fee = transportation.objects.filter(
                     Q(openid=self.request.auth.openid, send_city__icontains=supplier_city, receiver_city__icontains=warehouse_city,
@@ -286,23 +267,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 AsnDetailModel.objects.bulk_create(post_data_list, batch_size=100)
                 AsnListModel.objects.filter(openid=self.request.auth.openid, asn_code=str(data['asn_code'])).update(
                     supplier=str(data['supplier']), total_weight=total_weight, total_volume=total_volume,
-                    total_cost=total_cost, transportation_fee=transportation_res,
-                    patch_number=str(data['patch_number']), warehouse_id=int(data['warehouse_id']))
-                all_data = AsnDetailModel.objects.filter(patch_number=data['patch_number'])
-                pdf_data = list()
-                for i in range(len(all_data)):
-                    warehouse_addr = warehouse.objects.filter(pk=all_data[i].warehouse_id).first().warehouse_city.split('-')
-                    d = dict()
-                    d['id'] = i + 1
-                    d['patch_number'] = all_data[i].patch_number
-                    d['brand'] = 'MADE IN CHINA'
-                    d['barcode'] = goods.objects.filter(goods_code=all_data[i].goods_code).first().bar_code
-                    d['total'] = all_data[i].goods_qty
-                    d['goods_code'] = all_data[i].goods_code
-                    d['address'] = warehouse_addr[1]
-                    d['country'] = warehouse_addr[0]
-                    pdf_data.append(d)
-                makepdf.Draw(pdf_data, os.path.join(makepdf.base_dir, f"{data['patch_number']}/{data['patch_number']}.pdf")).main()
+                    total_cost=total_cost, transportation_fee=transportation_res)
                 return Response({"detail": "success"}, status=200)
             else:
                 raise APIException({"detail": "Supplier does not exists"})
@@ -313,7 +278,8 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
         data = self.request.data
         if AsnListModel.objects.filter(openid=self.request.auth.openid, asn_code=str(data['asn_code']),
                                        asn_status=1, is_delete=False).exists():
-            if supplier.objects.filter(supplier_name=str(data['supplier']), is_delete=False).exists():
+            if supplier.objects.filter(openid=self.request.auth.openid, supplier_name=str(data['supplier']),
+                                       is_delete=False).exists():
                 staff_name = staff.objects.filter(openid=self.request.auth.openid,
                                                   id=self.request.META.get('HTTP_OPERATOR')).first().staff_name
                 for i in range(len(data['goods_code'])):
@@ -323,9 +289,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                         'supplier': str(data['supplier']),
                         'goods_code': str(data['goods_code'][i]),
                         'goods_qty': int(data['goods_qty'][i]),
-                        'patch_number': str(data['patch_number']),
-                        'warehouse_id': int(data['warehouse_id']),
-                        'creater': str(staff_name),
+                        'creater': str(staff_name)
                     }
                     serializer = self.get_serializer(data=check_data)
                     serializer.is_valid(raise_exception=True)
@@ -347,7 +311,9 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 weight_list = []
                 volume_list = []
                 for j in range(len(data['goods_code'])):
-                    goods_detail = goods.objects.filter(goods_code=str(data['goods_code'][j]), is_delete=False).first()
+                    goods_detail = goods.objects.filter(openid=self.request.auth.openid,
+                                                        goods_code=str(data['goods_code'][j]),
+                                                        is_delete=False).first()
                     goods_weight = round(goods_detail.goods_weight * int(data['goods_qty'][j]) / 1000, 4)
                     goods_volume = round(goods_detail.unit_volume * int(data['goods_qty'][j]), 4)
                     goods_cost = round(goods_detail.goods_cost * int(data['goods_qty'][j]), 2)
@@ -371,15 +337,15 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                                                goods_qty=int(data['goods_qty'][j]),
                                                goods_weight=goods_weight,
                                                goods_volume=goods_volume,
-                                               patch_number=str(data['patch_number']),
-                                               warehouse_id=int(data['warehouse_id']),
                                                creater=str(staff_name))
                     post_data_list.append(post_data)
                     weight_list.append(goods_weight)
                     volume_list.append(goods_volume)
                 total_weight = sumOfList(weight_list, len(weight_list))
                 total_volume = sumOfList(volume_list, len(volume_list))
-                supplier_city = supplier.objects.filter(supplier_name=str(data['supplier']), is_delete=False).first().supplier_city
+                supplier_city = supplier.objects.filter(openid=self.request.auth.openid,
+                                                        supplier_name=str(data['supplier']),
+                                                        is_delete=False).first().supplier_city
                 warehouse_city = warehouse.objects.filter(openid=self.request.auth.openid).first().warehouse_city
                 transportation_fee = transportation.objects.filter(
                     Q(openid=self.request.auth.openid, send_city__icontains=supplier_city,
@@ -407,8 +373,7 @@ class AsnDetailViewSet(viewsets.ModelViewSet):
                 AsnDetailModel.objects.bulk_create(post_data_list, batch_size=100)
                 AsnListModel.objects.filter(openid=self.request.auth.openid, asn_code=str(data['asn_code'])).update(
                     supplier=str(data['supplier']), total_weight=total_weight, total_volume=total_volume,
-                    transportation_fee=transportation_res,
-                    patch_number=str(data.get('patch_number', '')), warehouse_id=int(data['warehouse_id']))
+                    transportation_fee=transportation_res)
                 return Response({"detail": "success"}, status=200)
             else:
                 raise APIException({"detail": "Supplier does not exists"})
@@ -435,17 +400,10 @@ class AsnViewPrintViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
             else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnListModel.objects.filter(**query_dict)
+                return AsnListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
         else:
             return AsnListModel.objects.none()
 
@@ -457,24 +415,17 @@ class AsnViewPrintViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk):
         qs = self.get_object()
-        u = Users.objects.filter(vip=9).first()
-        query_data = {}
-        if u is None:
-            superopenid = None
-        else:
-            superopenid = u.openid
-        if qs.openid != self.request.auth.openid and self.request.auth.openid != superopenid:
+        if qs.openid != self.request.auth.openid:
             raise APIException({"detail": "Cannot update data which not yours"})
         else:
             context = {}
-            if self.request.auth.openid != superopenid:
-                query_data['openid'] = self.request.auth.openid
-            asn_detail_list = AsnDetailModel.objects.filter(**query_data,
+            asn_detail_list = AsnDetailModel.objects.filter(openid=self.request.auth.openid,
                                                             asn_code=qs.asn_code,
                                                             is_delete=False)
             asn_detail = serializers.ASNDetailGetSerializer(asn_detail_list, many=True)
-            supplier_detail = supplier.objects.filter(supplier_name=qs.supplier).first()
-            warehouse_detail = warehouse.objects.filter(**query_data).first()
+            supplier_detail = supplier.objects.filter(openid=self.request.auth.openid,
+                                                            supplier_name=qs.supplier).first()
+            warehouse_detail = warehouse.objects.filter(openid=self.request.auth.openid,).first()
             context['asn_detail'] = asn_detail.data
             context['supplier_detail'] = {
                 "supplier_name": supplier_detail.supplier_name,
@@ -510,17 +461,10 @@ class AsnPreLoadViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
             else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnListModel.objects.filter(**query_dict)
+                return AsnListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
         else:
             return AsnListModel.objects.none()
 
@@ -579,17 +523,10 @@ class AsnPreSortViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
             else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnListModel.objects.filter(**query_dict)
+                return AsnListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
         else:
             return AsnListModel.objects.none()
 
@@ -647,17 +584,10 @@ class AsnSortedViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
             else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnListModel.objects.filter(**query_dict)
+                return AsnListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
         else:
             return AsnListModel.objects.none()
 
@@ -682,7 +612,9 @@ class AsnSortedViewSet(viewsets.ModelViewSet):
                                                            asn_status=3, supplier=str(data['supplier']),
                                                            goods_code=str(
                                                                data['goodsData'][j].get('goods_code'))).first()
-                goods_detail = goods.objects.filter(goods_code=str(data['goodsData'][j].get('goods_code')), is_delete=False).first()
+                goods_detail = goods.objects.filter(openid=self.request.auth.openid,
+                                                    goods_code=str(data['goodsData'][j].get('goods_code')),
+                                                    is_delete=False).first()
                 if int(data['goodsData'][j].get('goods_actual_qty')) == 0:
                     asn_detail.goods_actual_qty = int(data['goodsData'][j].get('goods_actual_qty'))
                     asn_detail.goods_shortage_qty = asn_detail.goods_qty
@@ -746,7 +678,9 @@ class AsnSortedViewSet(viewsets.ModelViewSet):
                                                            asn_code=str(data['asn_code']),
                                                            goods_code=str(
                                                                data['goodsData'][j].get('goods_code'))).first()
-                goods_detail = goods.objects.filter(goods_code=str(data['goodsData'][j].get('goods_code')), is_delete=False).first()
+                goods_detail = goods.objects.filter(openid=self.request.auth.openid,
+                                                    goods_code=str(data['goodsData'][j].get('goods_code')),
+                                                    is_delete=False).first()
                 if int(data['goodsData'][j].get('goods_actual_qty')) == 0:
                     asn_detail.goods_actual_qty = int(data['goodsData'][j].get('goods_actual_qty'))
                     asn_detail.goods_shortage_qty = asn_detail.goods_qty
@@ -816,17 +750,10 @@ class MoveToBinViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnDetailModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
             else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnDetailModel.objects.filter(**query_dict)
+                return AsnDetailModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
         else:
             return AsnDetailModel.objects.none()
 
@@ -1166,17 +1093,12 @@ class FileListDownloadView(viewsets.ModelViewSet):
                 for i in range(len(empty_qs)):
                     if empty_qs[i].create_time <= cur_date - date_check:
                         empty_qs[i].delete()
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnListModel.objects.filter(
+                    Q(openid=self.request.auth.openid, is_delete=False) & ~Q(supplier=''))
             else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnListModel.objects.filter(Q(**query_dict) & ~Q(supplier=''))
+                return AsnListModel.objects.filter(
+                    Q(openid=self.request.auth.openid, id=id, is_delete=False) & ~Q(supplier=''))
         else:
             return AsnListModel.objects.none()
 
@@ -1228,17 +1150,10 @@ class FileDetailDownloadView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.get_project()
         if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
+            if id is None:
+                return AsnDetailModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
             else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnDetailModel.objects.filter(**query_dict)
+                return AsnDetailModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
         else:
             return AsnDetailModel.objects.none()
 
@@ -1272,86 +1187,3 @@ class FileDetailDownloadView(viewsets.ModelViewSet):
         )
         response['Content-Disposition'] = "attachment; filename='asndetail_{}.csv'".format(str(dt.strftime('%Y%m%d%H%M%S%f')))
         return response
-
-
-class PDFDownload(viewsets.ModelViewSet):
-    pagination_class = None
-    filter_backends = [DjangoFilterBackend, OrderingFilter, ]
-    ordering_fields = ['id', "create_time", "update_time", ]
-    filter_class = None
-
-    def get_project(self):
-        try:
-            id = self.kwargs.get('pk')
-            return id
-        except:
-            return None
-
-    def get_queryset(self):
-        id = self.get_project()
-        if self.request.user:
-            u = Users.objects.filter(vip=9).first()
-            if u is None:
-                superopenid = None
-            else:
-                superopenid = u.openid
-            query_dict = {'is_delete': False}
-            if self.request.auth.openid != superopenid:
-                query_dict['openid'] = self.request.auth.openid
-            if id is not None:
-                query_dict['id'] = id
-            return AsnListModel.objects.filter(**query_dict)
-        else:
-            return AsnListModel.objects.none()
-
-    def get_serializer_class(self):
-        if self.action in ['list', 'retrieve']:
-            return serializers.ASNListGetSerializer
-        elif self.action in ['create']:
-            return serializers.ASNListPostSerializer
-        elif self.action in ['update']:
-            return serializers.ASNListUpdateSerializer
-        else:
-            return self.http_method_not_allowed(request=self.request)
-
-    def retrieve(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        if queryset.exists():
-            patch_number = queryset.first().patch_number
-            path = os.path.join(settings.BASE_DIR, f'media/asn_label/{patch_number}/{patch_number}.pdf')
-            content_type, encoding = mimetypes.guess_type(path)
-            try:
-                response = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
-            except FileNotFoundError:
-                all_data = AsnDetailModel.objects.filter(patch_number=patch_number, is_delete=False)
-                all_goods = {}
-                for detail in all_data:
-                    if detail.goods_code in all_goods:
-                        all_goods[detail.goods_code] += detail.goods_qty
-                    else:
-                        all_goods[detail.goods_code] = detail.goods_qty
-                iter_data = []
-                for k, v in all_goods.items():
-                    d = all_data.filter(goods_code=k).first()
-                    d.goods_qty = v
-                    iter_data.append(d)
-                pdf_data = list()
-                for j in range(len(iter_data)):
-                    warehouse_addr = warehouse.objects.filter(
-                        pk=iter_data[j].warehouse_id).first().warehouse_city.split('-')
-                    d = dict()
-                    d['id'] = j + 1
-                    d['patch_number'] = iter_data[j].patch_number
-                    d['brand'] = 'MADE IN CHINA'
-                    d['barcode'] = goods.objects.filter(goods_code=iter_data[j].goods_code).first().bar_code
-                    d['total'] = iter_data[j].goods_qty
-                    d['goods_code'] = iter_data[j].goods_code
-                    d['address'] = warehouse_addr[1]
-                    d['country'] = warehouse_addr[0]
-                    pdf_data.append(d)
-                makepdf.Draw(pdf_data, os.path.join(makepdf.base_dir, f'{patch_number}/{patch_number}.pdf')).main()
-                response = StreamingHttpResponse(FileWrapper(open(path, 'rb')), content_type=content_type)
-            response['Cache-Control'] = "max-age=864000000000"
-            return response
-        raise APIException({"detail": "This ASN PDF File Is Not Exists"})
-

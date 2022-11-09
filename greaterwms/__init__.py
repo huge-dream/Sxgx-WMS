@@ -28,10 +28,6 @@ goodslist_cn_path = os.path.join(settings.BASE_DIR, 'media/' + "/upload_example/
 goodslist_en_path = os.path.join(settings.BASE_DIR, 'media/' + "/upload_example/goodslist_en.xlsx")
 supplier_cn_path = os.path.join(settings.BASE_DIR, 'media/' + "/upload_example/supplier_cn.xlsx")
 supplier_en_path = os.path.join(settings.BASE_DIR, 'media/' + "/upload_example/supplier_en.xlsx")
-asnlist_cn_path = os.path.join(settings.BASE_DIR, 'media/' + "/upload_example/asnlist_cn.xlsx")
-asnlist_en_path = os.path.join(settings.BASE_DIR, 'media/' + "/upload_example/asnlist_en.xlsx")
-dnlist_cn_path = os.path.join(settings.BASE_DIR, 'media/' + "/upload_example/dnlist_cn.xlsx")
-dnlist_en_path = os.path.join(settings.BASE_DIR, 'media/' + "/upload_example/dnlist_en.xlsx")
 customer_cn_file = os.path.exists(customer_cn_path)
 customer_en_file = os.path.exists(customer_en_path)
 goodslist_cn_file = os.path.exists(goodslist_cn_path)
@@ -49,13 +45,13 @@ if not customer_en_file:
     df.to_excel(customer_en_path)
 
 if not goodslist_cn_file:
-    goodslist_cn = pd.DataFrame({"SKU": [], "商品描述": [], "商品供应商": [], "商品品类": [], "商品单位重量": [], "商品单位长度": [], "商品单位宽度": [],  "商品单位高度": [], "商品形状": [], "商品最小体积": [], "商品单位": [], "商品规格": [], "商品成本": [], "商品价格": []})
-    df = goodslist_cn.set_index("SKU")
+    goodslist_cn = pd.DataFrame({"商品编码": [], "商品描述": [], "商品供应商": [], "商品单位重量": [], "商品单位长度": [], "商品单位宽度": [], "商品单位高度": [],  "最小单位体积": [], "商品单位": [], "商品类别": [], "商品品牌": [], "商品颜色": [], "商品形状": [], "商品规格": [], "商品产地": [], "商品成本": [], "商品价格": []})
+    df = goodslist_cn.set_index("商品编码")
     df.to_excel(goodslist_cn_path)
 
 if not goodslist_en_file:
-    goodslist_en = pd.DataFrame({"SKU": [], "Goods Description": [], "Goods Supplier": [], "Goods Class": [], "Goods Weight": [], "Goods Depth": [], "Goods Width": [],  "Goods Height": [], "Goods Shape": [], "Goods Volume": [], "Goods Unit": [], "Goods Specs": [], "Goods Cost": [], "Goods Price": []})
-    df = goodslist_en.set_index("SKU")
+    goodslist_en = pd.DataFrame({"Goods Code": [], "Goods Description": [], "Goods Supplier": [], "Goods Weight": [], "Goods Width": [], "Goods Depth": [], "Goods Height": [],  "Unit Volume": [], "Goods Unit": [], "Goods Class": [], "Goods Brand": [], "Goods Color": [], "Goods Shape": [], "Goods Specs": [], "Goods Origin": [], "Goods Cost": [], "Goods Price": []})
+    df = goodslist_en.set_index("Goods Code")
     df.to_excel(goodslist_en_path)
 
 if not supplier_cn_file:
@@ -67,15 +63,5 @@ if not supplier_en_file:
     supplier_en = pd.DataFrame({"Supplier Name": [], "Supplier City": [] ,"Supplier Address": [], "Supplier Contact": [], "Supplier Manager": [], "Supplier Level": []})
     df = supplier_en.set_index("Supplier Name")
     df.to_excel(supplier_en_path)
-
-if not asnlist_cn_path:
-    asnlist_cn = pd.DataFrame({"序号 No.": [], "SKU": [], "数量 Qty": [], "批次号": [], "仓库ID": []})
-    df = asnlist_cn.set_index("序号 No.")
-    df.to_excel(asnlist_cn_path)
-
-if not asnlist_en_path:
-    asnlist_en = pd.DataFrame({"No.": [], "SKU": [], "Qty": [], "Patch Number": [], "Warehosue ID": []})
-    df = asnlist_en.set_index("No.")
-    df.to_excel(asnlist_en_path)
 
 print('Welcome To GreaterWMS')

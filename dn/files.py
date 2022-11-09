@@ -12,11 +12,10 @@ def list_file_headers():
         'create_time',
         'update_time'
     ]
-
 def list_cn_data_header():
     return dict([
         ('dn_code', u'发货单单号'),
-        ('dn_status', u'拣货单状态'),
+        ('dn_status', u'发货单状态'),
         ('total_weight', u'总重量'),
         ('total_volume', u'总体积'),
         ('customer', u'客户'),
@@ -61,7 +60,6 @@ def detail_file_headers():
         'create_time',
         'update_time'
     ]
-
 def detail_cn_data_header():
     return dict([
         ('dn_code', u'发货单单号'),
@@ -108,71 +106,13 @@ def detail_en_data_header():
         ('update_time', u'Update Time')
     ])
 
-def picklist_file_headers():
-    return [
-        'dn_code',
-        'bin_name',
-        'goods_code',
-        # 'picking_status',
-        'pick_qty',
-        'picked_qty',
-        'create_time',
-        'update_time'
-    ]
-
-def picklist_cn_data_header():
-    return dict([
-        (['dn_code', u'发货单号']),
-        (['bin_name', u'库位名']),
-        (['goods_code', u'SKU']),
-        # (['picking_status', u'拣货单状态']),
-        (['pick_qty', u'待拣货数量']),
-        (['picked_qty', u'已拣货数量']),
-        (['create_time', u'创建时间']),
-        (['update_time', u'更新时间']),
-    ])
-
-def picklist_en_data_header():
-    return dict([
-        (['dn_code', u'dn_code']),
-        (['bin_name', u'bin_name']),
-        (['goods_code', u'SKU']),
-        # (['picking_status', u'picking_status']),
-        (['pick_qty', u'pick_qty']),
-        (['picked_qty', u'picked_qty']),
-        (['create_time', u'create_time']),
-        (['update_time', u'update_time']),
-    ])
-
-def dnlist_file_headers():
-    return [
-        'SKU',
-        'Wait Deliver Oty',
-        'Warehouse ID',
-    ]
-
-def dnlist_cn_data_header():
-    return dict([
-        (['SKU', u'SKU']),
-        (['Wait Deliver Oty', u'待发货数量']),
-        (['Warehouse ID', u'仓库ID']),
-    ])
-
-def dnlist_en_data_header():
-    return dict([
-        (['SKU', u'SKU']),
-        (['Wait Deliver Oty', u'Wait Deliver Oty']),
-        (['Warehouse ID', u'Warehouse ID']),
-    ])
-
-
 class FileListRenderCN(CSVStreamingRenderer):
     header = list_file_headers()
     labels = list_cn_data_header()
 
 class FileListRenderEN(CSVStreamingRenderer):
     header = list_file_headers()
-    labels = list_en_data_header()
+    labels = list_cn_data_header()
 
 class FileDetailRenderCN(CSVStreamingRenderer):
     header = detail_file_headers()
@@ -181,19 +121,3 @@ class FileDetailRenderCN(CSVStreamingRenderer):
 class FileDetailRenderEN(CSVStreamingRenderer):
     header = detail_file_headers()
     labels = detail_en_data_header()
-
-class PickListRenderCN(CSVStreamingRenderer):
-    header = picklist_file_headers()
-    labels = picklist_cn_data_header()
-
-class PickListRenderEN(CSVStreamingRenderer):
-    header = picklist_file_headers()
-    labels = picklist_en_data_header()
-
-class DnListRenderCN(CSVStreamingRenderer):
-    header = dnlist_file_headers()
-    labels = dnlist_cn_data_header()
-
-class DnListRenderEN(CSVStreamingRenderer):
-    header = dnlist_file_headers()
-    labels = dnlist_en_data_header()
