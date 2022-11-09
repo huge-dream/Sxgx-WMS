@@ -88,6 +88,16 @@
             <template v-if="!editMode">
               <q-td key="action" :props="props" style="width: 175px">
                 <q-btn
+                  round
+                  flat
+                  push
+                  color="primary"
+                  icon="qr_code_2"
+                  @click="QRCode(props.row)"
+                >
+                  <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('qrcode') }}</q-tooltip>
+                </q-btn>
+                <q-btn
                   v-show="
                     $q.localStorage.getItem('staff_type') !== 'Supplier' &&
                       $q.localStorage.getItem('staff_type') !== 'Customer' &&
@@ -226,6 +236,25 @@
         </div>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="QRCodeForm">
+      <div id="printMe" style="width: 400px;height:320px;background-color: white">
+        <q-card-section>
+          <div class="row" style="height: 60px">
+            <div class="col-3"><img src="statics/goods/logo.png" style="width: 60px;height: 50px;margin-top: 5px;margin-left: 5px;" /></div>
+            <div class="col-9" style="height: 50px;float: contour;margin-top: 10px;">
+              <p style="font-size: 20px;font-weight: 550;position: absolute;right: 20px;">{{'员工姓名: ' + '张三' }}</p>
+            </div>
+          </div>
+          <hr />
+          <div class="row">
+            <div class="col-12" style="text-align: center">
+                <img :src="bar_code"  style="width: 200px;"/>
+            </div>
+          </div>
+        </q-card-section>
+      </div>
+      <div style="float: right; padding: 15px 15px 15px 0"><q-btn color="primary" icon="print" v-print="printObj">print</q-btn></div>
+    </q-dialog>
   </div>
 </template>
 <router-view />
@@ -270,6 +299,12 @@ export default {
       editFormData: {},
       editMode: false,
       deleteForm: false,
+      QRCodeForm: false,
+      bar_code: '',
+      printObj: {
+        id: 'printMe',
+        popTitle: this.$t('inbound.asn')
+      },
       deleteid: 0,
       filter: '',
       error1: this.$t('staff.view_staff.error1'),
@@ -593,6 +628,25 @@ export default {
       var _this = this
       _this.deleteForm = true
       _this.deleteid = e
+    },
+    QRCode (e) {
+      var _this = this
+      _this.QRCodeForm = true
+      var QRCode = require('qrcode');
+      QRCode.toDataURL(this.Base64.encode(`${e.id}_${e.check_code}`), [
+        {
+          errorCorrectionLevel: 'H',
+          mode: 'byte',
+          version: '2',
+          type: 'image/jpeg'
+        }
+      ])
+        .then(url => {
+          _this.bar_code = url;
+        })
+        .catch(err => {
+          console.error(err);
+        });
     },
     deleteDataSubmit () {
       var _this = this

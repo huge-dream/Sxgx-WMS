@@ -75,6 +75,7 @@ export default {
   refresh: '刷新',
   refreshtip: '刷新所有数据',
   edit: '编辑这条数据',
+  qrcode: '二维码信息',
   confirmedit: '确认编辑数据',
   canceledit: '取消编辑数据',
   delete: '删除这条数据',
