@@ -11,13 +11,13 @@ export default {
     index_title: '仓库管理平台',
     webtitle: 'GreaterWMS--开源仓库管理系统',
     home: '首页',
-    title: 'GreaterWMS',
-    title_tip: 'GreaterWMS首页',
+    title: '中物汇智',
+    title_tip: '中物汇智首页',
     hide_menu: '收起菜单',
     api: 'API文档',
     translate: '更改语言',
     unread: '未读消息',
-    login: '登入',
+    login: '管理员登入',
     register: '注册',
     login_tip: '输入你的OPENID和用户名',
     register_tip: '注册成为管理员',
@@ -323,7 +323,8 @@ export default {
     }
   },
   inbound: {
-    asn: '到货通知书',
+    put_on_shelves: '上架',
+    asn: '收货明细',
     predeliverystock: '待到货',
     preloadstock: '待卸货',
     presortstock: '待分拣',
@@ -350,7 +351,7 @@ export default {
     }
   },
   outbound: {
-    dn: '发货单',
+    dn: '发货明细',
     freshorder: '预发货单',
     neworder: '新发货单',
     backorder: '欠货订单',

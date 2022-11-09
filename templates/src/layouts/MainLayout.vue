@@ -21,70 +21,70 @@
           }}</q-toolbar-title>
         </transition>
         <q-space />
-        <transition appear enter-active-class="animated zoomIn">
-          <q-btn
-            icon="img:statics/icons/android.png"
-            round
-            dense
-            flat
-            @click="brownlink('https://www.56yhz.com/media/GWMS.apks')"
-            style="margin: 0 10px 0 10px"
-          >
-            <q-tooltip
-              content-class="bg-amber text-black shadow-4"
-              :offset="[15, 15]"
-              content-style="font-size: 12px"
-              >Android APP
-            </q-tooltip>
-          </q-btn>
-        </transition>
-        <transition appear enter-active-class="animated zoomIn">
-          <q-btn
-            icon="img:statics/icons/GitHub.png"
-            round
-            dense
-            flat
-            @click="brownlink('https://github.com/Singosgu/GreaterWMS')"
-            style="margin: 0 10px 0 10px"
-          >
-            <q-tooltip
-              content-class="bg-amber text-black shadow-4"
-              :offset="[15, 15]"
-              content-style="font-size: 12px"
-              >GitHub Link</q-tooltip
-            >
-          </q-btn>
-        </transition>
-        <transition appear enter-active-class="animated zoomIn">
-          <q-btn
-            round
-            dense
-            flat
-            color="white"
-            icon="translate"
-            style="margin: 0 10px 0 10px"
-          >
-            <q-tooltip
-              content-class="bg-amber text-black shadow-4"
-              :offset="[15, 15]"
-              content-style="font-size: 12px"
-              >{{ $t("index.translate") }}</q-tooltip
-            >
-            <q-menu>
-              <q-list style="min-width: 100px">
-                <q-item
-                  clickable
-                  v-close-popup
-                  v-for="(language, index) in langOptions"
-                  :key="index"
-                  @click="langChange(language.value)"
-                >
-                  <q-item-section>{{ language.label }}</q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
-        </transition>
+<!--        <transition appear enter-active-class="animated zoomIn">-->
+<!--          <q-btn-->
+<!--            icon="img:statics/icons/android.png"-->
+<!--            round-->
+<!--            dense-->
+<!--            flat-->
+<!--            @click="brownlink('https://www.56yhz.com/media/GWMS.apks')"-->
+<!--            style="margin: 0 10px 0 10px"-->
+<!--          >-->
+<!--            <q-tooltip-->
+<!--              content-class="bg-amber text-black shadow-4"-->
+<!--              :offset="[15, 15]"-->
+<!--              content-style="font-size: 12px"-->
+<!--              >Android APP-->
+<!--            </q-tooltip>-->
+<!--          </q-btn>-->
+<!--        </transition>-->
+<!--        <transition appear enter-active-class="animated zoomIn">-->
+<!--          <q-btn-->
+<!--            icon="img:statics/icons/GitHub.png"-->
+<!--            round-->
+<!--            dense-->
+<!--            flat-->
+<!--            @click="brownlink('https://github.com/Singosgu/GreaterWMS')"-->
+<!--            style="margin: 0 10px 0 10px"-->
+<!--          >-->
+<!--            <q-tooltip-->
+<!--              content-class="bg-amber text-black shadow-4"-->
+<!--              :offset="[15, 15]"-->
+<!--              content-style="font-size: 12px"-->
+<!--              >GitHub Link</q-tooltip-->
+<!--            >-->
+<!--          </q-btn>-->
+<!--        </transition>-->
+<!--        <transition appear enter-active-class="animated zoomIn">-->
+<!--          <q-btn-->
+<!--            round-->
+<!--            dense-->
+<!--            flat-->
+<!--            color="white"-->
+<!--            icon="translate"-->
+<!--            style="margin: 0 10px 0 10px"-->
+<!--          >-->
+<!--            <q-tooltip-->
+<!--              content-class="bg-amber text-black shadow-4"-->
+<!--              :offset="[15, 15]"-->
+<!--              content-style="font-size: 12px"-->
+<!--              >{{ $t("index.translate") }}</q-tooltip-->
+<!--            >-->
+<!--            <q-menu>-->
+<!--              <q-list style="min-width: 100px">-->
+<!--                <q-item-->
+<!--                  clickable-->
+<!--                  v-close-popup-->
+<!--                  v-for="(language, index) in langOptions"-->
+<!--                  :key="index"-->
+<!--                  @click="langChange(language.value)"-->
+<!--                >-->
+<!--                  <q-item-section>{{ language.label }}</q-item-section>-->
+<!--                </q-item>-->
+<!--              </q-list>-->
+<!--            </q-menu>-->
+<!--          </q-btn>-->
+<!--        </transition>-->
         <q-separator vertical />
         <template v-if="authin === '1'">
           <transition appear enter-active-class="animated zoomIn">
@@ -205,13 +205,13 @@
         <q-list>
           <q-item
             clickable
-            :to="{ name: 'outbounddashboard' }"
-            @click="linkChange('outbounddashboard')"
+            :to="{ name: 'inboundAndOutbound' }"
+            @click="linkChange('inboundAndOutbound')"
             v-ripple
             exact
-            :active="link === 'outbounddashboard' && link !== ''"
+            :active="link === 'inboundAndOutbound' && link !== ''"
             :class="{
-              'my-menu-link': link === 'outbounddashboard' && link !== '',
+              'my-menu-link': link === 'inboundAndOutbound' && link !== '',
             }"
           >
             <q-item-section avatar><q-icon name="auto_graph" /></q-item-section>
@@ -259,20 +259,20 @@
             <q-item-section>{{ $t("menuItem.stock") }}</q-item-section>
           </q-item>
           <q-separator />
-          <q-item
-            clickable
-            :to="{ name: 'capitallist' }"
-            @click="linkChange('finance')"
-            v-ripple
-            exact
-            :active="link === 'finance' && link !== ''"
-            :class="{ 'my-menu-link': link === 'finance' && link !== '' }"
-          >
-            <q-item-section avatar
-              ><q-icon name="devices_other"
-            /></q-item-section>
-            <q-item-section>{{ $t("menuItem.finance") }}</q-item-section>
-          </q-item>
+<!--          <q-item-->
+<!--            clickable-->
+<!--            :to="{ name: 'capitallist' }"-->
+<!--            @click="linkChange('finance')"-->
+<!--            v-ripple-->
+<!--            exact-->
+<!--            :active="link === 'finance' && link !== ''"-->
+<!--            :class="{ 'my-menu-link': link === 'finance' && link !== '' }"-->
+<!--          >-->
+<!--            <q-item-section avatar-->
+<!--              ><q-icon name="devices_other"-->
+<!--            /></q-item-section>-->
+<!--            <q-item-section>{{ $t("menuItem.finance") }}</q-item-section>-->
+<!--          </q-item>-->
           <q-item
             clickable
             :to="{ name: 'goodslist' }"
@@ -324,51 +324,51 @@
             /></q-item-section>
             <q-item-section>{{ $t("menuItem.staff") }}</q-item-section>
           </q-item>
-          <q-item
-            clickable
-            :to="{ name: 'driverlist' }"
-            @click="linkChange('driver')"
-            v-ripple
-            exact
-            :active="link === 'driver' && link !== ''"
-            :class="{ 'my-menu-link': link === 'driver' && link !== '' }"
-          >
-            <q-item-section avatar
-              ><q-icon name="transfer_within_a_station"
-            /></q-item-section>
-            <q-item-section>{{ $t("menuItem.driver") }}</q-item-section>
-          </q-item>
+<!--          <q-item-->
+<!--            clickable-->
+<!--            :to="{ name: 'driverlist' }"-->
+<!--            @click="linkChange('driver')"-->
+<!--            v-ripple-->
+<!--            exact-->
+<!--            :active="link === 'driver' && link !== ''"-->
+<!--            :class="{ 'my-menu-link': link === 'driver' && link !== '' }"-->
+<!--          >-->
+<!--            <q-item-section avatar-->
+<!--              ><q-icon name="transfer_within_a_station"-->
+<!--            /></q-item-section>-->
+<!--            <q-item-section>{{ $t("menuItem.driver") }}</q-item-section>-->
+<!--          </q-item>-->
           <q-separator v-show="device === 0" />
-          <q-item
-            clickable
-            :to="{ name: 'initializeupload' }"
-            @click="linkChange('uploadcenter')"
-            v-ripple
-            exact
-            :active="link === 'uploadcenter' && link !== ''"
-            :class="{ 'my-menu-link': link === 'uploadcenter' && link !== '' }"
-          >
-            <q-item-section avatar
-              ><q-icon name="file_upload"
-            /></q-item-section>
-            <q-item-section>{{ $t("menuItem.uploadcenter") }}</q-item-section>
-          </q-item>
-          <q-item
-            clickable
-            :to="{ name: 'downloadinbound' }"
-            @click="linkChange('downloadcenter')"
-            v-ripple
-            exact
-            :active="link === 'downloadcenter' && link !== ''"
-            :class="{
-              'my-menu-link': link === 'downloadcenter' && link !== '',
-            }"
-          >
-            <q-item-section avatar
-              ><q-icon name="file_download"
-            /></q-item-section>
-            <q-item-section>{{ $t("menuItem.downloadcenter") }}</q-item-section>
-          </q-item>
+<!--          <q-item-->
+<!--            clickable-->
+<!--            :to="{ name: 'initializeupload' }"-->
+<!--            @click="linkChange('uploadcenter')"-->
+<!--            v-ripple-->
+<!--            exact-->
+<!--            :active="link === 'uploadcenter' && link !== ''"-->
+<!--            :class="{ 'my-menu-link': link === 'uploadcenter' && link !== '' }"-->
+<!--          >-->
+<!--            <q-item-section avatar-->
+<!--              ><q-icon name="file_upload"-->
+<!--            /></q-item-section>-->
+<!--            <q-item-section>{{ $t("menuItem.uploadcenter") }}</q-item-section>-->
+<!--          </q-item>-->
+<!--          <q-item-->
+<!--            clickable-->
+<!--            :to="{ name: 'downloadinbound' }"-->
+<!--            @click="linkChange('downloadcenter')"-->
+<!--            v-ripple-->
+<!--            exact-->
+<!--            :active="link === 'downloadcenter' && link !== ''"-->
+<!--            :class="{-->
+<!--              'my-menu-link': link === 'downloadcenter' && link !== '',-->
+<!--            }"-->
+<!--          >-->
+<!--            <q-item-section avatar-->
+<!--              ><q-icon name="file_download"-->
+<!--            /></q-item-section>-->
+<!--            <q-item-section>{{ $t("menuItem.downloadcenter") }}</q-item-section>-->
+<!--          </q-item>-->
         </q-list>
       </q-scroll-area>
     </q-drawer>
