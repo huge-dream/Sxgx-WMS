@@ -92,7 +92,7 @@
                   flat
                   push
                   color="primary"
-                  icon="qr_code_2"
+                  icon="crop_free"
                   @click="QRCode(props.row)"
                 >
                   <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('qrcode') }}</q-tooltip>
@@ -237,7 +237,7 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="QRCodeForm">
-      <div id="printMe" style="width: 400px;height:320px;background-color: white">
+      <div id="printMe" style="width: 400px;height:220px;background-color: white">
         <q-card-section>
           <div class="row" style="height: 60px">
             <div class="col-3"><img src="statics/goods/logo.png" style="width: 60px;height: 50px;margin-top: 5px;margin-left: 5px;" /></div>
@@ -247,8 +247,8 @@
           </div>
           <hr />
           <div class="row">
-            <div class="col-12" style="text-align: center">
-                <img :src="bar_code"  style="width: 200px;"/>
+            <div class="col-12" style="text-align: center;margin-top: 30px;">
+              <canvas id="barCode" style="width: 100%;"/>
             </div>
           </div>
         </q-card-section>
@@ -262,6 +262,7 @@
 <script>
 import { getauth, postauth, putauth, deleteauth, getfile } from 'boot/axios_request'
 import { date, exportFile, LocalStorage } from 'quasar'
+import JsBarcode from "jsbarcode";
 
 export default {
   name: 'Pagestafflist',
@@ -300,7 +301,15 @@ export default {
       editMode: false,
       deleteForm: false,
       QRCodeForm: false,
-      bar_code: '',
+      bindBarCode (data) {
+        JsBarcode('#barCode', data, {
+          background: '#fff',
+          displayValue: false,
+          // width: 2, //
+          height: 30, // 一维码的高度
+          // margin: 5 // 一维码与容器的margin
+        })
+      },
       printObj: {
         id: 'printMe',
         popTitle: this.$t('inbound.asn')
@@ -632,21 +641,9 @@ export default {
     QRCode (e) {
       var _this = this
       _this.QRCodeForm = true
-      var QRCode = require('qrcode');
-      QRCode.toDataURL(this.Base64.encode(`${e.id}_${e.check_code}`), [
-        {
-          errorCorrectionLevel: 'H',
-          mode: 'byte',
-          version: '2',
-          type: 'image/jpeg'
-        }
-      ])
-        .then(url => {
-          _this.bar_code = url;
-        })
-        .catch(err => {
-          console.error(err);
-        });
+      this.$nextTick(() => {
+          this.bindBarCode( this.Base64.encode(`${e.id}_${e.check_code}`))
+      });
     },
     deleteDataSubmit () {
       var _this = this
