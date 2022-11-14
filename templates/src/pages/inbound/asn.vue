@@ -159,7 +159,7 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData1.bin"
+                v-model="goodsData1.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
@@ -172,8 +172,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData1.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData1.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData1.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData1.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -220,7 +220,7 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData2.bin"
+                v-model="goodsData2.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
@@ -233,8 +233,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData2.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData2.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData2.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData2.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -281,7 +281,7 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData3.bin"
+                v-model="goodsData3.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
@@ -294,8 +294,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData3.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData3.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData3.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData3.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -342,7 +342,7 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData4.bin"
+                v-model="goodsData4.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
@@ -355,8 +355,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData4.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData4.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData4.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData4.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -403,7 +403,7 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData5.bin"
+                v-model="goodsData5.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
@@ -416,8 +416,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData5.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData5.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData5.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData5.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -464,7 +464,7 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData6.bin"
+                v-model="goodsData6.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
@@ -477,8 +477,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData6.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData6.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData6.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData6.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -525,7 +525,7 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData7.bin"
+                v-model="goodsData7.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
@@ -538,8 +538,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData7.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData7.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData7.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData7.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -586,7 +586,7 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData8.bin"
+                v-model="goodsData8.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
@@ -599,8 +599,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData8.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData8.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData8.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData8.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -647,7 +647,7 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData9.bin"
+                v-model="goodsData9.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
@@ -660,8 +660,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData9.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData9.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData9.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData9.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -708,11 +708,10 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData10.bin"
+                v-model="goodsData10.bin_name"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
-                option-label="bin_name"
-                option-value="id"
+
                 @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
@@ -721,8 +720,8 @@
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData10.bin" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData10.bin = ''" class="cursor-pointer" />
+                <template v-if="goodsData10.bin_name" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData10.bin_name = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
