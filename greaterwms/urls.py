@@ -29,6 +29,7 @@ urlpatterns = [
     path('customer/', include('customer.urls')),
     path('warehouse/', include('warehouse.urls')),
     path('goods/', include('goods.urls')),
+    path('in_out_warehouse/', include('in_out_warehouse.urls')),
     path('goodsunit/', include('goodsunit.urls')),
     path('goodsclass/', include('goodsclass.urls')),
     path('goodscolor/', include('goodscolor.urls')),

@@ -50,11 +50,8 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td key="asn_code" :props="props">{{ props.row.asn_code }}</q-td>
+            <q-td key="good" :props="props">{{ props.row.good }}</q-td>
             <q-td key="asn_status" :props="props">{{ props.row.asn_status }}</q-td>
-            <q-td key="total_weight" :props="props">{{ props.row.total_weight.toFixed(4) }}</q-td>
-            <q-td key="total_volume" :props="props">{{ props.row.total_volume.toFixed(4) }}</q-td>
-            <q-td key="supplier" :props="props">{{ props.row.supplier }}</q-td>
             <q-td key="creater" :props="props">{{ props.row.creater }}</q-td>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
             <q-td key="update_time" :props="props">{{ props.row.update_time }}</q-td>
@@ -188,39 +185,40 @@
     <q-dialog v-model="newForm">
       <q-card class="shadow-24">
         <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
-          <div>{{ newFormData.asn_code }}</div>
+<!--          <div>{{ newFormData.asn_code }}</div>-->
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
             <q-tooltip content-class="bg-amber text-black shadow-4">{{ $t('index.close') }}</q-tooltip>
           </q-btn>
         </q-bar>
         <q-card-section style="max-height: 325px; width: 400px" class="scroll">
-          <q-select
-            filled
-            use-input
-            fill-input
-            hide-selected
-            input-debounce="0"
-            dense
-            outlined
-            square
-            v-model="newFormData.supplier"
-            :options="supplier_list"
-            @filter="filterFnS"
-            @input-value="setModel"
-            :label="$t('baseinfo.view_supplier.supplier_name')"
-            style="margin-bottom: 5px"
-            :rules="[val => (val && val.length > 0) || error1]"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-          >
-            <template v-slot:Sno-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  No Result
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
+<!--          <q-select-->
+<!--            filled-->
+<!--            use-input-->
+<!--            fill-input-->
+<!--            hide-selected-->
+<!--            input-debounce="0"-->
+<!--            dense-->
+<!--            outlined-->
+<!--            square-->
+<!--            v-model="newFormData.supplier"-->
+<!--            :options="supplier_list"-->
+<!--            @filter="filterFnS"-->
+<!--            @input-value="setModel"-->
+<!--            :label="$t('baseinfo.view_supplier.supplier_name')"-->
+<!--            style="margin-bottom: 5px"-->
+<!--            :rules="[val => (val && val.length > 0) || error1]"-->
+<!--            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"-->
+<!--          >-->
+<!--            <template v-slot:Sno-option>-->
+<!--              <q-item>-->
+<!--                <q-item-section class="text-grey">-->
+<!--                  No Result-->
+<!--                </q-item-section>-->
+<!--              </q-item>-->
+<!--            </template>-->
+<!--          </q-select>-->
+
           <q-input
             dense
             outlined
@@ -244,6 +242,7 @@
                 v-model="goodsData1.code"
                 :label="$t('goods.view_goodslist.goods_code')"
                 :options="options"
+
                 @focus="getFocus(1)"
                 @input-value="setOptions"
                 @filter="filterFn"
@@ -747,11 +746,8 @@ export default {
       supplier_list1: [],
       supplier_detail: {},
       columns: [
-        { name: 'asn_code', required: true, label: this.$t('inbound.view_asn.asn_code'), align: 'left', field: 'asn_code' },
-        { name: 'asn_status', label: this.$t('inbound.view_asn.asn_status'), field: 'asn_status', align: 'center' },
-        { name: 'total_weight', label: this.$t('inbound.view_asn.total_weight'), field: 'total_weight', align: 'center' },
-        { name: 'total_volume', label: this.$t('inbound.view_asn.total_volume'), field: 'total_volume', align: 'center' },
-        { name: 'supplier', label: this.$t('baseinfo.view_supplier.supplier_name'), field: 'supplier', align: 'center' },
+        { name: 'good', required: true, label: this.$t('inbound.view_asn.good'), align: 'left', field: 'good' },
+        { name: 'asn_status', label: this.$t('inbound.view_asn.number'), field: 'asn_status', align: 'center' },
         { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
         { name: 'update_time', label: this.$t('updatetime'), field: 'update_time', align: 'center' },
@@ -817,7 +813,7 @@ export default {
     getList () {
       var _this = this
       if (LocalStorage.has('auth')) {
-        getauth(_this.pathname + 'list/', {})
+        getauth('in_out_warehouse/in_out_warehouse/', {})
           .then(res => {
             _this.table_list = []
             res.results.forEach(item => {
@@ -992,45 +988,54 @@ export default {
       var _this = this
       _this.newFormData.creater = _this.login_name
       let cancelRequest = false
-      if (_this.newFormData.supplier !== '') {
-        _this.newFormData.goods_code = []
-        _this.newFormData.goods_qty = []
-        let goodsDataCheck = 0
-        for (let i = 0; i < 10; i++) {
-          const goodsData = `goodsData${i + 1}`
-          if (_this[goodsData].code !== '' && _this[goodsData].qty !== '') {
-            if (_this[goodsData].qty < 1) {
-              cancelRequest = true
-              _this.$q.notify({
-                message: 'Total Quantity Must Be > 0',
-                icon: 'close',
-                color: 'negative'
-              })
-            } else {
-              _this.newFormData.goods_code.push(_this[goodsData].code)
-              _this.newFormData.goods_qty.push(_this[goodsData].qty)
+      const submitForm = [] // 用于提交的form
+      // if (_this.newFormData.supplier !== '') {
+      _this.newFormData.goods_code = []
+      _this.newFormData.goods_qty = []
+      let goodsDataCheck = 0
+      for (let i = 0; i < 10; i++) {
+        const goodsData = `goodsData${i + 1}`
+        if (_this[goodsData].code !== '' && _this[goodsData].qty !== '') {
+          if (_this[goodsData].qty < 1) {
+            cancelRequest = true
+            _this.$q.notify({
+              message: 'Total Quantity Must Be > 0',
+              icon: 'close',
+              color: 'negative'
+            })
+          } else {
+            _this.newFormData.goods_code.push(_this[goodsData].code)
+            _this.newFormData.goods_qty.push(_this[goodsData].qty)
+            const dict = {
+              good: _this[goodsData].good,
+              number: _this[goodsData].qty,
+              type: 0,
+              creater: _this.login_name
             }
-            goodsDataCheck += 1
+            submitForm.push(dict)
           }
+          goodsDataCheck += 1
         }
-        if (goodsDataCheck === 0) {
-          cancelRequest = true
-          _this.$q.notify({
-            message: 'Please Enter The Goods & Qty',
-            icon: 'close',
-            color: 'negative'
-          })
-        }
-      } else {
+      }
+      if (goodsDataCheck === 0) {
         cancelRequest = true
         _this.$q.notify({
-          message: 'Please Enter The Supplier',
+          message: 'Please Enter The Goods & Qty',
           icon: 'close',
           color: 'negative'
         })
       }
+      // } else {
+      //   cancelRequest = true
+      //   _this.$q.notify({
+      //     message: 'Please Enter The Supplier',
+      //     icon: 'close',
+      //     color: 'negative'
+      //   })
+      // }
       if (!cancelRequest) {
-        postauth(_this.pathname + 'detail/', _this.newFormData)
+        console.log(submitForm)
+        postauth('in_out_warehouse/in_out_warehouse/', submitForm)
           .then(res => {
             _this.table_list = []
             _this.getList()
@@ -1296,6 +1301,7 @@ export default {
       this.listNumber = number
     },
     setOptions (val) {
+
       const _this = this
       if (!val) {
         this[`goodsData${this.listNumber}`].code = ''
@@ -1307,7 +1313,7 @@ export default {
           goodscodelist.push(res.results[i].goods_code)
           if (this.listNumber) {
             if (res.results[i].goods_code === val) {
-              this[`goodsData${this.listNumber}`].code = val
+              this[`goodsData${this.listNumber}`].good = res.results[i].id
             }
           }
         }

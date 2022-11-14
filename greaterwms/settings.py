@@ -60,7 +60,8 @@ INSTALLED_APPS = [
     'scanner.apps.ScannerConfig',
     'rest_framework',
     'django_filters',
-    'corsheaders'
+    'corsheaders',
+    'in_out_warehouse.apps.InOutWarehouseConfig'
 ]
 
 MIDDLEWARE = [

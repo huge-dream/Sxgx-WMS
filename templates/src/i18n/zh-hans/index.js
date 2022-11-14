@@ -339,6 +339,8 @@ export default {
       error1: '请输入数量，数量必须大于0'
     },
     view_asn: {
+      good:'商品',
+      number:'数量',
       asn_code: '到货通知书单号',
       asn_status: '到货通知书状态',
       goods_qty: '到货通知书数量',
