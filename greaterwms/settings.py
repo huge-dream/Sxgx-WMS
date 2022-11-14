@@ -155,6 +155,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 
 REST_FRAMEWORK = {
+    "DATETIME_FORMAT": "%Y-%m-%d %H:%M:%S",  # 日期时间格式配置
+    "DATE_FORMAT": "%Y-%m-%d",
     # AttributeError: ‘AutoSchema’ object has no attribute ‘get_link’
     #'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
     # DEFAULT SET:

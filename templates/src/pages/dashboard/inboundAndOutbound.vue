@@ -32,10 +32,10 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="goods_code" :props="props">{{ props.row.goods_code }}</q-td>
-            <q-td key="bin_name" :props="props">{{ props.row.bin_name }}</q-td>
             <q-td key="goods_desc" :props="props">{{ props.row.goods_desc }}</q-td>
-            <q-td key="mode_code" :props="props">{{ props.row.mode_code }}</q-td>
-            <q-td key="goods_qty" :props="props">{{ props.row.goods_qty }}</q-td>
+            <q-td key="binset_name" :props="props">{{ props.row.binset_name }}</q-td>
+            <q-td key="type_label" :props="props">{{ props.row.type_label }}</q-td>
+            <q-td key="number" :props="props">{{ props.row.number }}</q-td>
             <q-td key="creater" :props="props">{{ props.row.creater }}</q-td>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
             <q-td key="update_time" :props="props">{{ props.row.update_time }}</q-td>
@@ -78,10 +78,10 @@ export default {
       staff_type_list: ['Manager', 'Inbound', 'Outbound', 'Supervisor', 'StockControl', 'Customer', 'Supplier'],
       columns: [
         { name: 'goods_code', label: this.$t('dashboards.view_tradelist.goods_code'), field: 'goods_code', align: 'left' },
-        { name: 'bin_name', label: this.$t('dashboards.view_tradelist.bin_name'), field: 'bin_name', align: 'center' },
+        { name: 'binset_name', label: this.$t('dashboards.view_tradelist.bin_name'), field: 'binset_name', align: 'center' },
         { name: 'goods_desc', label: this.$t('goods.view_goodslist.goods_desc'), field: 'goods_desc', align: 'center' },
-        { name: 'mode_code', required: true, label: this.$t('dashboards.view_tradelist.mode_code'), align: 'center', field: 'mode_code' },
-        { name: 'goods_qty', label: this.$t('dashboards.view_tradelist.goods_qty'), field: 'goods_qty', align: 'center' },
+        { name: 'type_label', required: true, label: this.$t('dashboards.view_tradelist.mode_code'), align: 'center', field: 'type_label' },
+        { name: 'number', label: this.$t('dashboards.view_tradelist.goods_qty'), field: 'number', align: 'center' },
         { name: 'creater', label: this.$t('dashboards.view_tradelist.creater'), field: 'creater', align: 'center' },
         { name: 'create_time', label: this.$t('dashboards.view_tradelist.create_time'), field: 'create_time', align: 'center' },
         { name: 'update_time', label: this.$t('dashboards.view_tradelist.update_time'), field: 'update_time', align: 'right' }
@@ -95,7 +95,7 @@ export default {
   methods: {
     getList () {
       var _this = this
-      getauth('cyclecount/qtyrecorviewset/', {})
+      getauth('in_out_warehouse/in_out_warehouse/', {})
         .then(res => {
           _this.table_list = res.results
           _this.pathname_previous = res.previous
