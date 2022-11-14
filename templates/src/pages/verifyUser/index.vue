@@ -22,40 +22,20 @@
       </q-card>
     </q-dialog>
     <!--  入库  -->
-    <q-dialog v-model="inDialog" persistent>
-      <q-card style="min-width: 350px">
-        <q-card-section>
-          <div class="text-h6">入库</div>
-        </q-card-section>
-
-        <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="取消" @click="inDialogCancel"/>
-          <q-btn flat label="入库" @click="inDialogOk"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <!--  出库  -->
-    <q-dialog v-model="outDialog" persistent>
-      <q-card style="min-width: 350px">
-        <q-card-section>
-          <div class="text-h6">出库</div>
-        </q-card-section>
-
-        <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="取消" @click="outDialogCancel"/>
-          <q-btn flat label="出库" @click="outDialogOk"/>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <in-library v-if="inDialog" :openid="openid" :login_name="username" @cancel="inDialog=false"></in-library>
+    <out-library v-if="outDialog" :openid="openid" :login_name="username" @cancel="outDialog=false"></out-library>
 
   </q-page>
 </template>
 
 <script>
 import { getauth, post, baseurl } from 'boot/axios_request'
+import InLibrary from 'pages/verifyUser/inLibrary'
+import OutLibrary from 'pages/verifyUser/outLibrary'
 
 export default {
   name: 'verifyUser',
+  components: { OutLibrary, InLibrary },
   props: {
     // 滚动优化的选项
     value: {

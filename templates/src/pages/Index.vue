@@ -30,7 +30,7 @@
 import LottieWebCimo from 'components/lottie-web-cimo'
 import { database } from '../db/database'
 import { Platform, LocalStorage, Screen } from 'quasar'
-import VerifyUser from 'pages/verifyUser'
+import VerifyUser from 'pages/verifyUser/index'
 
 export default {
   name: 'PageIndex',
