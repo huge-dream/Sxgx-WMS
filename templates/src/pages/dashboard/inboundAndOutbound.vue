@@ -81,7 +81,7 @@ export default {
         { name: 'binset_name', label: this.$t('dashboards.view_tradelist.bin_name'), field: 'binset_name', align: 'center' },
         { name: 'goods_desc', label: this.$t('goods.view_goodslist.goods_desc'), field: 'goods_desc', align: 'center' },
         { name: 'type_label', required: true, label: this.$t('dashboards.view_tradelist.mode_code'), align: 'center', field: 'type_label' },
-        { name: 'number', label: this.$t('dashboards.view_tradelist.goods_qty'), field: 'number', align: 'center' },
+        { name: 'number', label: this.$t('inbound.view_asn.number'), field: 'number', align: 'center' },
         { name: 'creater', label: this.$t('dashboards.view_tradelist.creater'), field: 'creater', align: 'center' },
         { name: 'create_time', label: this.$t('dashboards.view_tradelist.create_time'), field: 'create_time', align: 'center' },
         { name: 'update_time', label: this.$t('dashboards.view_tradelist.update_time'), field: 'update_time', align: 'right' }
