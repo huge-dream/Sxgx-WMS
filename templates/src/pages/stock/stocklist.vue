@@ -36,19 +36,19 @@
             <q-td key="goods_desc" :props="props">{{ props.row.goods_desc }}</q-td>
             <q-td key="goods_qty" :props="props">{{ props.row.goods_qty }}</q-td>
             <q-td key="onhand_stock" :props="props">{{ props.row.onhand_stock }}</q-td>
-            <q-td key="can_order_stock" :props="props">{{ props.row.can_order_stock }}</q-td>
-            <q-td key="ordered_stock" :props="props">{{ props.row.ordered_stock }}</q-td>
-            <q-td key="inspect_stock" :props="props">{{ props.row.inspect_stock }}</q-td>
-            <q-td key="hold_stock" :props="props">{{ props.row.hold_stock }}</q-td>
-            <q-td key="damage_stock" :props="props">{{ props.row.damage_stock }}</q-td>
-            <q-td key="asn_stock" :props="props">{{ props.row.asn_stock }}</q-td>
-            <q-td key="dn_stock" :props="props">{{ props.row.dn_stock }}</q-td>
-            <q-td key="pre_load_stock" :props="props">{{ props.row.pre_load_stock }}</q-td>
-            <q-td key="pre_sort_stock" :props="props">{{ props.row.pre_sort_stock }}</q-td>
-            <q-td key="sorted_stock" :props="props">{{ props.row.sorted_stock }}</q-td>
-            <q-td key="pick_stock" :props="props">{{ props.row.pick_stock }}</q-td>
-            <q-td key="picked_stock" :props="props">{{ props.row.picked_stock }}</q-td>
-            <q-td key="back_order_stock" :props="props">{{ props.row.back_order_stock }}</q-td>
+<!--            <q-td key="can_order_stock" :props="props">{{ props.row.can_order_stock }}</q-td>-->
+<!--            <q-td key="ordered_stock" :props="props">{{ props.row.ordered_stock }}</q-td>-->
+<!--            <q-td key="inspect_stock" :props="props">{{ props.row.inspect_stock }}</q-td>-->
+<!--            <q-td key="hold_stock" :props="props">{{ props.row.hold_stock }}</q-td>-->
+<!--            <q-td key="damage_stock" :props="props">{{ props.row.damage_stock }}</q-td>-->
+<!--            <q-td key="asn_stock" :props="props">{{ props.row.asn_stock }}</q-td>-->
+<!--            <q-td key="dn_stock" :props="props">{{ props.row.dn_stock }}</q-td>-->
+<!--            <q-td key="pre_load_stock" :props="props">{{ props.row.pre_load_stock }}</q-td>-->
+<!--            <q-td key="pre_sort_stock" :props="props">{{ props.row.pre_sort_stock }}</q-td>-->
+<!--            <q-td key="sorted_stock" :props="props">{{ props.row.sorted_stock }}</q-td>-->
+<!--            <q-td key="pick_stock" :props="props">{{ props.row.pick_stock }}</q-td>-->
+<!--            <q-td key="picked_stock" :props="props">{{ props.row.picked_stock }}</q-td>-->
+<!--            <q-td key="back_order_stock" :props="props">{{ props.row.back_order_stock }}</q-td>-->
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
             <q-td key="update_time" :props="props">{{ props.row.update_time }}</q-td>
           </q-tr>
@@ -71,12 +71,12 @@
 <router-view />
 
 <script>
-import { getauth, getfile } from 'boot/axios_request';
-import { date, exportFile, LocalStorage } from 'quasar';
+import { getauth, getfile } from 'boot/axios_request'
+import { date, exportFile, LocalStorage } from 'quasar'
 
 export default {
   name: 'Pagestocklist',
-  data() {
+  data () {
     return {
       openid: '',
       login_name: '',
@@ -96,19 +96,19 @@ export default {
         { name: 'goods_desc', label: this.$t('stock.view_stocklist.goods_desc'), field: 'goods_desc', align: 'center' },
         { name: 'goods_qty', label: this.$t('stock.view_stocklist.goods_qty'), field: 'goods_qty', align: 'center' },
         { name: 'onhand_stock', label: this.$t('stock.view_stocklist.onhand_stock'), field: 'onhand_stock', align: 'center' },
-        { name: 'can_order_stock', label: this.$t('stock.view_stocklist.can_order_stock'), field: 'can_order_stock', align: 'center' },
-        { name: 'ordered_stock', label: this.$t('stock.view_stocklist.ordered_stock'), field: 'ordered_stock', align: 'center' },
-        { name: 'inspect_stock', label: this.$t('stock.view_stocklist.inspect_stock'), field: 'inspect_stock', align: 'center' },
-        { name: 'hold_stock', label: this.$t('stock.view_stocklist.hold_stock'), field: 'hold_stock', align: 'center' },
-        { name: 'damage_stock', label: this.$t('stock.view_stocklist.damage_stock'), field: 'damage_stock', align: 'center' },
-        { name: 'asn_stock', label: this.$t('stock.view_stocklist.asn_stock'), field: 'asn_stock', align: 'center' },
-        { name: 'dn_stock', label: this.$t('stock.view_stocklist.dn_stock'), field: 'dn_stock', align: 'center' },
-        { name: 'pre_load_stock', label: this.$t('stock.view_stocklist.pre_load_stock'), field: 'pre_load_stock', align: 'center' },
-        { name: 'pre_sort_stock', label: this.$t('stock.view_stocklist.pre_sort_stock'), field: 'pre_sort_stock', align: 'center' },
-        { name: 'sorted_stock', label: this.$t('stock.view_stocklist.sorted_stock'), field: 'sorted_stock', align: 'center' },
-        { name: 'pick_stock', label: this.$t('stock.view_stocklist.pick_stock'), field: 'pick_stock', align: 'center' },
-        { name: 'picked_stock', label: this.$t('stock.view_stocklist.picked_stock'), field: 'picked_stock', align: 'center' },
-        { name: 'back_order_stock', label: this.$t('stock.view_stocklist.back_order_stock'), field: 'back_order_stock', align: 'center' },
+        // { name: 'can_order_stock', label: this.$t('stock.view_stocklist.can_order_stock'), field: 'can_order_stock', align: 'center' },
+        // { name: 'ordered_stock', label: this.$t('stock.view_stocklist.ordered_stock'), field: 'ordered_stock', align: 'center' },
+        // { name: 'inspect_stock', label: this.$t('stock.view_stocklist.inspect_stock'), field: 'inspect_stock', align: 'center' },
+        // { name: 'hold_stock', label: this.$t('stock.view_stocklist.hold_stock'), field: 'hold_stock', align: 'center' },
+        // { name: 'damage_stock', label: this.$t('stock.view_stocklist.damage_stock'), field: 'damage_stock', align: 'center' },
+        // { name: 'asn_stock', label: this.$t('stock.view_stocklist.asn_stock'), field: 'asn_stock', align: 'center' },
+        // { name: 'dn_stock', label: this.$t('stock.view_stocklist.dn_stock'), field: 'dn_stock', align: 'center' },
+        // { name: 'pre_load_stock', label: this.$t('stock.view_stocklist.pre_load_stock'), field: 'pre_load_stock', align: 'center' },
+        // { name: 'pre_sort_stock', label: this.$t('stock.view_stocklist.pre_sort_stock'), field: 'pre_sort_stock', align: 'center' },
+        // { name: 'sorted_stock', label: this.$t('stock.view_stocklist.sorted_stock'), field: 'sorted_stock', align: 'center' },
+        // { name: 'pick_stock', label: this.$t('stock.view_stocklist.pick_stock'), field: 'pick_stock', align: 'center' },
+        // { name: 'picked_stock', label: this.$t('stock.view_stocklist.picked_stock'), field: 'picked_stock', align: 'center' },
+        // { name: 'back_order_stock', label: this.$t('stock.view_stocklist.back_order_stock'), field: 'back_order_stock', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
         { name: 'update_time', label: this.$t('updatetime'), field: 'update_time', align: 'center' }
       ],
@@ -117,117 +117,117 @@ export default {
         page: 1,
         rowsPerPage: '30'
       }
-    };
+    }
   },
   methods: {
-    getList() {
-      var _this = this;
+    getList () {
+      var _this = this
       getauth(_this.pathname + '?ordering=-update_time', {})
         .then(res => {
-          _this.table_list = res.results;
-          _this.pathname_previous = res.previous;
-          _this.pathname_next = res.next;
+          _this.table_list = res.results
+          _this.pathname_previous = res.previous
+          _this.pathname_next = res.next
         })
         .catch(err => {
           _this.$q.notify({
             message: err.detail,
             icon: 'close',
             color: 'negative'
-          });
-        });
+          })
+        })
     },
-    getSearchList() {
-      var _this = this;
+    getSearchList () {
+      var _this = this
       if (LocalStorage.has('auth')) {
         getauth(_this.pathname + '?ordering=-update_time' + '&goods_code__icontains=' + _this.filter, {})
           .then(res => {
-            _this.table_list = res.results;
-            _this.pathname_previous = res.previous;
-            _this.pathname_next = res.next;
+            _this.table_list = res.results
+            _this.pathname_previous = res.previous
+            _this.pathname_next = res.next
           })
           .catch(err => {
             _this.$q.notify({
               message: err.detail,
               icon: 'close',
               color: 'negative'
-            });
-          });
+            })
+          })
       } else {
       }
     },
-    getListPrevious() {
-      var _this = this;
+    getListPrevious () {
+      var _this = this
       if (LocalStorage.has('auth')) {
         getauth(_this.pathname_previous, {})
           .then(res => {
-            _this.table_list = res.results;
-            _this.pathname_previous = res.previous;
-            _this.pathname_next = res.next;
+            _this.table_list = res.results
+            _this.pathname_previous = res.previous
+            _this.pathname_next = res.next
           })
           .catch(err => {
             _this.$q.notify({
               message: err.detail,
               icon: 'close',
               color: 'negative'
-            });
-          });
+            })
+          })
       } else {
       }
     },
-    getListNext() {
-      var _this = this;
+    getListNext () {
+      var _this = this
       if (LocalStorage.has('auth')) {
         getauth(_this.pathname_next, {})
           .then(res => {
-            _this.table_list = res.results;
-            _this.pathname_previous = res.previous;
-            _this.pathname_next = res.next;
+            _this.table_list = res.results
+            _this.pathname_previous = res.previous
+            _this.pathname_next = res.next
           })
           .catch(err => {
             _this.$q.notify({
               message: err.detail,
               icon: 'close',
               color: 'negative'
-            });
-          });
+            })
+          })
       } else {
       }
     },
-    reFresh() {
-      var _this = this;
-      _this.getList();
+    reFresh () {
+      var _this = this
+      _this.getList()
     }
   },
-  created() {
-    var _this = this;
+  created () {
+    var _this = this
     if (LocalStorage.has('openid')) {
-      _this.openid = LocalStorage.getItem('openid');
+      _this.openid = LocalStorage.getItem('openid')
     } else {
-      _this.openid = '';
-      LocalStorage.set('openid', '');
+      _this.openid = ''
+      LocalStorage.set('openid', '')
     }
     if (LocalStorage.has('login_name')) {
-      _this.login_name = LocalStorage.getItem('login_name');
+      _this.login_name = LocalStorage.getItem('login_name')
     } else {
-      _this.login_name = '';
-      LocalStorage.set('login_name', '');
+      _this.login_name = ''
+      LocalStorage.set('login_name', '')
     }
     if (LocalStorage.has('auth')) {
-      _this.authin = '1';
-      _this.getList();
+      _this.authin = '1'
+      _this.getList()
     } else {
-      _this.authin = '0';
+      _this.authin = '0'
     }
   },
-  mounted() {
-    var _this = this;
+  mounted () {
+    var _this = this
     if (_this.$q.platform.is.electron) {
-      _this.height = String(_this.$q.screen.height - 290) + 'px';
+      _this.height = String(_this.$q.screen.height - 290) + 'px'
     } else {
-      _this.height = _this.$q.screen.height - 290 + '' + 'px';
+      _this.height = _this.$q.screen.height - 290 + '' + 'px'
     }
   },
-  updated() {},
-  destroyed() {}
-};
+  updated () {},
+  destroyed () {}
+}
 </script>

@@ -137,15 +137,23 @@ export default {
     },
     inDialogCancel () {
       this.inDialog = false
+      this.username = ''
+      this.token = ''
     },
     outDialogCancel () {
       this.outDialog = false
+      this.username = ''
+      this.token = ''
     },
     inDialogOk () {
       this.inDialog = false
+      this.username = ''
+      this.token = ''
     },
     outDialogOk () {
       this.outDialog = false
+      this.username = ''
+      this.token = ''
     }
   }
 

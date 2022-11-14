@@ -36,8 +36,8 @@
             <q-td key="goods_code" :props="props">{{ props.row.goods_code }}</q-td>
             <q-td key="goods_desc" :props="props">{{ props.row.goods_desc }}</q-td>
             <q-td key="goods_qty" :props="props">{{ props.row.goods_qty }}</q-td>
-            <q-td key="pick_qty" :props="props">{{ props.row.pick_qty }}</q-td>
-            <q-td key="picked_qty" :props="props">{{ props.row.picked_qty }}</q-td>
+<!--            <q-td key="pick_qty" :props="props">{{ props.row.pick_qty }}</q-td>-->
+<!--            <q-td key="picked_qty" :props="props">{{ props.row.picked_qty }}</q-td>-->
             <q-td key="bin_size" :props="props">{{ props.row.bin_size }}</q-td>
             <q-td key="bin_property" :props="props">{{ props.row.bin_property }}</q-td>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
@@ -152,8 +152,8 @@ export default {
         { name: 'goods_code', label: this.$t('stock.view_stocklist.goods_code'), field: 'goods_code', align: 'center' },
         { name: 'goods_desc', label: this.$t('stock.view_stocklist.goods_desc'), field: 'onhand_stock', align: 'center' },
         { name: 'goods_qty', label: this.$t('stock.view_stocklist.onhand_stock'), field: 'goods_qty', align: 'center' },
-        { name: 'pick_qty', label: this.$t('stock.view_stocklist.pick_stock'), field: 'pick_qty', align: 'center' },
-        { name: 'picked_qty', label: this.$t('stock.view_stocklist.picked_stock'), field: 'picked_qty', align: 'center' },
+        // { name: 'pick_qty', label: this.$t('stock.view_stocklist.pick_stock'), field: 'pick_qty', align: 'center' },
+        // { name: 'picked_qty', label: this.$t('stock.view_stocklist.picked_stock'), field: 'picked_qty', align: 'center' },
         { name: 'bin_size', label: this.$t('warehouse.view_binset.bin_size'), field: 'bin_size', align: 'center' },
         { name: 'bin_property', label: this.$t('warehouse.view_binset.bin_property'), field: 'bin_property', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
