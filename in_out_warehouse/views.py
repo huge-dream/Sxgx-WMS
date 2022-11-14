@@ -17,7 +17,7 @@ class InOutWarehouseSerializer(ModelSerializer):
     """
     goods_code = serializers.CharField(read_only=True,source='good.goods_code')
     goods_desc = serializers.CharField(read_only=True, source='good.goods_desc')
-
+    binset_name = serializers.CharField(read_only=True, source='binset.bin_name')
     class Meta:
         model = ListModel
         fields = "__all__"

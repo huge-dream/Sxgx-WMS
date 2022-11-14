@@ -52,6 +52,7 @@
           <q-tr :props="props">
             <q-td key="goods_code" :props="props">{{ props.row.goods_code }}</q-td>
             <q-td key="goods_desc" :props="props">{{ props.row.goods_desc }}</q-td>
+            <q-td key="binset_name" :props="props">{{ props.row.binset_name }}</q-td>
             <q-td key="number" :props="props">{{ props.row.number }}</q-td>
             <q-td key="creater" :props="props">{{ props.row.creater }}</q-td>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
@@ -106,42 +107,14 @@
       </div>
     </template>
     <q-dialog v-model="newForm">
-      <q-card class="shadow-24">
+      <q-card class="shadow-24" style="width: 800px">
         <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
-<!--          <div>{{ newFormData.asn_code }}</div>-->
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
             <q-tooltip content-class="bg-amber text-black shadow-4">{{ $t('index.close') }}</q-tooltip>
           </q-btn>
         </q-bar>
-        <q-card-section style="max-height: 325px; width: 400px" class="scroll">
-<!--          <q-select-->
-<!--            filled-->
-<!--            use-input-->
-<!--            fill-input-->
-<!--            hide-selected-->
-<!--            input-debounce="0"-->
-<!--            dense-->
-<!--            outlined-->
-<!--            square-->
-<!--            v-model="newFormData.supplier"-->
-<!--            :options="supplier_list"-->
-<!--            @filter="filterFnS"-->
-<!--            @input-value="setModel"-->
-<!--            :label="$t('baseinfo.view_supplier.supplier_name')"-->
-<!--            style="margin-bottom: 5px"-->
-<!--            :rules="[val => (val && val.length > 0) || error1]"-->
-<!--            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"-->
-<!--          >-->
-<!--            <template v-slot:Sno-option>-->
-<!--              <q-item>-->
-<!--                <q-item-section class="text-grey">-->
-<!--                  No Result-->
-<!--                </q-item-section>-->
-<!--              </q-item>-->
-<!--            </template>-->
-<!--          </q-select>-->
-
+        <q-card-section style="max-height: 325px; width:700px" class="scroll">
           <q-input
             dense
             outlined
@@ -165,7 +138,6 @@
                 v-model="goodsData1.code"
                 :label="$t('goods.view_goodslist.goods_code')"
                 :options="options"
-
                 @focus="getFocus(1)"
                 @input-value="setOptions"
                 @filter="filterFn"
@@ -187,21 +159,21 @@
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData1.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-
+                v-model="goodsData1.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
                 @focus="getFocus(1)"
-                @input-value="setOptions"
-                @filter="filterFn"
+                @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
                 </template>
-                <template v-if="goodsData1.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData1.code = ''" class="cursor-pointer" />
+                <template v-if="goodsData1.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData1.bin = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -240,6 +212,31 @@
                   <q-icon name="cancel" @click.stop="goodsData2.code = ''" class="cursor-pointer" />
                 </template>
               </q-select>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData2.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
+                @focus="getFocus(1)"
+                @input-value="setBinSetOptions"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData2.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData2.bin = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
             </template>
           </q-input>
           <q-input
@@ -274,6 +271,31 @@
                 </template>
                 <template v-if="goodsData3.code" v-slot:append>
                   <q-icon name="cancel" @click.stop="goodsData3.code = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData3.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
+                @focus="getFocus(1)"
+                @input-value="setBinSetOptions"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData3.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData3.bin = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -312,6 +334,31 @@
                   <q-icon name="cancel" @click.stop="goodsData4.code = ''" class="cursor-pointer" />
                 </template>
               </q-select>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData4.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
+                @focus="getFocus(1)"
+                @input-value="setBinSetOptions"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData4.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData4.bin = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
             </template>
           </q-input>
           <q-input
@@ -346,6 +393,31 @@
                 </template>
                 <template v-if="goodsData5.code" v-slot:append>
                   <q-icon name="cancel" @click.stop="goodsData5.code = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData5.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
+                @focus="getFocus(1)"
+                @input-value="setBinSetOptions"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData5.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData5.bin = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -384,6 +456,31 @@
                   <q-icon name="cancel" @click.stop="goodsData6.code = ''" class="cursor-pointer" />
                 </template>
               </q-select>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData6.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
+                @focus="getFocus(1)"
+                @input-value="setBinSetOptions"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData6.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData6.bin = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
             </template>
           </q-input>
           <q-input
@@ -418,6 +515,31 @@
                 </template>
                 <template v-if="goodsData7.code" v-slot:append>
                   <q-icon name="cancel" @click.stop="goodsData7.code = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData7.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
+                @focus="getFocus(1)"
+                @input-value="setBinSetOptions"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData7.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData7.bin = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -456,6 +578,31 @@
                   <q-icon name="cancel" @click.stop="goodsData8.code = ''" class="cursor-pointer" />
                 </template>
               </q-select>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData8.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
+                @focus="getFocus(1)"
+                @input-value="setBinSetOptions"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData8.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData8.bin = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
             </template>
           </q-input>
           <q-input
@@ -492,6 +639,31 @@
                   <q-icon name="cancel" @click.stop="goodsData9.code = ''" class="cursor-pointer" />
                 </template>
               </q-select>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData9.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
+                @focus="getFocus(1)"
+                @input-value="setBinSetOptions"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData9.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData9.bin = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
             </template>
           </q-input>
           <q-input
@@ -526,6 +698,31 @@
                 </template>
                 <template v-if="goodsData10.code" v-slot:append>
                   <q-icon name="cancel" @click.stop="goodsData10.code = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData10.bin"
+                :label="$t('inbound.view_asn.bin_name')"
+                :options="binSetOptions"
+                option-label="bin_name"
+                option-value="id"
+                @focus="getFocus(1)"
+                @input-value="setBinSetOptions"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData10.bin" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData10.bin = ''" class="cursor-pointer" />
                 </template>
               </q-select>
             </template>
@@ -696,10 +893,11 @@ export default {
       columns: [
         { name: 'goods_code', required: true, label: this.$t('inbound.view_asn.goods_code'), align: 'left', field: 'goods_code' },
         { name: 'goods_desc', label: this.$t('inbound.view_asn.goods_desc'), align: 'left', field: 'goods_desc' },
+        { name: 'binset_name', label: this.$t('inbound.view_asn.bin_name'), align: 'left', field: 'binset_name' },
         { name: 'number', label: this.$t('inbound.view_asn.number'), field: 'number', align: 'center' },
         { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
-        { name: 'update_time', label: this.$t('updatetime'), field: 'update_time', align: 'center' },
+        { name: 'update_time', label: this.$t('updatetime'), field: 'update_time', align: 'center' }
         // { name: 'action', label: this.$t('action'), align: 'right' }
       ],
       filter: '',
@@ -755,7 +953,8 @@ export default {
       },
       devi: window.device,
       error1: this.$t('baseinfo.view_supplier.error1'),
-      goodsListData: []
+      goodsListData: [],
+      binSetOptions: []
     }
   },
   methods: {
@@ -959,6 +1158,7 @@ export default {
             const dict = {
               good: _this[goodsData].good,
               number: _this[goodsData].qty,
+              binset: _this[goodsData].bin,
               type: 0,
               creater: _this.login_name
             }
@@ -1276,6 +1476,23 @@ export default {
       }
       update(() => {
         this.options = this.options1
+      })
+    },
+    setBinSetOptions (val) {
+      const _this = this
+      if (!val) {
+        this[`goodsData${this.listNumber}`].bin = ''
+      }
+      const needle = val.toLowerCase()
+      getauth('/binset/?empty_label=true&bin_name__icontains=' + needle).then(res => {
+        for (let i = 0; i < res.results.length; i++) {
+          if (this.listNumber) {
+            if (res.results[i].bin_name === val) {
+              this[`goodsData${this.listNumber}`].bin = res.results[i].id
+            }
+          }
+        }
+        _this.binSetOptions = res.results
       })
     },
     setModel (val) {
