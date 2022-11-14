@@ -12,24 +12,37 @@
       <div class="flex flex-center">
         <lottie-web-cimo ref="lottie_web" style="width: 50%; max-width: 80%" />
       </div>
+      <br>
+      <br>
+      <br>
+      <br>
+      <div class="flex flex-center">
+        <q-btn push color="primary" label="扫码入库" size="lg" :ripple="{ center: true }" icon="cloud_upload" style="margin-right: 50px" @click="verifyDialog=true;type='in'"/>
+        <q-btn push color="secondary" label="扫码出库" size="lg" :ripple="{ center: true }" icon="local_shipping" @click="verifyDialog=true;type='out'"/>
+      </div>
     </div>
     <div style="position: absolute;right: 2%;bottom: 8%;font-family:SourceHanSansCN; font-size: 16px;color: #4C5875;">—— &nbsp;&nbsp; ZWHZ-WMS-PC-V1.0 &nbsp; &nbsp;——</div>
+<!--  验证扫码登录  -->
+    <verify-user :value.sync="verifyDialog" :type="type"></verify-user>
   </q-page>
 </template>
 <script>
 import LottieWebCimo from 'components/lottie-web-cimo'
 import { database } from '../db/database'
 import { Platform, LocalStorage, Screen } from 'quasar'
+import VerifyUser from 'pages/verifyUser'
 
 export default {
   name: 'PageIndex',
-  components: { LottieWebCimo },
+  components: { VerifyUser, LottieWebCimo },
   data () {
     return {
       isEnglish: false,
       cleardata: [],
       height: '',
-      width: '100%'
+      width: '100%',
+      verifyDialog: false,
+      type: ''
     }
   },
   methods: {},

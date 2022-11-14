@@ -262,7 +262,7 @@
 <script>
 import { getauth, postauth, putauth, deleteauth, getfile } from 'boot/axios_request'
 import { date, exportFile, LocalStorage } from 'quasar'
-import JsBarcode from "jsbarcode";
+import JsBarcode from 'jsbarcode'
 
 export default {
   name: 'Pagestafflist',
@@ -306,7 +306,7 @@ export default {
           background: '#fff',
           displayValue: false,
           // width: 2, //
-          height: 30, // 一维码的高度
+          height: 30 // 一维码的高度
           // margin: 5 // 一维码与容器的margin
         })
       },
@@ -642,8 +642,8 @@ export default {
       var _this = this
       _this.QRCodeForm = true
       this.$nextTick(() => {
-          this.bindBarCode( this.Base64.encode(`${e.id}_${e.check_code}`))
-      });
+        this.bindBarCode(this.Base64.encode(`${e.id}_${e.check_code}`))
+      })
     },
     deleteDataSubmit () {
       var _this = this

@@ -5,7 +5,7 @@
   >
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar class="main-headers text-white shadow-18 rounded-borders">
-        <transition appear enter-active-class="animated zoomIn">
+        <transition appear enter-active-class="animated zoomIn" v-if="authin === '1'">
           <q-btn flat @click="drawerleft = !drawerleft" round dense icon="menu">
             <q-tooltip
               content-class="bg-amber text-black shadow-4"
@@ -16,7 +16,7 @@
           </q-btn>
         </transition>
         <transition appear enter-active-class="animated zoomIn">
-          <q-toolbar-title shrink class="text-weight-bold" @click="$router.push({ name: 'web_index' })">{{
+          <q-toolbar-title shrink class="text-weight-bold" @click="$router.push({ name: 'web_index' });drawerleft=false">{{
             $t("index.title")
           }}</q-toolbar-title>
         </transition>
@@ -195,7 +195,6 @@
     </q-header>
     <q-drawer
       v-model="drawerleft"
-      show-if-above
       :width="200"
       :breakpoint="500"
       bordered
@@ -424,15 +423,15 @@
           style="height: 50px"
         >
           <q-tabs v-model="activeTab" class="tabs">
-            <q-tab name="user" @click="admin = false">
-              {{ $t("index.user_login") }}
-              <q-tooltip
-                content-class="bg-amber text-black shadow-4"
-                :offset="[5, 5]"
-                content-style="font-size: 12px"
-                >{{ $t("index.user_login") }}</q-tooltip
-              >
-            </q-tab>
+<!--            <q-tab name="user" @click="admin = false">-->
+<!--              {{ $t("index.user_login") }}-->
+<!--              <q-tooltip-->
+<!--                content-class="bg-amber text-black shadow-4"-->
+<!--                :offset="[5, 5]"-->
+<!--                content-style="font-size: 12px"-->
+<!--                >{{ $t("index.user_login") }}</q-tooltip-->
+<!--              >-->
+<!--            </q-tab>-->
             <q-tab name="admin" @click="admin = true">
               {{ $t("index.admin_login") }}
               <q-tooltip
@@ -826,6 +825,7 @@ export default {
       var _this = this
       _this.authin = '0'
       _this.login_name = ''
+      this.drawerleft = false
       LocalStorage.remove('auth')
       SessionStorage.remove('axios_check')
       LocalStorage.set('login_name', '')
@@ -899,11 +899,11 @@ export default {
       }, 1)
     },
     isLoggedIn () {
-      if (this.$q.localStorage.getItem('openid')) {
-        this.login = true
-      } else {
-        this.register = true
-      }
+      // if (this.$q.localStorage.getItem('openid')) {
+      //   this.login = true
+      // } else {
+      //   this.register = true
+      // }
     }
   },
   created () {

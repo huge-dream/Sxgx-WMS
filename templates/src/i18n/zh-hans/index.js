@@ -11,8 +11,8 @@ export default {
     index_title: '仓库管理平台',
     webtitle: 'GreaterWMS--开源仓库管理系统',
     home: '首页',
-    title: '中物汇智',
-    title_tip: '中物汇智首页',
+    title: '中物汇智仓库管理平台',
+    title_tip: '中物汇智仓库管理平台首页',
     hide_menu: '收起菜单',
     api: 'API文档',
     translate: '更改语言',
@@ -339,9 +339,9 @@ export default {
       error1: '请输入数量，数量必须大于0'
     },
     view_asn: {
-      goods_code:'商品编码',
-      goods_desc:'商品描述',
-      number:'数量',
+      goods_code: '商品编码',
+      goods_desc: '商品描述',
+      number: '数量',
       asn_code: '到货通知书单号',
       asn_status: '到货通知书状态',
       goods_qty: '到货通知书数量',
