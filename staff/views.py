@@ -1,3 +1,5 @@
+import base64
+
 from rest_framework import viewsets
 from .models import ListModel, TypeListModel
 from . import serializers
@@ -71,7 +73,6 @@ class APIViewSet(viewsets.ModelViewSet):
                     return super().list(request, *args, **kwargs)
             else:
                 return super().list(request, *args, **kwargs)
-
 
     def get_project(self):
         try:
@@ -148,6 +149,57 @@ class APIViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(qs, many=False)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=200, headers=headers)
+
+
+class CodeLoginAPIViewSet(viewsets.ModelViewSet):
+    """
+        create:
+            Create a data line（post）
+    """
+    pagination_class = MyPageNumberPagination
+    filter_backends = [DjangoFilterBackend, OrderingFilter, ]
+    ordering_fields = ['id', "create_time", "update_time", ]
+    filter_class = Filter
+    throttle_classes = []
+    authentication_classes = []
+    permission_classes = []
+
+    def get_queryset(self):
+        id = self.get_project()
+        if self.request.user:
+            if id is None:
+                return ListModel.objects.filter(is_delete=False)
+            else:
+                return ListModel.objects.filter(id=id, is_delete=False)
+        else:
+            return ListModel.objects.none()
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve', 'destroy']:
+            return serializers.StaffGetSerializer
+        elif self.action in ['create']:
+            return serializers.StaffPostSerializer
+        elif self.action in ['update']:
+            return serializers.StaffUpdateSerializer
+        elif self.action in ['partial_update']:
+            return serializers.StaffPartialUpdateSerializer
+        else:
+            return self.http_method_not_allowed(request=self.request)
+
+    def create(self, request, *args, **kwargs):
+        data = self.request.data
+        # code =
+        try:
+            code = str(base64.b64decode(data.get('code', '')).decode())
+        except Exception as e:
+            raise APIException({"detail": "登录无效，请重试!"})
+        print(11,code)
+        if not code:
+            raise APIException({"detail": "登录无效，请重试!"})
+        obj = ListModel.objects.filter(id=code.split('_')[0], check_code=int(code.split('_')[1])).first()
+        if not obj:
+            raise APIException({"detail": "登录无效，请重试!"})
+        return Response(status=200, data={"status_code": 200, "name": obj.staff_name, "openid": obj.openid})
 
 
 class TypeAPIViewSet(viewsets.ModelViewSet):

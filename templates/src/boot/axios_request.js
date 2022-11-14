@@ -121,7 +121,7 @@ axiosInstanceAuth.interceptors.response.use(
       Notify.create(defaultNotify)
       return Promise.reject(error)
     }
-    switch (error.response.status) {
+    switch (error.response && error.response.status) {
       case 400:
         defaultNotify.message = i18n.t('notice.400')
         Notify.create(defaultNotify)
@@ -249,7 +249,7 @@ axiosInstanceAuthScan.interceptors.response.use(
       Notify.create(defaultNotify)
       return Promise.reject(error)
     }
-    switch (error.response.status) {
+    switch (error.response && error.response.status) {
       case 400:
         defaultNotify.message = i18n.t('notice.400')
         Notify.create(defaultNotify)
@@ -357,7 +357,7 @@ axiosInstance.interceptors.response.use(
       Notify.create(defaultNotify)
       return Promise.reject(error)
     }
-    switch (error.response.status) {
+    switch (error.response && error.response.status) {
       case 400:
         defaultNotify.message = i18n.t('notice.400')
         Notify.create(defaultNotify)
@@ -491,7 +491,7 @@ axiosFile.interceptors.response.use(
       Notify.create(defaultNotify)
       return Promise.reject(error)
     }
-    switch (error.response.status) {
+    switch (error.response && error.response.status) {
       case 400:
         defaultNotify.message = i18n.t('notice.400')
         Notify.create(defaultNotify)
