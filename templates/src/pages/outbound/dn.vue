@@ -35,19 +35,19 @@
             <q-btn :label="$t('refresh')" icon="refresh" @click="reFresh()">
               <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('refreshtip') }}</q-tooltip>
             </q-btn>
-            <q-btn
-              v-show="
-                $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                  $q.localStorage.getItem('staff_type') !== 'StockControl'
-              "
-              :label="$t('release')"
-              icon="img:statics/outbound/orderrelease.png"
-              @click="orderreleaseAllData()"
-            >
-              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('releaseallorder') }}</q-tooltip>
-            </q-btn>
+<!--            <q-btn-->
+<!--              v-show="-->
+<!--                $q.localStorage.getItem('staff_type') !== 'Supplier' &&-->
+<!--                  $q.localStorage.getItem('staff_type') !== 'Customer' &&-->
+<!--                  $q.localStorage.getItem('staff_type') !== 'Inbound' &&-->
+<!--                  $q.localStorage.getItem('staff_type') !== 'StockControl'-->
+<!--              "-->
+<!--              :label="$t('release')"-->
+<!--              icon="img:statics/outbound/orderrelease.png"-->
+<!--              @click="orderreleaseAllData()"-->
+<!--            >-->
+<!--              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('releaseallorder') }}</q-tooltip>-->
+<!--            </q-btn>-->
           </q-btn-group>
           <q-space />
           <q-input outlined rounded dense debounce="300" color="primary" v-model="filter" :placeholder="$t('search')" @blur="getSearchList()" @keyup.enter="getSearchList()">

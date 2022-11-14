@@ -51,8 +51,8 @@ export default {
   },
   menuItem: {
     dashboard: '报表中心',
-    inbound: '收货管理',
-    outbound: '发货管理',
+    inbound: '入库管理',
+    outbound: '出库管理',
     stock: '库存管理',
     finance: '财务中心',
     goods: '商品管理',
@@ -169,8 +169,8 @@ export default {
   },
   dashboards: {
     outbound_statements: '出库报表',
-    inbound_statements: '收货报表',
-    inbound_and_outbound_statements: '收发货报表',
+    inbound_statements: '出入库mi报表',
+    inbound_and_outbound_statements: '出入库报表',
     total_sales: '总销量',
     category_sales_ranking: '品类销量排名',
     sales_volume_ranking: '销售额排名',
@@ -326,14 +326,14 @@ export default {
   },
   inbound: {
     put_on_shelves: '上架',
-    asn: '收货明细',
+    asn: '入库明细',
     predeliverystock: '待到货',
     preloadstock: '待卸货',
     presortstock: '待分拣',
     sortstock: '已分拣',
     shortage: '来货短少',
     more: '多到货',
-    asnfinish: '收货明细',
+    asnfinish: '入库明细',
     asndone: '收货完成',
     view_sortstock: {
       error1: '请输入数量，数量必须大于0'
@@ -353,7 +353,7 @@ export default {
     }
   },
   outbound: {
-    dn: '发货明细',
+    dn: '出库明细',
     freshorder: '预发货单',
     neworder: '新发货单',
     backorder: '欠货订单',
