@@ -50,123 +50,46 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td key="good" :props="props">{{ props.row.good }}</q-td>
-            <q-td key="asn_status" :props="props">{{ props.row.asn_status }}</q-td>
+            <q-td key="goods_code" :props="props">{{ props.row.goods_code }}</q-td>
+            <q-td key="goods_desc" :props="props">{{ props.row.goods_desc }}</q-td>
+            <q-td key="number" :props="props">{{ props.row.number }}</q-td>
             <q-td key="creater" :props="props">{{ props.row.creater }}</q-td>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
             <q-td key="update_time" :props="props">{{ props.row.update_time }}</q-td>
-            <q-td key="action" :props="props" style="width: 100px">
-              <q-btn
-                v-show="
-                  $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Outbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
-                "
-                round
-                flat
-                push
-                color="info"
-                icon="visibility"
-                @click="viewData(props.row)"
-              >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('printthisasn') }}</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="
-                  $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Outbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
-                "
-                round
-                flat
-                push
-                color="positive"
-                icon="img:statics/inbound/preloadstock.png"
-                @click="preloadData(props.row)"
-              >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('confirmdelivery') }}</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="
-                  $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Outbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
-                "
-                round
-                flat
-                push
-                color="positive"
-                icon="img:statics/inbound/presortstock.png"
-                @click="presortData(props.row)"
-              >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('finishloading') }}</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="
-                  $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Outbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
-                "
-                round
-                flat
-                push
-                color="purple"
-                icon="img:statics/inbound/sortstock.png"
-                @click="sortedData(props.row)"
-              >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('confirmsorted') }}</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="
-                  $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Outbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
-                "
-                round
-                flat
-                push
-                color="purple"
-                icon="edit"
-                @click="editData(props.row)"
-              >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('edit') }}</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="
-                  $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                    $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                    $q.localStorage.getItem('staff_type') !== 'Outbound' &&
-                    $q.localStorage.getItem('staff_type') !== 'StockControl'
-                "
-                round
-                flat
-                push
-                color="dark"
-                icon="delete"
-                @click="deleteData(props.row)"
-              >
-                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('delete') }}</q-tooltip>
-              </q-btn>
-            </q-td>
-            <template v-if="props.row.transportation_fee.detail !== []">
-              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">
-                <q-list>
-                  <div v-for="(transportation_fee, index) in props.row.transportation_fee.detail" :key="index">
-                    <q-item v-ripple>
-                      <q-item-section>
-                        <q-item-label>{{ transportation_fee.transportation_supplier }}</q-item-label>
-                        <q-item-label>{{ $t('estimate') }}: {{ transportation_fee.transportation_cost }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </div>
-                </q-list>
-              </q-tooltip>
-            </template>
+<!--            <q-td key="action" :props="props" style="width: 100px">-->
+<!--              <q-btn-->
+<!--                v-show="-->
+<!--                  $q.localStorage.getItem('staff_type') !== 'Supplier' &&-->
+<!--                    $q.localStorage.getItem('staff_type') !== 'Customer' &&-->
+<!--                    $q.localStorage.getItem('staff_type') !== 'Outbound' &&-->
+<!--                    $q.localStorage.getItem('staff_type') !== 'StockControl'-->
+<!--                "-->
+<!--                round-->
+<!--                flat-->
+<!--                push-->
+<!--                color="purple"-->
+<!--                icon="edit"-->
+<!--                @click="editData(props.row)"-->
+<!--              >-->
+<!--                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('edit') }}</q-tooltip>-->
+<!--              </q-btn>-->
+<!--              <q-btn-->
+<!--                v-show="-->
+<!--                  $q.localStorage.getItem('staff_type') !== 'Supplier' &&-->
+<!--                    $q.localStorage.getItem('staff_type') !== 'Customer' &&-->
+<!--                    $q.localStorage.getItem('staff_type') !== 'Outbound' &&-->
+<!--                    $q.localStorage.getItem('staff_type') !== 'StockControl'-->
+<!--                "-->
+<!--                round-->
+<!--                flat-->
+<!--                push-->
+<!--                color="dark"-->
+<!--                icon="delete"-->
+<!--                @click="deleteData(props.row)"-->
+<!--              >-->
+<!--                <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('delete') }}</q-tooltip>-->
+<!--              </q-btn>-->
+<!--            </q-td>-->
           </q-tr>
         </template>
       </q-table>
@@ -231,6 +154,31 @@
             @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-select
+                ref="one"
+                dense
+                outlined
+                square
+                use-input
+                hide-selected
+                fill-input
+                v-model="goodsData1.code"
+                :label="$t('goods.view_goodslist.goods_code')"
+                :options="options"
+
+                @focus="getFocus(1)"
+                @input-value="setOptions"
+                @filter="filterFn"
+                autofocus
+                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
+              >
+                <template v-slot:no-option>
+                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
+                </template>
+                <template v-if="goodsData1.code" v-slot:append>
+                  <q-icon name="cancel" @click.stop="goodsData1.code = ''" class="cursor-pointer" />
+                </template>
+              </q-select>
               <q-select
                 ref="one"
                 dense
@@ -746,12 +694,13 @@ export default {
       supplier_list1: [],
       supplier_detail: {},
       columns: [
-        { name: 'good', required: true, label: this.$t('inbound.view_asn.good'), align: 'left', field: 'good' },
-        { name: 'asn_status', label: this.$t('inbound.view_asn.number'), field: 'asn_status', align: 'center' },
+        { name: 'goods_code', required: true, label: this.$t('inbound.view_asn.goods_code'), align: 'left', field: 'goods_code' },
+        { name: 'goods_desc', label: this.$t('inbound.view_asn.goods_desc'), align: 'left', field: 'goods_desc' },
+        { name: 'number', label: this.$t('inbound.view_asn.number'), field: 'number', align: 'center' },
         { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
         { name: 'update_time', label: this.$t('updatetime'), field: 'update_time', align: 'center' },
-        { name: 'action', label: this.$t('action'), align: 'right' }
+        // { name: 'action', label: this.$t('action'), align: 'right' }
       ],
       filter: '',
       pagination: {
@@ -813,7 +762,8 @@ export default {
     getList () {
       var _this = this
       if (LocalStorage.has('auth')) {
-        getauth('in_out_warehouse/in_out_warehouse/', {})
+        getauth('in_out_warehouse/in_out_warehouse/?type=0', {
+        })
           .then(res => {
             _this.table_list = []
             res.results.forEach(item => {
@@ -851,7 +801,7 @@ export default {
     getSearchList () {
       var _this = this
       if (LocalStorage.has('auth')) {
-        getauth(_this.pathname + 'list/?asn_code__icontains=' + _this.filter, {})
+        getauth(_this.pathname + 'list/?search=' + _this.filter, {})
           .then(res => {
             _this.table_list = []
             res.results.forEach(item => {
@@ -1301,7 +1251,6 @@ export default {
       this.listNumber = number
     },
     setOptions (val) {
-
       const _this = this
       if (!val) {
         this[`goodsData${this.listNumber}`].code = ''

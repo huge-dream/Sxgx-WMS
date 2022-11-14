@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from rest_framework import serializers
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -14,17 +15,9 @@ class InOutWarehouseSerializer(ModelSerializer):
     """
     出入库表-序列化器
     """
+    goods_code = serializers.CharField(read_only=True,source='good.goods_code')
+    goods_desc = serializers.CharField(read_only=True, source='good.goods_desc')
 
-    class Meta:
-        model = ListModel
-        fields = "__all__"
-        read_only_fields = ["id"]
-
-
-class InOutWarehouseCreateSerializer(ModelSerializer):
-    """
-    出入库表-新增-序列化器
-    """
     class Meta:
         model = ListModel
         fields = "__all__"
@@ -41,6 +34,8 @@ class InOutWarehouseViewSet(ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter, ]
     ordering_fields = ['id', "create_time", "update_time", ]
+    filter_fields =['type']
+    search_fields = ['good__goods_code','good__goods_desc']
 
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
@@ -50,7 +45,4 @@ class InOutWarehouseViewSet(ModelViewSet):
         else:
             return serializer_class(*args, **kwargs)
 
-    # def create(self,request):
-    #     print(request.data)
-    #     return Response([], status=200)
 
