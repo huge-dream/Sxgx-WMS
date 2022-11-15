@@ -1,0 +1,69 @@
+{
+  "config_dir": "E:\\git_backup\\shaoxing\\Sxgx-WMS\\.pyupdater",
+  "filename": "E:\\git_backup\\shaoxing\\Sxgx-WMS\\.pyupdater\\config.pyu",
+  "count": 0,
+  "app_config": {
+    "APP_NAME": "Sxgx-WMS",
+    "CLIENT_CONFIG_PATH": [
+      "client_config.py"
+    ],
+    "COMPANY_NAME": "Sxgx-WMS",
+    "PLUGIN_CONFIGS": {
+      "scp-Digital Sapphire": {
+        "username": "root",
+        "password": "Singosgu83@",
+        "keyfile": "",
+        "host": "116.62.71.145",
+        "port": 22,
+        "remote_dir": "/home/newhome/media/update/zwhz/"
+      }
+    },
+    "UPDATE_PATCHES": true,
+    "MAX_DOWNLOAD_RETRIES": 3,
+    "HTTP_TIMEOUT": 30,
+    "UPDATE_URLS": [
+      "https://www.56yhz.com/media/update/zwhz/"
+    ],
+    "DATA_DIR": "E:\\git_backup\\shaoxing\\Sxgx-WMS"
+  },
+  "keypack": {
+    "client": {
+      "offline_public": "Xy4A75/gX5OcQDi6f0NBGDrjIMKzhOTbA9BuOhW6Lfg"
+    },
+    "repo": {
+      "app_private": "s+cMDYW0Q7YVjwOI82s9U1dw9A2Xv0c4Rz9ZwOdgROc"
+    },
+    "upload": {
+      "app_public": "CuBuE9vgbmx/em6WvS1jI6Nx0QeM4kT+oiW2KljaXdU",
+      "signature": "j8jXEPacifhS9IVAr11srAARg1cZT+om38kPPn6Ty3ZQor6i5856qUZRx8xxu5X1D1LrfvndUGO3tef6xzhaAQ"
+    }
+  },
+  "version_meta": {
+    "updates": {
+      "Sxgx-WMS": {
+        "1.0.0.2.0": {
+          "win": {
+            "file_hash": "db4433b38f2073b1c3f7544fb0dec748fcfb1b7f97b727f000c4a740efcfc9a7",
+            "file_size": 60546355,
+            "filename": "Sxgx-WMS-win-1.0.0.zip"
+          }
+        }
+      }
+    },
+    "latest": {
+      "Sxgx-WMS": {
+        "stable": {
+          "win": "1.0.0.2.0"
+        }
+      }
+    }
+  },
+  "py_repo_config": {
+    "patches": {},
+    "package": {
+      "Sxgx-WMS": {
+        "win": "1.0.0.2.0"
+      }
+    }
+  }
+}
