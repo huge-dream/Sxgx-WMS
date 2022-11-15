@@ -910,7 +910,7 @@ export default {
     var _this = this
     if (LocalStorage.has('openid')) {
       _this.openid = LocalStorage.getItem('openid')
-      _this.activeTab = LocalStorage.getItem('login_mode')
+      _this.activeTab = 'admin'
     } else {
       _this.openid = ''
       LocalStorage.set('openid', '')

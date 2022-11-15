@@ -78,8 +78,8 @@ export default {
       staff_type_list: ['Manager', 'Inbound', 'Outbound', 'Supervisor', 'StockControl', 'Customer', 'Supplier'],
       columns: [
         { name: 'goods_code', label: this.$t('dashboards.view_tradelist.goods_code'), field: 'goods_code', align: 'left' },
-        { name: 'binset_name', label: this.$t('dashboards.view_tradelist.bin_name'), field: 'binset_name', align: 'center' },
         { name: 'goods_desc', label: this.$t('goods.view_goodslist.goods_desc'), field: 'goods_desc', align: 'center' },
+        { name: 'binset_name', label: this.$t('dashboards.view_tradelist.bin_name'), field: 'binset_name', align: 'center' },
         { name: 'type_label', required: true, label: this.$t('dashboards.view_tradelist.mode_code'), align: 'center', field: 'type_label' },
         { name: 'number', label: this.$t('inbound.view_asn.number'), field: 'number', align: 'center' },
         { name: 'creater', label: this.$t('dashboards.view_tradelist.creater'), field: 'creater', align: 'center' },
