@@ -57,24 +57,34 @@
             "patch_hash": "87b8d08c9687fc9b7213a3097a96cc2f471d79a907c2dbf669311ec251c8c5ff",
             "patch_size": 2656046
           }
+        },
+        "1.0.2.2.0": {
+          "win": {
+            "file_hash": "8ecb4a44990ff6113db952900b1c8cd5045ac53279ca848824aaccfbc67512da",
+            "file_size": 60920399,
+            "filename": "Sxgx-WMS-win-1.0.2.zip",
+            "patch_name": "Sxgx-WMS-win-stable-3",
+            "patch_hash": "4fd6e77acab45cfa140c55f5e36850439bfa08f8243dd08a31d51e1269334368",
+            "patch_size": 2716729
+          }
         }
       }
     },
     "latest": {
       "Sxgx-WMS": {
         "stable": {
-          "win": "1.0.1.2.0"
+          "win": "1.0.2.2.0"
         }
       }
     }
   },
   "py_repo_config": {
     "patches": {
-      "Sxgx-WMS": 2
+      "Sxgx-WMS": 3
     },
     "package": {
       "Sxgx-WMS": {
-        "win": "1.0.1.2.0"
+        "win": "1.0.2.2.0"
       }
     }
   }
