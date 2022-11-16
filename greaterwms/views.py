@@ -126,7 +126,7 @@ def initcheck():
         s.connect(('8.8.8.8', 80))
         ip = s.getsockname()[0]
         s.close()
-        baseurl = "http://" + ip + ":8008/"
+        baseurl = "http://" + ip + ":8000/"
         path = os.path.join(settings.BASE_DIR, 'templates/dist/spa/statics/baseurl.txt')
         if os.path.exists(path):
             os.remove(path)
