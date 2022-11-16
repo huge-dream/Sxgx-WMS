@@ -14,7 +14,7 @@ a = Analysis(
         ('static', 'static'),
         ('media', 'media'),
         ('logs', 'logs'),
-        ('GreaterWMS-Start.exe', '.')
+        ('SxgxWMS-Start.exe', '.')
     ],
     hiddenimports=[
     'django.contrib.admin',
