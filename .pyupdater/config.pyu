@@ -67,13 +67,20 @@
             "patch_hash": "4fd6e77acab45cfa140c55f5e36850439bfa08f8243dd08a31d51e1269334368",
             "patch_size": 2716729
           }
+        },
+        "1.0.4.2.0": {
+          "win": {
+            "file_hash": "2589f2fb493ed367b01acf7c0b75e0782375873dd6f019455a6a9b1adf92cd7f",
+            "file_size": 61135272,
+            "filename": "Sxgx-WMS-win-1.0.4.zip"
+          }
         }
       }
     },
     "latest": {
       "Sxgx-WMS": {
         "stable": {
-          "win": "1.0.2.2.0"
+          "win": "1.0.4.2.0"
         }
       }
     }
@@ -84,7 +91,7 @@
     },
     "package": {
       "Sxgx-WMS": {
-        "win": "1.0.2.2.0"
+        "win": "1.0.4.2.0"
       }
     }
   }
