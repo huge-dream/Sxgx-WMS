@@ -56,6 +56,7 @@ a = Analysis(
     'update',
     'in_out_warehouse',
     'rest_framework',
+    'rest_framework_csv',
     'rest_framework.apps',
     'django_filters',
     'corsheaders',
