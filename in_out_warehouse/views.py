@@ -8,6 +8,12 @@ from rest_framework.viewsets import ModelViewSet
 from in_out_warehouse.models import ListModel
 from utils.page import MyPageNumberPagination
 
+from stock.models import StockListModel, StockBinModel
+from binset.models import ListModel as binsetmodel
+from goods.models import ListModel as goodsmodel
+
+from rest_framework.exceptions import APIException
+
 
 class InOutWarehouseSerializer(ModelSerializer):
     """
@@ -53,10 +59,52 @@ class InOutWarehouseViewSet(ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         # 写这里
-        if serializer.instance.type == 0:
-            # 入库
-            pass
-        else:
-            # 出库
-            pass
+        for stock_data in serializer.data:
+            bin_detail = binsetmodel.objects.get(id=(stock_data.get('binset')))
+            goods_detail = goodsmodel.objects.get(id=int(stock_data.get('good')))
+            if stock_data.get('type') == 0:
+                goods_qty = StockListModel.objects.filter(goods_code=goods_detail.goods_code)
+                if goods_qty.exists():
+                    goods_qty_add_detail = goods_qty.first()
+                    goods_qty_add_detail.goods_qty = goods_qty_add_detail.goods_qty + int(stock_data.get('number'))
+                    goods_qty_add_detail.save()
+                else:
+                    StockListModel.objects.create(openid=self.request.auth.openid,
+                                                  goods_code=goods_detail.goods_code,
+                                                  goods_desc=goods_detail.goods_desc,
+                                                  goods_qty=int(stock_data.get('number'))
+                                                  )
+                bin_qty = StockBinModel.objects.filter(bin_name=bin_detail.bin_name, goods_code=goods_detail.goods_code)
+                if bin_qty.exists():
+                    bin_qty_add_detail = bin_qty.first()
+                    bin_qty_add_detail.goods_qty = bin_qty_add_detail.goods_qty + int(stock_data.get('number'))
+                    bin_qty_add_detail.save()
+                else:
+                    StockBinModel.objects.create(openid=self.request.auth.openid,
+                                                 bin_name=bin_detail.bin_name,
+                                                 goods_code=goods_detail.goods_code,
+                                                 goods_desc=goods_detail.goods_desc,
+                                                 goods_qty=int(stock_data.get('number')),
+                                                 )
+            else:
+                goods_qty = StockListModel.objects.filter(goods_code=goods_detail.goods_code)
+                if goods_qty.exists():
+                    goods_qty_add_detail = goods_qty.first()
+                    goods_qty_add_detail.goods_qty = goods_qty_add_detail.goods_qty - int(stock_data.get('number'))
+                    if goods_qty_add_detail.goods_qty < 0:
+                        raise APIException({"detail": "出库数量不能大于现有数量"})
+                    else:
+                        goods_qty_add_detail.save()
+                else:
+                    raise APIException({"detail": "该货物库存不存在"})
+                bin_qty = StockBinModel.objects.filter(bin_name=bin_detail.bin_name, goods_code=goods_detail.goods_code)
+                if bin_qty.exists():
+                    bin_qty_add_detail = bin_qty.first()
+                    bin_qty_add_detail.goods_qty = bin_qty_add_detail.goods_qty - int(stock_data.get('number'))
+                    if bin_qty_add_detail.goods_qty < 0:
+                        raise APIException({"detail": "出库数量不能大于现有数量"})
+                    else:
+                        bin_qty_add_detail.save()
+                else:
+                    raise APIException({"detail": "该货物库存不存在"})
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
