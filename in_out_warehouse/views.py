@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -45,5 +45,32 @@ class InOutWarehouseViewSet(ModelViewSet):
             return serializer_class(many=True, *args, **kwargs)
         else:
             return serializer_class(*args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        """
+        创建
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        # 写这里
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):
+        """
+        编辑
+        """
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+        # 写这里
+        return Response(serializer.data)
+
+
 
 
