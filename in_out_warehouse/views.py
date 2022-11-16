@@ -103,6 +103,8 @@ class InOutWarehouseViewSet(ModelViewSet):
                     bin_qty_add_detail.goods_qty = bin_qty_add_detail.goods_qty - int(stock_data.get('number'))
                     if bin_qty_add_detail.goods_qty < 0:
                         raise APIException({"detail": "出库数量不能大于现有数量"})
+                    elif bin_qty_add_detail.goods_qty == 0:
+                        bin_qty_add_detail.delete()
                     else:
                         bin_qty_add_detail.save()
                 else:
