@@ -674,7 +674,7 @@
 </template>
 
 <script>
-import { getauth, postauth, putauth } from 'boot/axios_request'
+import { putauth } from 'boot/axios_request'
 import { SessionStorage } from 'quasar'
 
 export default {
@@ -687,6 +687,18 @@ export default {
     },
     openid: {
       type: String,
+      required: true
+    },
+    getauth: {
+      type: Function,
+      required: true
+    },
+    postauth: {
+      type: Function,
+      required: true
+    },
+    putauth: {
+      type: Function,
       required: true
     }
   },
@@ -779,7 +791,7 @@ export default {
       // }
       if (!cancelRequest) {
         console.log(submitForm)
-        postauth('in_out_warehouse/in_out_warehouse/', submitForm)
+        this.postauth('in_out_warehouse/in_out_warehouse/', submitForm)
           .then(res => {
             this.table_list = []
             _this.newDataCancel()
@@ -834,7 +846,7 @@ export default {
         }
       }
       if (!cancelRequest) {
-        putauth(_this.pathname + 'detail/', _this.newFormData)
+        this.putauth(_this.pathname + 'detail/', _this.newFormData)
           .then(res => {
             this.table_list = []
             this.newDataCancel()
@@ -862,7 +874,7 @@ export default {
         this[`goodsData${this.listNumber}`].code = ''
       }
       const needle = val.toLowerCase()
-      getauth('goods/?goods_code__icontains=' + needle).then(res => {
+      this.getauth('goods/?goods_code__icontains=' + needle).then(res => {
         const goodscodelist = []
         for (let i = 0; i < res.results.length; i++) {
           goodscodelist.push(res.results[i].goods_code)
@@ -890,7 +902,7 @@ export default {
         this[`goodsData${this.listNumber}`].bin = ''
       }
       const needle = val.toLowerCase()
-      getauth('/binset/?empty_label=true&bin_name__icontains=' + needle).then(res => {
+      this.getauth('/binset/?empty_label=true&bin_name__icontains=' + needle).then(res => {
         for (let i = 0; i < res.results.length; i++) {
           if (this.listNumber) {
             if (res.results[i].bin_name === val) {

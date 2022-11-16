@@ -17,8 +17,8 @@
       <br>
       <br>
       <div class="flex flex-center">
-        <q-btn push color="primary" label="扫码入库" size="lg" :ripple="{ center: true }" icon="cloud_upload" style="margin-right: 50px" @click="verifyDialog=true;type='in'"/>
-        <q-btn push color="secondary" label="扫码出库" size="lg" :ripple="{ center: true }" icon="local_shipping" @click="verifyDialog=true;type='out'"/>
+        <q-btn push color="primary" label="扫码入库" size="lg" :ripple="{ center: true }" icon="cloud_upload" style="margin-right: 50px" @click="inWarehouseClick"/>
+        <q-btn push color="secondary" label="扫码出库" size="lg" :ripple="{ center: true }" icon="local_shipping" @click="outWarehouseClick"/>
       </div>
     </div>
     <div style="position: absolute;right: 2%;bottom: 8%;font-family:SourceHanSansCN; font-size: 16px;color: #4C5875;">—— &nbsp;&nbsp; ZWHZ-WMS-PC-V1.0 &nbsp; &nbsp;——</div>
@@ -29,7 +29,7 @@
 <script>
 import LottieWebCimo from 'components/lottie-web-cimo'
 import { database } from '../db/database'
-import { Platform, LocalStorage, Screen } from 'quasar'
+import { Platform, LocalStorage, Screen, SessionStorage } from 'quasar'
 import VerifyUser from 'pages/verifyUser/index'
 
 export default {
@@ -45,16 +45,21 @@ export default {
       type: ''
     }
   },
-  methods: {},
+  methods: {
+    outWarehouseClick () {
+      this.verifyDialog = true
+      this.type = 'out'
+    },
+    inWarehouseClick () {
+      this.verifyDialog = true
+      this.type = 'in'
+    }
+  },
   beforeCreate: function () {
   },
   created: function () {
     LocalStorage.set('menulink', '')
-    if (this.$q.localStorage.getItem('lang') === 'en-us') {
-      this.isEnglish = true
-    } else {
-      this.isEnglish = false
-    }
+    this.isEnglish = this.$q.localStorage.getItem('lang') === 'en-us'
   },
   beforeMount: function () {
   },
