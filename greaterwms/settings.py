@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
+    'update',
     'in_out_warehouse.apps.InOutWarehouseConfig'
 ]
 

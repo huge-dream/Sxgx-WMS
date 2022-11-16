@@ -16,23 +16,19 @@ function getBaseUrl (name) {
 const baseurl = getBaseUrl('baseurl.txt')
 
 const axiosInstance = axios.create({
-  baseURL: baseurl,
-  timeout: 5000
+  baseURL: baseurl
 })
 
 const axiosInstanceVersion = axios.create({
-  baseURL: baseurl,
-  timeout: 5000
+  baseURL: baseurl
 })
 
 const axiosInstanceAuth = axios.create({
-  baseURL: baseurl,
-  timeout: 5000
+  baseURL: baseurl
 })
 
 const axiosInstanceAuthScan = axios.create({
-  baseURL: baseurl,
-  timeout: 5000
+  baseURL: baseurl
 })
 
 var lang = LocalStorage.getItem('lang')
@@ -44,8 +40,7 @@ if (LocalStorage.has('lang')) {
 }
 
 const axiosFile = axios.create({
-  baseURL: baseurl,
-  timeout: 5000
+  baseURL: baseurl
 })
 
 axiosInstanceAuth.interceptors.request.use(
