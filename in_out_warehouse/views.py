@@ -1,4 +1,5 @@
 from rest_framework import serializers, status
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -13,21 +14,38 @@ from binset.models import ListModel as binsetmodel
 from goods.models import ListModel as goodsmodel
 
 from rest_framework.exceptions import APIException
-
+from binset.models import ListModel as BinsetModel
 
 class InOutWarehouseSerializer(ModelSerializer):
     """
     出入库表-序列化器
     """
-    goods_code = serializers.CharField(read_only=True, source='good.goods_code')
-    goods_desc = serializers.CharField(read_only=True, source='good.goods_desc')
-    binset_name = serializers.CharField(read_only=True, source='binset.bin_name')
+    goods_desc = serializers.SerializerMethodField()
     type_label = serializers.CharField(read_only=True, source='get_type_display')
+
+    def get_goods_desc(self,instance):
+        goods_code = instance.goods_code
+        goods_detail = goodsmodel.objects.filter(goods_code=goods_code).first()
+        if goods_detail:
+            return goods_detail.goods_desc
+        return None
 
     class Meta:
         model = ListModel
         fields = "__all__"
         read_only_fields = ["id"]
+
+
+class WarehouseSerializer(ModelSerializer):
+    """
+    根据商品编码查询库位和剩余数量
+    """
+    class Meta:
+        model = ListModel
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
 
 
 class InOutWarehouseViewSet(ModelViewSet):
@@ -39,7 +57,7 @@ class InOutWarehouseViewSet(ModelViewSet):
     pagination_class = MyPageNumberPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter, ]
     ordering_fields = ['id', "create_time", "update_time", ]
-    filter_fields = ['type']
+    filter_fields = "__all__"
     search_fields = ['good__goods_code', 'good__goods_desc']
 
     def get_serializer(self, *args, **kwargs):
@@ -60,12 +78,12 @@ class InOutWarehouseViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         # 写这里
         for stock_data in serializer.data:
-            bin_detail = binsetmodel.objects.get(id=(stock_data.get('binset')))
-            goods_detail = goodsmodel.objects.get(id=int(stock_data.get('good')))
+            bin_detail = binsetmodel.objects.filter(bin_name=stock_data.get('bin_name')).first()
+            goods_detail = goodsmodel.objects.filter(goods_code=stock_data.get('goods_code')).first()
             if stock_data.get('type') == 0:
-                goods_qty = StockListModel.objects.filter(goods_code=goods_detail.goods_code)
-                if goods_qty.exists():
-                    goods_qty_add_detail = goods_qty.first()
+                goods_qty = StockListModel.objects.filter(goods_code=goods_detail.goods_code).first()
+                if goods_qty is not None:
+                    goods_qty_add_detail = goods_qty
                     goods_qty_add_detail.goods_qty = goods_qty_add_detail.goods_qty + int(stock_data.get('number'))
                     goods_qty_add_detail.save()
                 else:
@@ -110,3 +128,17 @@ class InOutWarehouseViewSet(ModelViewSet):
                 else:
                     raise APIException({"detail": "该货物库存不存在"})
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @action(methods=['get'],detail=False)
+    def code_to_detail(self,request):
+        params = request.query_params
+        goods_code = params.get('goods_code')
+        queryset = StockBinModel.objects.filter(goods_code__icontains=goods_code).values('goods_qty','bin_name')
+        bin_name_list = [item.get('bin_name') for item in queryset]
+        bin_set = BinsetModel.objects.filter(bin_name__in=bin_name_list).values('id','bin_name')
+        bin_set_dict = { item.get('bin_name'):item.get('id') for item in bin_set }
+        for item in queryset:
+            if not item.get('bin_name'):
+                continue
+            item['bin_id'] = bin_set_dict.get(item.get('bin_name'),'')
+        return Response(queryset, status=status.HTTP_200_OK)

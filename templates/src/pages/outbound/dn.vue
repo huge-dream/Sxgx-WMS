@@ -52,7 +52,7 @@
           <q-tr :props="props">
             <q-td key="goods_code" :props="props">{{ props.row.goods_code }}</q-td>
             <q-td key="goods_desc" :props="props">{{ props.row.goods_desc }}</q-td>
-            <q-td key="binset_name" :props="props">{{ props.row.binset_name }}</q-td>
+            <q-td key="bin_name" :props="props">{{ props.row.bin_name }}</q-td>
             <q-td key="number" :props="props">{{ props.row.number }}</q-td>
             <q-td key="creater" :props="props">{{ props.row.creater }}</q-td>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
@@ -107,7 +107,7 @@
       </div>
     </template>
     <q-dialog v-model="newForm">
-      <q-card class="shadow-24" style="width: 800px">
+      <q-card class="shadow-30" style="width: 800px">
         <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
           <q-space />
           <q-btn dense flat icon="close" v-close-popup>
@@ -121,38 +121,17 @@
             square
             debounce="500"
             v-model.number="goodsData1.qty"
+            ref="goodsData1Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData1Code" v-model="goodsData1.code"  @focus="getFocus(1)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData1.code,$event)" />
               <q-select
-                ref="one"
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData1.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(1)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData1.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData1.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
+                ref="goodsData1Bin_name"
                 dense
                 outlined
                 square
@@ -164,10 +143,8 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -178,42 +155,24 @@
               </q-select>
             </template>
           </q-input>
+<!--          2-->
           <q-input
             dense
             outlined
             square
             debounce="500"
             v-model.number="goodsData2.qty"
+            ref="goodsData2Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData2Code" v-model="goodsData2.code"  @focus="getFocus(2)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData2.code,$event)" />
               <q-select
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData2.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(2)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData2.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData2.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
+                ref="goodsData2Bin_name"
                 dense
                 outlined
                 square
@@ -225,10 +184,8 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -239,42 +196,24 @@
               </q-select>
             </template>
           </q-input>
+<!--          3-->
           <q-input
             dense
             outlined
             square
             debounce="500"
             v-model.number="goodsData3.qty"
+            ref="goodsData3Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData3Code" v-model="goodsData3.code"  @focus="getFocus(3)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData3.code,$event)" />
               <q-select
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData3.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(3)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData3.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData3.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
+                ref="goodsData3Bin_name"
                 dense
                 outlined
                 square
@@ -286,10 +225,8 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -300,42 +237,24 @@
               </q-select>
             </template>
           </q-input>
+<!--          4-->
           <q-input
             dense
             outlined
             square
             debounce="500"
             v-model.number="goodsData4.qty"
+            ref="goodsData4Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData4Code" v-model="goodsData4.code"  @focus="getFocus(4)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData4.code,$event)" />
               <q-select
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData4.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(4)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData4.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData4.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
+                ref="goodsData4Bin_name"
                 dense
                 outlined
                 square
@@ -347,10 +266,8 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -361,57 +278,37 @@
               </q-select>
             </template>
           </q-input>
+<!--          5-->
           <q-input
             dense
             outlined
             square
             debounce="500"
             v-model.number="goodsData5.qty"
+            ref="goodsData5Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData5Code" v-model="goodsData5.code"  @focus="getFocus(5)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData5.code,$event)" />
               <q-select
+                ref="goodsData5Bin_name"
                 dense
                 outlined
                 square
                 use-input
                 hide-selected
                 fill-input
-                v-model="goodsData5.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(5)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData5.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData5.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData5.bin_name"
+                v-model="goodsData5.bin"
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -422,42 +319,24 @@
               </q-select>
             </template>
           </q-input>
+<!--          6-->
           <q-input
             dense
             outlined
             square
             debounce="500"
             v-model.number="goodsData6.qty"
+            ref="goodsData6Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData6Code" v-model="goodsData6.code"  @focus="getFocus(6)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData6.code,$event)" />
               <q-select
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData6.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(6)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData6.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData6.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
+                ref="goodsData6Bin_name"
                 dense
                 outlined
                 square
@@ -469,10 +348,8 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -483,42 +360,24 @@
               </q-select>
             </template>
           </q-input>
+<!--          7-->
           <q-input
             dense
             outlined
             square
             debounce="500"
             v-model.number="goodsData7.qty"
+            ref="goodsData7Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData7Code" v-model="goodsData7.code"  @focus="getFocus(7)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData7.code,$event)" />
               <q-select
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData7.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(7)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData7.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData7.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
+                ref="goodsData7Bin_name"
                 dense
                 outlined
                 square
@@ -530,10 +389,8 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -544,42 +401,24 @@
               </q-select>
             </template>
           </q-input>
+<!--          8-->
           <q-input
             dense
             outlined
             square
             debounce="500"
             v-model.number="goodsData8.qty"
+            ref="goodsData8Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData8Code" v-model="goodsData8.code"  @focus="getFocus(8)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData8.code,$event)" />
               <q-select
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData8.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(8)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData8.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData8.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
+                ref="goodsData8Bin_name"
                 dense
                 outlined
                 square
@@ -591,10 +430,8 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -605,42 +442,24 @@
               </q-select>
             </template>
           </q-input>
+<!--          9-->
           <q-input
             dense
             outlined
             square
             debounce="500"
             v-model.number="goodsData9.qty"
+            ref="goodsData9Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData9Code" v-model="goodsData9.code"  @focus="getFocus(9)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData9.code,$event)" />
               <q-select
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData9.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(9)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData9.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData9.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
+                ref="goodsData9Bin_name"
                 dense
                 outlined
                 square
@@ -652,10 +471,8 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -666,42 +483,24 @@
               </q-select>
             </template>
           </q-input>
+<!--          10-->
           <q-input
             dense
             outlined
             square
             debounce="500"
             v-model.number="goodsData10.qty"
+            ref="goodsData10Qty"
+            @input="inputNumber"
+            autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
-            @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
           >
             <template v-slot:before>
+              <q-input outlined ref="goodsData1Code" v-model="goodsData10.code"  @focus="getFocus(10)"  autofocus :label="$t('goods.view_goodslist.goods_code')" @keyup.enter="codeEnter(goodsData10.code,$event)" />
               <q-select
-                dense
-                outlined
-                square
-                use-input
-                hide-selected
-                fill-input
-                v-model="goodsData10.code"
-                :label="$t('goods.view_goodslist.goods_code')"
-                :options="options"
-                @focus="getFocus(10)"
-                @input-value="setOptions"
-                @filter="filterFn"
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
-              >
-                <template v-slot:no-option>
-                  <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
-                </template>
-                <template v-if="goodsData10.code" v-slot:append>
-                  <q-icon name="cancel" @click.stop="goodsData10.code = ''" class="cursor-pointer" />
-                </template>
-              </q-select>
-              <q-select
-                ref="one"
+                ref="goodsData10Bin_name"
                 dense
                 outlined
                 square
@@ -713,10 +512,8 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
                 @input-value="setBinSetOptions"
                 autofocus
-                @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
               >
                 <template v-slot:no-option>
                   <q-item><q-item-section class="text-grey">No results</q-item-section></q-item>
@@ -893,7 +690,7 @@ export default {
       columns: [
         { name: 'goods_code', required: true, label: this.$t('inbound.view_asn.goods_code'), align: 'left', field: 'goods_code' },
         { name: 'goods_desc', label: this.$t('inbound.view_asn.goods_desc'), align: 'left', field: 'goods_desc' },
-        { name: 'binset_name', label: this.$t('inbound.view_asn.bin_name'), align: 'left', field: 'binset_name' },
+        { name: 'bin_name', label: this.$t('inbound.view_asn.bin_name'), align: 'left', field: 'bin_name' },
         { name: 'number', label: this.$t('inbound.view_asn.number'), field: 'number', align: 'center' },
         { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
@@ -954,7 +751,9 @@ export default {
       devi: window.device,
       error1: this.$t('baseinfo.view_supplier.error1'),
       goodsListData: [],
-      binSetOptions: []
+      binSetOptions: [],
+      maxNumber: 0,
+      refIndex:null
     }
   },
   methods: {
@@ -1156,9 +955,9 @@ export default {
             _this.newFormData.goods_code.push(_this[goodsData].code)
             _this.newFormData.goods_qty.push(_this[goodsData].qty)
             const dict = {
-              good: _this[goodsData].good,
+              goods_code: _this[goodsData].code,
               number: _this[goodsData].qty,
-              binset: _this[goodsData].bin,
+              bin_name: _this[goodsData].bin_name.bin_name,
               type: 1,
               creater: _this.login_name
             }
@@ -1184,7 +983,6 @@ export default {
       //   })
       // }
       if (!cancelRequest) {
-        console.log(submitForm)
         postauth('in_out_warehouse/in_out_warehouse/', submitForm)
           .then(res => {
             _this.table_list = []
@@ -1480,20 +1278,14 @@ export default {
     },
     setBinSetOptions (val) {
       const _this = this
-      if (!val) {
-        this[`goodsData${this.listNumber}`].bin = ''
-      }
-      const needle = val.toLowerCase()
-      getauth('/binset/?empty_label=true&bin_name__icontains=' + needle).then(res => {
-        for (let i = 0; i < res.results.length; i++) {
-          if (this.listNumber) {
-            if (res.results[i].bin_name === val) {
-              this[`goodsData${this.listNumber}`].bin = res.results[i].id
-            }
-          }
+      const obj = _this.binSetOptions.filter(item => {
+        if (item.bin_name === val) {
+          return item
         }
-        _this.binSetOptions = res.results
       })
+      if (obj.length > 0) {
+        _this.maxNumber = obj[0].goods_qty
+      }
     },
     setModel (val) {
       const _this = this
@@ -1586,6 +1378,58 @@ export default {
           })
         _this.viewForm = true
       })
+    },
+    /**
+     * 商品编码enter事件
+     */
+    codeEnter (val, event) {
+      const _this = this
+      if (val) {
+        _this.$refs[`goodsData${_this.listNumber}Bin_name`].focus()
+        getauth('in_out_warehouse/in_out_warehouse/code_to_detail/?goods_code=' + val).then(res => {
+          // console.log(res)
+          if (res.length === 0) {
+            _this.$q.notify({
+              message: '未查询到该商品编码',
+              icon: 'close',
+              color: 'negative'
+            })
+            _this[`goodsData${_this.listNumber}`].code = ''
+            const refName = `goodsData${_this.listNumber}Code`
+            _this.$refs[refName].focus()
+          } else {
+            _this.binSetOptions = res
+          }
+        })
+      } else {
+        _this.$q.notify({
+          message: '商品编码不能为空',
+          icon: 'close',
+          color: 'negative'
+        })
+      }
+    },
+    /**
+     * 数量输入事件
+     */
+    inputNumber (val) {
+      const _this = this
+      if (Number(val) < 0) {
+        _this[`goodsData${_this.listNumber}`].qty = null
+        _this.$q.notify({
+          message: '出库数量必须大于0',
+          icon: 'close',
+          color: 'negative'
+        })
+      }
+      if (Number(val) > _this.maxNumber) {
+        _this[`goodsData${_this.listNumber}`].qty = null
+        _this.$q.notify({
+          message: `当前库位库存数量为:${_this.maxNumber}`,
+          icon: 'close',
+          color: 'negative'
+        })
+      }
     }
   },
   created () {

@@ -3,8 +3,8 @@ from goods.models import ListModel as GoodModel
 from binset.models import ListModel as BinsetModel
 
 class ListModel(models.Model):
-    good = models.ForeignKey(GoodModel,db_constraint=False,on_delete=models.CASCADE,verbose_name="商品")
-    binset = models.ForeignKey(BinsetModel, db_constraint=False, on_delete=models.CASCADE, verbose_name="库位")
+    goods_code = models.CharField(max_length=255, verbose_name="Goods Code")
+    bin_name = models.CharField(max_length=255, verbose_name="Bin Name")
     number = models.IntegerField(default=0,blank=True,verbose_name="数量")
     TYPE_ENUM = (
         (0,'入库'),

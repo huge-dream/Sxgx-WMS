@@ -52,7 +52,7 @@
           <q-tr :props="props">
             <q-td key="goods_code" :props="props">{{ props.row.goods_code }}</q-td>
             <q-td key="goods_desc" :props="props">{{ props.row.goods_desc }}</q-td>
-            <q-td key="binset_name" :props="props">{{ props.row.binset_name }}</q-td>
+            <q-td key="bin_name" :props="props">{{ props.row.bin_name }}</q-td>
             <q-td key="number" :props="props">{{ props.row.number }}</q-td>
             <q-td key="creater" :props="props">{{ props.row.creater }}</q-td>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
@@ -225,7 +225,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
+                @focus="getFocus(2)"
                 @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
@@ -286,7 +286,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
+                @focus="getFocus(3)"
                 @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
@@ -347,7 +347,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
+                @focus="getFocus(4)"
                 @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
@@ -408,7 +408,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
+                @focus="getFocus(5)"
                 @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
@@ -469,7 +469,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
+                @focus="getFocus(6)"
                 @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
@@ -530,7 +530,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
+                @focus="getFocus(7)"
                 @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
@@ -591,7 +591,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
+                @focus="getFocus(8)"
                 @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
@@ -652,7 +652,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
-                @focus="getFocus(1)"
+                @focus="getFocus(9)"
                 @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
@@ -712,7 +712,7 @@
                 :label="$t('inbound.view_asn.bin_name')"
                 :options="binSetOptions"
 
-                @focus="getFocus(1)"
+                @focus="getFocus(10)"
                 @input-value="setBinSetOptions"
                 autofocus
                 @keyup.enter="isEdit ? editDataSubmit() : newDataSubmit()"
@@ -892,7 +892,7 @@ export default {
       columns: [
         { name: 'goods_code', required: true, label: this.$t('inbound.view_asn.goods_code'), align: 'left', field: 'goods_code' },
         { name: 'goods_desc', label: this.$t('inbound.view_asn.goods_desc'), align: 'left', field: 'goods_desc' },
-        { name: 'binset_name', label: this.$t('inbound.view_asn.bin_name'), align: 'left', field: 'binset_name' },
+        { name: 'bin_name', label: this.$t('inbound.view_asn.bin_name'), align: 'left', field: 'bin_name' },
         { name: 'number', label: this.$t('inbound.view_asn.number'), field: 'number', align: 'center' },
         { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
@@ -1132,14 +1132,14 @@ export default {
           })
         })
     },
+    /**
+     * 数据提交
+     */
     newDataSubmit () {
       var _this = this
       _this.newFormData.creater = _this.login_name
       let cancelRequest = false
       const submitForm = [] // 用于提交的form
-      // if (_this.newFormData.supplier !== '') {
-      _this.newFormData.goods_code = []
-      _this.newFormData.goods_qty = []
       let goodsDataCheck = 0
       for (let i = 0; i < 10; i++) {
         const goodsData = `goodsData${i + 1}`
@@ -1152,12 +1152,10 @@ export default {
               color: 'negative'
             })
           } else {
-            _this.newFormData.goods_code.push(_this[goodsData].code)
-            _this.newFormData.goods_qty.push(_this[goodsData].qty)
             const dict = {
-              good: _this[goodsData].good,
+              goods_code: _this[goodsData].code,
               number: _this[goodsData].qty,
-              binset: _this[goodsData].bin,
+              bin_name: _this[goodsData].bin,
               type: 0,
               creater: _this.login_name
             }
@@ -1174,14 +1172,6 @@ export default {
           color: 'negative'
         })
       }
-      // } else {
-      //   cancelRequest = true
-      //   _this.$q.notify({
-      //     message: 'Please Enter The Supplier',
-      //     icon: 'close',
-      //     color: 'negative'
-      //   })
-      // }
       if (!cancelRequest) {
         console.log(submitForm)
         postauth('in_out_warehouse/in_out_warehouse/', submitForm)
@@ -1461,7 +1451,7 @@ export default {
           goodscodelist.push(res.results[i].goods_code)
           if (this.listNumber) {
             if (res.results[i].goods_code === val) {
-              this[`goodsData${this.listNumber}`].good = res.results[i].id
+              this[`goodsData${this.listNumber}`].code = res.results[i].goods_code
             }
           }
         }
@@ -1487,7 +1477,7 @@ export default {
         for (let i = 0; i < res.results.length; i++) {
           if (this.listNumber) {
             if (res.results[i].bin_name === val) {
-              this[`goodsData${this.listNumber}`].bin = res.results[i].id
+              this[`goodsData${this.listNumber}`].bin = res.results[i].bin_name
             }
           }
         }
