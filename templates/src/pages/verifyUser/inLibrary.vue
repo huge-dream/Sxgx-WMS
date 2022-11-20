@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center">
     <q-dialog v-model="newForm" persistent maximized>
-      <q-card class="shadow-24" style="width: 700px;height: 425px;">
+      <q-card class="shadow-24" style="width: 700px;height: 445px;">
         <q-bar class="bg-light-blue-10 text-white rounded-borders" style="height: 50px">
            <div>入库</div>
           <q-space/>
@@ -73,13 +73,23 @@
                 </template>
               </q-select>
             </template>
+            <template v-slot:after>
+              <span v-if="data[`goodsData${index+1}`] && data[`goodsData${index+1}`].bin_name && data[`goodsData${index+1}`].bin_name.light_guide_sign">
+                <!--  0 待指引；2指引完成；1指引中              -->
+                <q-icon name="sync" v-if="data[`goodsData${index+1}`].bin_name.complete === 1" style="color:#58BD6A;animation: spin 1s linear infinite;" @click="loopClick(index)" class="cursor-pointer"/>
+                <q-icon name="check_circle" v-else-if="data[`goodsData${index+1}`].bin_name.complete === 2" style="color:#58BD6A;" class="cursor-pointer"/>
+                <q-icon name="cancel" v-else-if="data[`goodsData${index+1}`].bin_name.complete === 3" style="color:red;" class="cursor-pointer"/>
+                <q-icon color="primary" name="hourglass_top" v-else class="cursor-pointer"/>
+              </span>
+            </template>
           </q-input>
         </q-card-section>
         <div style="float: right; padding: 15px 15px 15px 0">
           <q-btn color="white" text-color="black" style="margin-right: 25px"
                  @click="newDataCancel()">{{ $t('cancel') }}
           </q-btn>
-          <q-btn color="primary" @click="newDataSubmit()">{{ $t('submit') }}</q-btn>
+          <q-btn color="primary" @click="newDataSubmit('guide')" style="margin-right: 25px" :disable="isGuide===2" :loading="isGuide===1">开始光指引</q-btn>
+          <q-btn color="primary" @click="newDataSubmit()" :disable="isGuide!==2">入库保存</q-btn>
         </div>
       </q-card>
     </q-dialog>
@@ -147,7 +157,10 @@ export default {
       options: SessionStorage.getItem('goods_code'),
       options1: [],
       goodsListData: [],
-      binSetOptions: []
+      binSetOptions: [],
+      isGuide: 0, // 是否指引完成 0 待进行；1 进行中；2完成
+      setInterval: null,
+      setIntervalIndex: 0
     }
   },
   created () {
@@ -156,7 +169,64 @@ export default {
   mounted () {
   },
   methods: {
-    newDataSubmit () {
+    guideSubmit () {
+      let isGuide = 2
+      for (let index = 0; index < this.tableFromNum; index++) {
+        if (this.data[`goodsData${index + 1}`].bin_name) {
+          if (this.data[`goodsData${index + 1}`].bin_name.complete === 2) {
+            continue
+          }
+          if (this.data[`goodsData${index + 1}`].bin_name.complete === 3) {
+            continue
+          }
+          this.data[`goodsData${index + 1}`].bin_name.complete = 1
+          if (!this.setInterval) {
+            this.setInterval = setInterval(this.getResultsSerial, 2000)
+            this.setIntervalIndex = index
+          }
+          isGuide = 1
+        }
+      }
+      this.isGuide = isGuide
+      if (this.isGuide !== 1) {
+        this.$q.notify({
+          message: '光指引完毕',
+          icon: 'check',
+          color: 'green'
+        })
+      }
+    },
+    getResultsSerial () {
+      this.getauth('in_out_warehouse/in_out_warehouse/get_serial/').then(res => {
+        if (res.state === -1) {
+          this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 3
+          clearInterval(this.setInterval)
+          this.setIntervalIndex = 0
+          this.guideSubmit()
+          this.$q.notify({
+            message: '光指引设备调用失败',
+            icon: 'close',
+            color: 'negative'
+          })
+        } else if (res.state === 1) {
+          // 返回0不操作，返回1进行下一个判断
+          this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 2
+          clearInterval(this.setInterval)
+          this.setIntervalIndex = 0
+          this.guideSubmit()
+        }
+      })
+    },
+    // 停止光指引
+    loopClick (index) {
+      this.data[`goodsData${index + 1}`].bin_name.complete = 3
+      console.log(1, this.data[`goodsData${index + 1}`].bin_name.complete)
+      clearInterval(this.setInterval)
+      this.setIntervalIndex = 0
+      this.isGuide = 2
+      this.guideSubmit()
+    },
+    newDataSubmit (type) {
       var _this = this
       _this.newFormData.creater = _this.login_name
       let cancelRequest = false
@@ -208,7 +278,10 @@ export default {
       // }
       console.log(11, cancelRequest)
       if (!cancelRequest) {
-        console.log(3333, submitForm)
+        if (type) {
+          this.guideSubmit()
+          return
+        }
         this.postauth('in_out_warehouse/in_out_warehouse/', submitForm)
           .then(res => {
             this.table_list = []
@@ -232,7 +305,7 @@ export default {
       this.listNumber = number
     },
     filterFn (val, update, abort) {
-      if (this.options.indexOf(val) !== -1) {
+      if (val && this.options && this.options.indexOf(val) !== -1) {
         abort()
         return
       }
@@ -277,6 +350,8 @@ export default {
         goods_qty: [],
         creater: ''
       }
+      clearInterval(this.setInterval)
+      this.setIntervalIndex = 0
       _this.goodsDataClear()
     },
     goodsDataClear () {
@@ -310,6 +385,9 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style >
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
