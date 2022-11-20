@@ -1,4 +1,7 @@
 from rest_framework import viewsets
+
+from stock.models import StockBinModel
+from stock.serializers import StockListGetSerializer, StockBinGetSerializer
 from .models import ListModel
 from goods.models import ListModel as goodsmodel
 from . import serializers
@@ -94,16 +97,33 @@ class APIViewSet(viewsets.ModelViewSet):
         if self.request.user:
             if id is None:
                 goods_code = self.request.query_params.get('goods_code')
+                type = self.request.query_params.get('type')
                 if goods_code:
                     goods_code_obj = goodsmodel.objects.filter(goods_code__icontains=goods_code).first()
-                    if goods_code_obj and goods_code_obj.light_guidance:
-                        return  ListModel.objects.filter(openid=self.request.auth.openid,light_guide_sign__isnull=False, is_delete=False)
+                    queryset = ListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
+                    if  type != 'out' and goods_code_obj and goods_code_obj.light_guidance:
+                        queryset = queryset.filter(light_guide_sign__isnull=False)
+                    return  queryset
                 return ListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
             else:
                 return ListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)
         else:
             return ListModel.objects.none()
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        type = self.request.query_params.get('type')
+        if type == 'out':
+            # 出库类型，只过滤有存在的
+            goods_code = self.request.query_params.get('goods_code')
+            queryset = StockBinModel.objects.filter(goods_code__icontains=goods_code, goods_qty__gt=0)
+            serializer = StockBinGetSerializer(queryset,many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve', 'destroy']:
             return serializers.BinsetGetSerializer

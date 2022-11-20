@@ -1,3 +1,7 @@
+import time
+
+import binascii
+import serial
 from rest_framework import serializers, status
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
@@ -59,6 +63,17 @@ class InOutWarehouseViewSet(ModelViewSet):
     ordering_fields = ['id', "create_time", "update_time", ]
     filter_fields = "__all__"
     search_fields = ['good__goods_code', 'good__goods_desc']
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.order_by('-create_time')
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
@@ -142,3 +157,38 @@ class InOutWarehouseViewSet(ModelViewSet):
                 continue
             item['bin_id'] = bin_set_dict.get(item.get('bin_name'),'')
         return Response(queryset, status=status.HTTP_200_OK)
+
+    @action(methods=['get'], detail=False, permission_classes=[])
+    def get_serial(self, request):
+        state = request.query_params.get('state')
+        light_guide_sign = request.query_params.get('light_guide_sign')
+        # 2. 如果状态为1，直接调用指定位置
+        # 3. 如果状态为2，查询结果
+        try:
+            ser = serial.Serial(port="COM3", baudrate=9200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE,
+                                timeout=2, rtscts=False)
+        except Exception as e:
+            print(e)
+            return Response(data={
+                "state": -1  # 返回0不操作，返回1进行下一个判断
+            }, status=status.HTTP_200_OK)
+        init_light_guide_sign = 'FF 01 00 07 00 01 09'  # 初始点位
+        print("light_guide_sign", light_guide_sign)
+        if state == 1:
+            ser.write(bytes.fromhex(init_light_guide_sign))
+            time.sleep(0.5)
+            ser.write(bytes.fromhex(light_guide_sign))
+        elif state == 2:
+            count = ser.inWaiting()
+            # 数据的接收
+            if count > 0:
+                data = ser.read_all()
+                read_data = str(binascii.b2a_hex(data))[2:-1]
+                print("read_data", read_data)
+                return Response(data={
+                    "state": 1  # 返回0不操作，返回1进行下一个判断
+                }, status=status.HTTP_200_OK)
+
+        return Response(data={
+            "state": 0  # 返回0不操作，返回1进行下一个判断
+        }, status=status.HTTP_200_OK)

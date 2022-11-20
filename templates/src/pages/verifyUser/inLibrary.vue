@@ -181,6 +181,7 @@ export default {
           }
           this.data[`goodsData${index + 1}`].bin_name.complete = 1
           if (!this.setInterval) {
+            this.getResultsSerial(1)
             this.setInterval = setInterval(this.getResultsSerial, 2000)
             this.setIntervalIndex = index
           }
@@ -196,8 +197,9 @@ export default {
         })
       }
     },
-    getResultsSerial () {
-      this.getauth('in_out_warehouse/in_out_warehouse/get_serial/').then(res => {
+    getResultsSerial (state = 2) {
+      const lightGuideSign = this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.light_guide_sign
+      this.getauth('in_out_warehouse/in_out_warehouse/get_serial/?light_guide_sign=' + lightGuideSign + '&state=' + state).then(res => {
         if (res.state === -1) {
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 3
           clearInterval(this.setInterval)
