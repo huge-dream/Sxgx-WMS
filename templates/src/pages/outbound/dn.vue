@@ -122,9 +122,11 @@
             debounce="500"
             v-model.number="goodsData1.qty"
             ref="goodsData1Qty"
-            @input="inputNumber"
+            :error="!numberValid"
             autofocus
             type="number"
+            min="1"
+            :max="goodsData1.maxNumber"
             :label="$t('stock.view_stocklist.goods_qty')"
             style="margin-bottom: 5px"
           >
@@ -491,7 +493,7 @@
             debounce="500"
             v-model.number="goodsData10.qty"
             ref="goodsData10Qty"
-            @input="inputNumber"
+
             autofocus
             type="number"
             :label="$t('stock.view_stocklist.goods_qty')"
@@ -669,6 +671,12 @@ import { SessionStorage, LocalStorage } from 'quasar'
 
 export default {
   name: 'Pageasnlist',
+  computed: {
+    numberValid () {
+      const _this = this
+      return _this[`goodsData${_this.listNumber}`].qty <= _this[`goodsData${_this.listNumber}`].maxNumber
+    }
+  },
   data () {
     return {
       openid: '',
@@ -706,7 +714,7 @@ export default {
       options: SessionStorage.getItem('goods_code'),
       options1: [],
       isEdit: false,
-      listNumber: '',
+      listNumber: 1,
       newAsn: { creater: '' },
       newFormData: {
         asn_code: '',
@@ -715,16 +723,16 @@ export default {
         goods_qty: [],
         creater: ''
       },
-      goodsData1: { code: '', qty: '' },
-      goodsData2: { code: '', qty: '' },
-      goodsData3: { code: '', qty: '' },
-      goodsData4: { code: '', qty: '' },
-      goodsData5: { code: '', qty: '' },
-      goodsData6: { code: '', qty: '' },
-      goodsData7: { code: '', qty: '' },
-      goodsData8: { code: '', qty: '' },
-      goodsData9: { code: '', qty: '' },
-      goodsData10: { code: '', qty: '' },
+      goodsData1: { code: '', qty: '', maxNumber: 0 },
+      goodsData2: { code: '', qty: '', maxNumber: 0 },
+      goodsData3: { code: '', qty: '', maxNumber: 0 },
+      goodsData4: { code: '', qty: '', maxNumber: 0 },
+      goodsData5: { code: '', qty: '', maxNumber: 0 },
+      goodsData6: { code: '', qty: '', maxNumber: 0 },
+      goodsData7: { code: '', qty: '', maxNumber: 0 },
+      goodsData8: { code: '', qty: '', maxNumber: 0 },
+      goodsData9: { code: '', qty: '', maxNumber: 0 },
+      goodsData10: { code: '', qty: '', maxNumber: 0 },
       editid: 0,
       editFormData: {},
       sortedForm: false,
@@ -753,7 +761,7 @@ export default {
       goodsListData: [],
       binSetOptions: [],
       maxNumber: 0,
-      refIndex:null
+      refIndex: null
     }
   },
   methods: {
@@ -1284,7 +1292,7 @@ export default {
         }
       })
       if (obj.length > 0) {
-        _this.maxNumber = obj[0].goods_qty
+        _this[`goodsData${this.listNumber}`].maxNumber = obj[0].goods_qty
       }
     },
     setModel (val) {
