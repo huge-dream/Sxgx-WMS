@@ -19,19 +19,19 @@
       >
         <template v-slot:top>
           <q-btn-group push>
-            <q-btn
-              v-show="
-                $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                  $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                  $q.localStorage.getItem('staff_type') !== 'Outbound' &&
-                  $q.localStorage.getItem('staff_type') !== 'StockControl'
-              "
-              :label="$t('new')"
-              icon="add"
-              @click="newFormOpen()"
-            >
-              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('newtip') }}</q-tooltip>
-            </q-btn>
+<!--            <q-btn-->
+<!--              v-show="-->
+<!--                $q.localStorage.getItem('staff_type') !== 'Supplier' &&-->
+<!--                  $q.localStorage.getItem('staff_type') !== 'Customer' &&-->
+<!--                  $q.localStorage.getItem('staff_type') !== 'Outbound' &&-->
+<!--                  $q.localStorage.getItem('staff_type') !== 'StockControl'-->
+<!--              "-->
+<!--              :label="'入库'"-->
+<!--              icon="add"-->
+<!--              @click="newFormOpen()"-->
+<!--            >-->
+<!--              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('newtip') }}</q-tooltip>-->
+<!--            </q-btn>-->
             <q-btn
               v-show="$q.localStorage.getItem('staff_type') !== 'Supplier' && $q.localStorage.getItem('staff_type') !== 'Customer'"
               :label="$t('refresh')"

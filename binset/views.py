@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from .models import ListModel
+from goods.models import ListModel as goodsmodel
 from . import serializers
 from .page import MyPageNumberPagination
 from rest_framework.filters import OrderingFilter
@@ -92,6 +93,11 @@ class APIViewSet(viewsets.ModelViewSet):
         id = self.get_project()
         if self.request.user:
             if id is None:
+                goods_code = self.request.query_params.get('goods_code')
+                if goods_code:
+                    goods_code_obj = goodsmodel.objects.filter(goods_code__icontains=goods_code).first()
+                    if goods_code_obj and goods_code_obj.light_guidance:
+                        return  ListModel.objects.filter(openid=self.request.auth.openid,light_guide_sign__isnull=False, is_delete=False)
                 return ListModel.objects.filter(openid=self.request.auth.openid, is_delete=False)
             else:
                 return ListModel.objects.filter(openid=self.request.auth.openid, id=id, is_delete=False)

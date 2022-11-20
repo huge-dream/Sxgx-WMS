@@ -16,7 +16,7 @@
           </q-btn>
         </transition>
         <transition appear enter-active-class="animated zoomIn">
-          <q-toolbar-title shrink class="text-weight-bold" @click="$router.push({ name: 'web_index' });drawerleft=false">{{
+          <q-toolbar-title shrink class="text-weight-bold" style="cursor:pointer;" @click="$router.push({ name: 'web_index' });drawerleft=false">{{
             $t("index.title")
           }}</q-toolbar-title>
         </transition>

@@ -242,7 +242,7 @@
           <div class="row" style="height: 60px">
             <div class="col-3"><img src="statics/goods/logo.png" style="width: 60px;height: 50px;margin-top: 5px;margin-left: 5px;" /></div>
             <div class="col-9" style="height: 50px;float: contour;margin-top: 10px;">
-              <p style="font-size: 20px;font-weight: 550;position: absolute;right: 20px;">{{'员工姓名: ' + '张三' }}</p>
+              <p style="font-size: 20px;font-weight: 550;position: absolute;right: 20px;">{{'员工姓名: ' + newFormData.staff_name }}</p>
             </div>
           </div>
           <hr />
@@ -641,6 +641,11 @@ export default {
     QRCode (e) {
       var _this = this
       _this.QRCodeForm = true
+      console.log('id:', `${e.id}_${e.check_code}`, this.Base64.encode(`${e.id}_${e.check_code}`))
+      _this.newFormData = {
+        staff_name: e.staff_name,
+        staff_type: e.staff_type
+      }
       this.$nextTick(() => {
         this.bindBarCode(this.Base64.encode(`${e.id}_${e.check_code}`))
       })

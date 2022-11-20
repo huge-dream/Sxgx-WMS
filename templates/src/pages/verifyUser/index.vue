@@ -7,7 +7,7 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <q-input dense v-model="loginCode" autofocus type="password" hint="请使用扫码枪进行扫码识别身份"
+          <q-input dense v-model="loginCode" autofocus hint="请使用扫码枪进行扫码识别身份"
                    @keyup.enter="loginCodeOk">
             <template v-slot:before>
               <q-icon name="filter_center_focus"/>
@@ -56,7 +56,7 @@ export default {
   },
   data () {
     return {
-      loginCode: '',
+      loginCode: 'Ml83ODc5',
       inDialog: false,
       outDialog: false,
       username: '',
@@ -73,7 +73,7 @@ export default {
   methods: {
     cancel () {
       this.$emit('update:value', !this.value)
-      this.loginCode = ''
+      this.loginCode = 'Ml83ODc5'
     },
     // 进行登录获取token
     loginCodeOk () {
@@ -92,7 +92,7 @@ export default {
       ).then((res) => {
         if (res.data.status_code === 200) {
           this.$emit('update:value', !this.value)
-          this.loginCode = ''
+          this.loginCode = 'Ml83ODc5'
           // 弹出入库或出库需要填写信息
           if (this.type === 'in') {
             this.inDialog = true
@@ -244,11 +244,11 @@ export default {
           this.getauth = function (url) {
             return axiosVersion.get(url)
           }
-          this.postauth = function (url) {
-            return axiosVersion.get(url)
+          this.postauth = function (url, data) {
+            return axiosVersion.post(url, data)
           }
-          this.putauth = function (url) {
-            return axiosVersion.get(url)
+          this.putauth = function (url, data) {
+            return axiosVersion.put(url, data)
           }
           this.$q.notify({
             message: '认证成功',

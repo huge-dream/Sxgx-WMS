@@ -9,6 +9,7 @@ class Filter(FilterSet):
             "bin_name": ['exact', 'iexact', 'contains', 'icontains'],
             "bin_size": ['exact', 'iexact', 'contains', 'icontains'],
             "bin_property": ['exact', 'iexact', 'contains', 'icontains'],
+            "light_guide_sign": ['exact', 'iexact', 'isnull'],
             "empty_label": ['exact', 'iexact'],
             "creater": ['exact', 'iexact', 'contains', 'icontains'],
             "is_delete": ['exact', 'iexact'],

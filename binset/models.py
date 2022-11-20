@@ -3,6 +3,7 @@ from django.db import models
 class ListModel(models.Model):
     bin_name = models.CharField(max_length=255, verbose_name="Bin Name")
     bin_size = models.CharField(max_length=255, verbose_name="Bin Size")
+    light_guide_sign = models.CharField(max_length=255, blank=True, null=True, verbose_name="光指引标识")
     bin_property = models.CharField(max_length=11, verbose_name="Bin Property")
     empty_label = models.BooleanField(default=True, verbose_name="Empty Label")
     creater = models.CharField(max_length=255, verbose_name="Who Created")

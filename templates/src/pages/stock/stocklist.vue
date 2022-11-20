@@ -35,7 +35,7 @@
             <q-td key="goods_code" :props="props">{{ props.row.goods_code }}</q-td>
             <q-td key="goods_desc" :props="props">{{ props.row.goods_desc }}</q-td>
             <q-td key="goods_qty" :props="props">{{ props.row.goods_qty }}</q-td>
-            <q-td key="onhand_stock" :props="props">{{ props.row.onhand_stock }}</q-td>
+<!--            <q-td key="onhand_stock" :props="props">{{ props.row.onhand_stock }}</q-td>-->
 <!--            <q-td key="can_order_stock" :props="props">{{ props.row.can_order_stock }}</q-td>-->
 <!--            <q-td key="ordered_stock" :props="props">{{ props.row.ordered_stock }}</q-td>-->
 <!--            <q-td key="inspect_stock" :props="props">{{ props.row.inspect_stock }}</q-td>-->
@@ -95,7 +95,7 @@ export default {
         { name: 'goods_code', required: true, label: this.$t('stock.view_stocklist.goods_code'), align: 'left', field: 'goods_code' },
         { name: 'goods_desc', label: this.$t('stock.view_stocklist.goods_desc'), field: 'goods_desc', align: 'center' },
         { name: 'goods_qty', label: this.$t('stock.view_stocklist.goods_qty'), field: 'goods_qty', align: 'center' },
-        { name: 'onhand_stock', label: this.$t('stock.view_stocklist.onhand_stock'), field: 'onhand_stock', align: 'center' },
+        // { name: 'onhand_stock', label: this.$t('stock.view_stocklist.onhand_stock'), field: 'onhand_stock', align: 'center' },
         // { name: 'can_order_stock', label: this.$t('stock.view_stocklist.can_order_stock'), field: 'can_order_stock', align: 'center' },
         // { name: 'ordered_stock', label: this.$t('stock.view_stocklist.ordered_stock'), field: 'ordered_stock', align: 'center' },
         // { name: 'inspect_stock', label: this.$t('stock.view_stocklist.inspect_stock'), field: 'inspect_stock', align: 'center' },

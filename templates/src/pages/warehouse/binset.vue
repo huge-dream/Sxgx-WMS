@@ -59,6 +59,22 @@
             </template>
             <q-td key="bin_property" :props="props">{{ props.row.bin_property }}</q-td>
             <q-td key="empty_label" :props="props">{{ props.row.empty_label }}</q-td>
+            <template v-if="props.row.id === editid">
+              <q-td key="light_guide_sign" :props="props">
+                <q-input
+                  dense
+                  outlined
+                  square
+                  v-model="editFormData.light_guide_sign"
+                  :label="'光指引标识'"
+                  autofocus
+                  :rules="[val => (val && val.length > 0) || '光指引标识不能为空']"
+                />
+              </q-td>
+            </template>
+            <template v-else-if="props.row.id !== editid">
+              <q-td key="light_guide_sign" :props="props">{{ props.row.light_guide_sign }}</q-td>
+            </template>
             <q-td key="creater" :props="props">{{ props.row.creater }}</q-td>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
             <q-td key="update_time" :props="props">{{ props.row.update_time }}</q-td>
@@ -158,6 +174,15 @@
             :label="$t('warehouse.view_binset.bin_property')"
             :rules="[val => (val && val.length > 0) || error3]"
           />
+          <q-input
+            dense
+            outlined
+            square
+            v-model="newFormData.light_guide_sign"
+            :label="'光指引标识'"
+            autofocus
+            :rules="[val => (val && val.length > 0) || '光指引标识不能为空']"
+          />
         </q-card-section>
         <div style="float: right; padding: 15px 15px 15px 0">
           <q-btn color="white" text-color="black" style="margin-right: 25px" @click="newDataCancel()">{{ $t('cancel') }}</q-btn>
@@ -238,6 +263,7 @@ export default {
         { name: 'bin_size', label: this.$t('warehouse.view_binset.bin_size'), field: 'bin_size', align: 'center' },
         { name: 'bin_property', label: this.$t('warehouse.view_binset.bin_property'), field: 'bin_property', align: 'center' },
         { name: 'empty_label', label: this.$t('warehouse.view_binset.empty_label'), field: 'empty_label', align: 'center' },
+        { name: 'light_guide_sign', label: '光指引标识', field: 'light_guide_sign', align: 'center' },
         { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
         { name: 'update_time', label: this.$t('updatetime'), field: 'update_time', align: 'center' },
@@ -253,6 +279,7 @@ export default {
         bin_name: '',
         bin_size: '',
         bin_property: '',
+        light_guide_sign: '',
         creater: ''
       },
       editid: 0,
@@ -547,6 +574,7 @@ export default {
       _this.editFormData = {
         bin_name: e.bin_name,
         bin_size: e.bin_size,
+        light_guide_sign: e.light_guide_sign,
         bin_property: e.bin_property,
         creater: _this.login_name
       }
@@ -599,6 +627,7 @@ export default {
         bin_size: '',
         bin_property: '',
         empty_label: '',
+        light_guide_sign: '',
         creater: ''
       }
     },
