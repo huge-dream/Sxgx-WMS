@@ -56,7 +56,7 @@ export default {
   },
   data () {
     return {
-      loginCode: 'Ml83ODc5',
+      loginCode: '',
       inDialog: false,
       outDialog: false,
       username: '',
@@ -73,7 +73,7 @@ export default {
   methods: {
     cancel () {
       this.$emit('update:value', !this.value)
-      this.loginCode = 'Ml83ODc5'
+      this.loginCode = ''
     },
     // 进行登录获取token
     loginCodeOk () {
@@ -92,7 +92,7 @@ export default {
       ).then((res) => {
         if (res.data.status_code === 200) {
           this.$emit('update:value', !this.value)
-          this.loginCode = 'Ml83ODc5'
+          this.loginCode = ''
           // 弹出入库或出库需要填写信息
           if (this.type === 'in') {
             this.inDialog = true
