@@ -174,6 +174,12 @@ class InOutWarehouseViewSet(ModelViewSet):
             }, status=status.HTTP_200_OK)
         init_light_guide_sign = 'FF 01 00 07 00 01 09'  # 初始点位
         print("light_guide_sign", light_guide_sign)
+        if light_guide_sign.isnumeric(): # 数字时执行
+            ser.write(init_light_guide_sign)
+            time.sleep(0.5)
+            return Response(data={
+                "state": 0  # 返回0不操作，返回1进行下一个判断
+            }, status=status.HTTP_200_OK)
         if state == 1:
             ser.write(bytes.fromhex(init_light_guide_sign))
             time.sleep(0.5)
@@ -188,7 +194,13 @@ class InOutWarehouseViewSet(ModelViewSet):
                 return Response(data={
                     "state": 1  # 返回0不操作，返回1进行下一个判断
                 }, status=status.HTTP_200_OK)
-
+        elif state == 3:
+            # 位置移动
+            ser.write(bytes.fromhex(light_guide_sign))
+            time.sleep(0.5)
+            ser.write(bytes.fromhex('FF 01 00 00 00 00 01')) # 停止移动
+        elif state == 4:
+            ser.write(bytes.fromhex(light_guide_sign)) # 直接执行
         return Response(data={
             "state": 0  # 返回0不操作，返回1进行下一个判断
         }, status=status.HTTP_200_OK)

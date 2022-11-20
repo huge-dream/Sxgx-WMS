@@ -28,6 +28,9 @@
             <q-btn :label="$t('download')" icon="cloud_download" @click="downloadData()">
               <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('downloadtip') }}</q-tooltip>
             </q-btn>
+            <q-btn :label="'光指引'" icon="power" @click="guide()">
+              <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">光指引配置</q-tooltip>
+            </q-btn>
           </q-btn-group>
           <q-space />
           <q-input outlined rounded dense debounce="300" color="primary" v-model="filter" :placeholder="$t('search')" @blur="getSearchList()" @keyup.enter="getSearchList()">
@@ -227,6 +230,45 @@
       </div>
       <div style="float: right; padding: 15px 15px 15px 0"><q-btn color="primary" icon="print" v-print="printObj">print</q-btn></div>
     </q-dialog>
+    <q-dialog v-model="guideDialog">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">光指引设备配置</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none" style="width: 300px;height: 200px;text-align: center;margin-top: 30px;">
+          <div>
+            <q-btn flat push color="purple" icon="border_clear"></q-btn>
+            <q-btn flat push color="purple" icon="arrow_upward" @click="executeGuideCMD('FF 01 00 08 21 21 4B')"></q-btn>
+            <q-btn flat push color="purple" icon="border_clear"></q-btn>
+          </div>
+          <div style="margin-top: 10px;margin-bottom: 10px;">
+            <q-btn flat push color="purple" icon="arrow_back" @click="executeGuideCMD('FF 01 00 04 21 21 47')"></q-btn>
+            <q-btn flat push color="purple" icon="border_clear"></q-btn>
+            <q-btn flat push color="purple" icon="arrow_forward" @click="executeGuideCMD('FF 01 00 02 21 21 45')"></q-btn>
+          </div>
+          <div>
+            <q-btn flat push color="purple" icon="border_clear"></q-btn>
+            <q-btn flat push color="purple" icon="arrow_downward" @click="executeGuideCMD('FF 01 00 10 00 20 31')"></q-btn>
+            <q-btn flat push color="purple" icon="border_clear"></q-btn>
+          </div>
+          <div style="margin-top: 10px;">
+                    <q-input bottom-slots v-model="guideCMD" label="命令" counter maxlength="20" :dense="true" style="margin-left: 10px;">
+          <template v-slot:hint>
+            手动输入命令执行
+          </template>
+
+          <template v-slot:after>
+            <q-btn round dense flat icon="send" @click="executeGuideCMD(guideCMD,4)"/>
+          </template>
+        </q-input>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="关闭" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 <router-view />
@@ -290,7 +332,9 @@ export default {
       bar_code: '',
       error1: this.$t('warehouse.view_binset.error1'),
       error2: this.$t('warehouse.view_binset.error2'),
-      error3: this.$t('warehouse.view_binset.error3')
+      error3: this.$t('warehouse.view_binset.error3'),
+      guideDialog: false,
+      guideCMD: ''
     }
   },
   methods: {
@@ -704,6 +748,27 @@ export default {
           console.error(err)
         })
       _this.viewForm = true
+    },
+    guide () {
+      this.guideDialog = true
+    },
+    executeGuideCMD (lightGuideSign, state = 3) {
+      getauth('in_out_warehouse/in_out_warehouse/get_serial/?light_guide_sign=' + lightGuideSign + '&state=' + state).then(res => {
+        if (res.state === -1) {
+          this.$q.notify({
+            message: '光指引设备调用失败',
+            icon: 'close',
+            color: 'negative'
+          })
+        } else if (res.state === 1) {
+          // 返回0不操作，返回1进行下一个判断
+          this.$q.notify({
+            message: '光指引设备调用成功',
+            icon: 'check',
+            color: 'green'
+          })
+        }
+      })
     }
   },
   created () {
