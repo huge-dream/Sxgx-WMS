@@ -2,6 +2,7 @@ import time
 
 import binascii
 import serial
+from django.db import transaction
 from rest_framework import serializers, status
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
@@ -83,6 +84,7 @@ class InOutWarehouseViewSet(ModelViewSet):
         else:
             return serializer_class(*args, **kwargs)
 
+    @transaction.atomic # 添加入库事物
     def create(self, request, *args, **kwargs):
         """
         创建

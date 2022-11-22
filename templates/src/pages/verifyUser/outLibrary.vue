@@ -296,6 +296,14 @@ export default {
       let goodsDataCheck = 0
       for (let i = 0; i < 10; i++) {
         const goodsData = `goodsData${i + 1}`
+        if (_this.data[goodsData].qty < 1) {
+          cancelRequest = true
+          _this.$q.notify({
+            message: 'Total Quantity Must Be > 0',
+            icon: 'close',
+            color: 'negative'
+          })
+        }
         if (_this.data[goodsData].code !== '' && _this.data[goodsData].bin_name && _this.data[goodsData].bin_name.bin_name !== '') {
           _this.newFormData.goods_code.push(_this.data[goodsData].code)
           _this.newFormData.goods_qty.push(_this.data[goodsData].qty)
