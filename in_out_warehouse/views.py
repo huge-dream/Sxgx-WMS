@@ -175,7 +175,7 @@ class InOutWarehouseViewSet(ModelViewSet):
         init_light_guide_sign = 'FF 01 00 07 00 01 09'  # 初始点位
         print("light_guide_sign", light_guide_sign)
         if light_guide_sign.isnumeric(): # 数字时执行
-            ser.write(init_light_guide_sign)
+            ser.write(light_guide_sign.encode())
             time.sleep(0.5)
             return Response(data={
                 "state": 0  # 返回0不操作，返回1进行下一个判断
