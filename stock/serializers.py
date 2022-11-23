@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from binset.models import ListModel
 from .models import StockListModel, StockBinModel
 from utils import datasolve
 
@@ -29,6 +31,7 @@ class StockListGetSerializer(serializers.ModelSerializer):
 
 class StockBinGetSerializer(serializers.ModelSerializer):
     bin_name = serializers.CharField(read_only=True, required=False)
+    light_guide_sign = serializers.SerializerMethodField()
     goods_code = serializers.CharField(read_only=True, required=False)
     goods_desc = serializers.CharField(read_only=True, required=False)
     goods_qty = serializers.IntegerField(read_only=True, required=False)
@@ -45,7 +48,9 @@ class StockBinGetSerializer(serializers.ModelSerializer):
         model = StockBinModel
         exclude = ['openid', ]
         read_only_fields = ['id', 'create_time', 'update_time', ]
-
+    def get_light_guide_sign(self,obj):
+        binset = ListModel.objects.filter(bin_name=obj.bin_name).first()
+        return binset.light_guide_sign if binset else ''
     def get_qty(self, obj):
         return 0
 

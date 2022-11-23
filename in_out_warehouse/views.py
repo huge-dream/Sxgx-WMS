@@ -187,15 +187,19 @@ class InOutWarehouseViewSet(ModelViewSet):
             time.sleep(0.5)
             ser.write(bytes.fromhex(light_guide_sign))
         elif state == 2:
-            count = ser.inWaiting()
-            # 数据的接收
-            if count > 0:
-                data = ser.read_all()
-                read_data = str(binascii.b2a_hex(data))[2:-1]
-                print("read_data", read_data)
-                return Response(data={
-                    "state": 1  # 返回0不操作，返回1进行下一个判断
-                }, status=status.HTTP_200_OK)
+            ser.write(bytes.fromhex(init_light_guide_sign))
+            time.sleep(0.5)
+            ser.write(bytes.fromhex(light_guide_sign))
+            time.sleep(0.5)
+            ser.flushInput()  # 清空缓冲区
+            while True:
+                if ser.in_waiting():
+                    data = ser.read_all().decode('gbk')
+                    print("data", data)
+                    # 数据的接收
+                    return Response(data={
+                        "state": 1  # 返回0不操作，返回1进行下一个判断
+                    }, status=status.HTTP_200_OK)
         elif state == 3:
             # 位置移动
             ser.write(bytes.fromhex(light_guide_sign))

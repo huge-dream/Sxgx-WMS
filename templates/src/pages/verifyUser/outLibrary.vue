@@ -194,7 +194,9 @@ export default {
       optionsGoodsCode: [],
       isWriteOff: false, // 是否核销
       isGuide: 0, // 是否指引完成 0 待进行；1 进行中；2完成
-      scanInput: ''
+      scanInput: '',
+      setIntervalIndex: 0,
+      setInterval: null
     }
   },
   created () {
@@ -294,7 +296,7 @@ export default {
       let goodsDataCheck = 0
       for (let i = 0; i < 10; i++) {
         const goodsData = `goodsData${i + 1}`
-        if (_this.data[goodsData].qty < 1) {
+        if (_this.data[goodsData].qty < 1 && !type) {
           cancelRequest = true
           _this.$q.notify({
             message: 'Total Quantity Must Be > 0',
