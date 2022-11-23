@@ -34,6 +34,8 @@
                 v-model="data[`goodsData${index+1}`].code"
                 :label="$t('goods.view_goodslist.goods_code')"
                 :options="options"
+                option-value="goods_code"
+                option-label="goods_code"
                 @focus="getFocus(index+1)"
                 @input-value="setModel($event,index)"
                 autofocus
@@ -41,6 +43,17 @@
                 @blur="goodsCodeEnter(index)"
                 @keyup.enter="goodsCodeEnter(index)"
               >
+                <template v-slot:option="scope">
+                  <q-item
+                    v-bind="scope.itemProps"
+                    v-on="scope.itemEvents"
+                  >
+                    <q-item-section>
+                      <q-item-label v-html="scope.opt.goods_code" />
+                      <q-item-label caption>{{ scope.opt.goods_desc }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">No results</q-item-section>
@@ -160,7 +173,8 @@ export default {
       binSetOptions: [],
       isGuide: 0, // 是否指引完成 0 待进行；1 进行中；2完成
       setInterval: null,
-      setIntervalIndex: 0
+      setIntervalIndex: 0,
+      optionsGoodsCode: []
     }
   },
   created () {
@@ -182,7 +196,7 @@ export default {
           this.data[`goodsData${index + 1}`].bin_name.complete = 1
           if (!this.setInterval) {
             this.getResultsSerial(1)
-            this.setInterval = setInterval(this.getResultsSerial, 2000)
+            this.setInterval = setInterval(this.guideSubmit, 2000)
             this.setIntervalIndex = index
           }
           isGuide = 1
@@ -307,8 +321,18 @@ export default {
       this.listNumber = number
     },
     filterFn (val, update, abort) {
-      if (val && this.options && this.options.indexOf(val) !== -1) {
+      if (val && this.optionsGoodsCode && this.optionsGoodsCode.indexOf(val) !== -1) {
         abort()
+        return
+      }
+      if (val) {
+        let newAllOptions = []
+        newAllOptions = this.allOptions.filter(res => {
+          return res.goods_code.toLowerCase().indexOf(val.toLowerCase()) !== -1 || res.goods_desc.toLowerCase().indexOf(val.toLowerCase()) !== -1
+        })
+        update(() => {
+          this.options = newAllOptions
+        })
         return
       }
       update(() => {
@@ -321,7 +345,9 @@ export default {
         for (let i = 0; i < res.results.length; i++) {
           goodscodelist.push(res.results[i].goods_code)
         }
-        this.allOptions = goodscodelist
+        this.optionsGoodsCode = goodscodelist
+        this.options = []
+        this.allOptions = res.results
       })
     },
     setBinSetOptions (val) {
@@ -364,9 +390,14 @@ export default {
     },
     goodsCodeEnter (index) {
       if (!this.data[`goodsData${index + 1}`].code) return
-      if (this.options.indexOf(this.data[`goodsData${index + 1}`].code) !== -1) {
+      let data = this.data[`goodsData${index + 1}`].code
+      if (Object.prototype.toString.call(data) === '[object Object]') {
+        this.data[`goodsData${index + 1}`].code = data.goods_code
+        data = data.goods_code
+      }
+      if (this.optionsGoodsCode.indexOf(data) !== -1) {
         this.$refs[`goodsData${index}BinName`][0].showPopup()
-        this.getauth('/binset/?empty_label=true&goods_code=' + this.data[`goodsData${index + 1}`].code.toLowerCase()).then(res => {
+        this.getauth('/binset/?empty_label=true&goods_code=' + data.toLowerCase()).then(res => {
           this.binSetOptions = res.results
         })
       } else {

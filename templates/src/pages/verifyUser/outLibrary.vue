@@ -216,7 +216,7 @@ export default {
           this.data[`goodsData${index + 1}`].bin_name.complete = 1
           if (!this.setInterval) {
             this.getResultsSerial(1)
-            this.setInterval = setInterval(this.getResultsSerial, 2000)
+            this.setInterval = setInterval(this.guideSubmit, 2000)
             this.setIntervalIndex = index
           }
           isGuide = 1
@@ -237,7 +237,6 @@ export default {
       this.getauth('in_out_warehouse/in_out_warehouse/get_serial/?light_guide_sign=' + lightGuideSign + '&state=' + state).then(res => {
         if (res.state === -1) {
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 3
-          clearInterval(this.setInterval)
           this.setIntervalIndex = 0
           this.guideSubmit()
           this.$q.notify({
@@ -249,7 +248,6 @@ export default {
         } else if (res.state === 1) {
           // 返回0不操作，返回1进行下一个判断
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 2
-          clearInterval(this.setInterval)
           this.setIntervalIndex = 0
           this.guideSubmit()
         }
@@ -369,6 +367,16 @@ export default {
         abort()
         return
       }
+      if (val) {
+        let newAllOptions = []
+        newAllOptions = this.allOptions.filter(res => {
+          return res.goods_code.toLowerCase().indexOf(val.toLowerCase()) !== -1 || res.goods_desc.toLowerCase().indexOf(val.toLowerCase()) !== -1
+        })
+        update(() => {
+          this.options = newAllOptions
+        })
+        return
+      }
       update(() => {
         this.options = this.allOptions
       })
@@ -393,6 +401,7 @@ export default {
       }
     },
     setModel (val, index) {
+      console.log(111, val)
       this.data[`goodsData${index + 1}`].qty = val ? 0 : ''
       this.data[`goodsData${index + 1}`].code = val
     },
@@ -404,6 +413,7 @@ export default {
           goodscodelist.push(res.results[i].goods_code)
         }
         this.optionsGoodsCode = goodscodelist
+        this.options = []
         this.allOptions = res.results
       })
     },
