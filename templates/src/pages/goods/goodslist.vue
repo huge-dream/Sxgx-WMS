@@ -194,7 +194,7 @@
     </q-dialog>
     <q-dialog v-model="viewForm">
       <div class="row" id="printMe" style="width: 500px;height:110px;background-color: white">
-        <div>
+        <div style="margin-top: 5px;">
           <q-card-section>
             <div class="row" style="height: 30px;width: 200px;">
 <!--              <div class="col-3"><img src="statics/goods/logo.png" style="width: 30px;height: 30px;margin-top: -10px;margin-left: 5px" /></div>-->
@@ -210,7 +210,7 @@
               <canvas id="barCode" style="width: 100%;"/>
           </q-card-section>
         </div>
-        <div>
+        <div style="margin-top: 5px;">
           <q-card-section>
             <div class="row" style="height: 30px;width: 200px;">
 <!--              <div class="col-3"><img src="statics/goods/logo.png" style="width: 30px;height: 30px;margin-top: -10px;margin-left: 5px" /></div>-->
