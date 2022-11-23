@@ -193,29 +193,29 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="viewForm">
-      <div class="row" id="printMe" style="width: 800px;height:120px;background-color: white">
-        <div class="col-6">
+      <div class="row" id="printMe" style="width: 500px;height:110px;background-color: white">
+        <div>
           <q-card-section>
-            <div class="row" style="height: 30px">
-              <div class="col-3"><img src="statics/goods/logo.png" style="width: 50px;height: 40px;margin-top: -10px;margin-left: 5px" /></div>
+            <div class="row" style="height: 30px;width: 200px;">
+              <div class="col-3"><img src="statics/goods/logo.png" style="width: 30px;height: 30px;margin-top: -10px;margin-left: 5px" /></div>
               <div class="col-9" style="height: 40px;float: contour;margin-top: -10px">
-                <p style="font-size: 16px;font-weight: 500">
+                <p style="font-size: 10px;font-weight: 500">
                   {{ $t('goods.view_goodslist.goods_code') + ': ' + goods_code }}
                   <br>
                   {{ $t('goods.view_goodslist.goods_name') + ': ' }} {{ goods_desc }}
                 </p>
               </div>
             </div>
-            <hr />
-            <canvas id="barCode" style="width: 100%;"/>
+            <hr>
+              <canvas id="barCode" style="width: 100%;"/>
           </q-card-section>
         </div>
-        <div class="col-6">
+        <div>
           <q-card-section>
-            <div class="row" style="height: 30px">
-              <div class="col-3"><img src="statics/goods/logo.png" style="width: 50px;height: 40px;margin-top: -10px;margin-left: 5px" /></div>
+            <div class="row" style="height: 30px;width: 200px;">
+              <div class="col-3"><img src="statics/goods/logo.png" style="width: 30px;height: 30px;margin-top: -10px;margin-left: 5px" /></div>
               <div class="col-9" style="height: 40px;float: contour;margin-top: -10px">
-                <p style="font-size: 16px;font-weight: 500">
+                <p style="font-size: 10px;font-weight: 500">
                   {{ $t('goods.view_goodslist.goods_code') + ': ' + goods_code }}
                   <br>
                   {{ $t('goods.view_goodslist.goods_name') + ': ' }} {{ goods_desc }}

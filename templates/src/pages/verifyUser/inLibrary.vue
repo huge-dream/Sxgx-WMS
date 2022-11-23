@@ -195,6 +195,7 @@ export default {
           }
           this.data[`goodsData${index + 1}`].bin_name.complete = 1
           if (!this.setInterval) {
+            console.log('this.setInterval---', this.setInterval, index)
             this.getResultsSerial(2)
             this.setInterval = true
             this.setIntervalIndex = index
