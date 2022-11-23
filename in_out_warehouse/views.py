@@ -162,7 +162,7 @@ class InOutWarehouseViewSet(ModelViewSet):
 
     @action(methods=['get'], detail=False, permission_classes=[])
     def get_serial(self, request):
-        state = request.query_params.get('state')
+        state = int(request.query_params.get('state',1))
         light_guide_sign = request.query_params.get('light_guide_sign')
         # 2. 如果状态为1，直接调用指定位置
         # 3. 如果状态为2，查询结果
