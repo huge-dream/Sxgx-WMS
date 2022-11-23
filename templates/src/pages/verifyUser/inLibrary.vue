@@ -187,19 +187,15 @@ export default {
       let isGuide = 2
       for (let index = 0; index < this.tableFromNum; index++) {
         if (this.data[`goodsData${index + 1}`].bin_name) {
-          if (this.data[`goodsData${index + 1}`].bin_name.complete === 2) {
-            continue
+          if (this.data[`goodsData${index + 1}`].bin_name.complete !== 2 && this.data[`goodsData${index + 1}`].bin_name.complete !== 3) {
+            this.data[`goodsData${index + 1}`].bin_name.complete = 1
+            if (!this.setInterval) {
+              this.setInterval = true
+              this.setIntervalIndex = index
+              this.getResultsSerial(2)
+            }
+            isGuide = 1
           }
-          if (this.data[`goodsData${index + 1}`].bin_name.complete === 3) {
-            continue
-          }
-          this.data[`goodsData${index + 1}`].bin_name.complete = 1
-          if (!this.setInterval) {
-            this.setInterval = true
-            this.setIntervalIndex = index
-            this.getResultsSerial(2)
-          }
-          isGuide = 1
         }
       }
       this.isGuide = isGuide
@@ -227,6 +223,7 @@ export default {
         } else if (res.state === 1) {
           // 返回0不操作，返回1进行下一个判断
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 2
+          console.log(111, this.setIntervalIndex, this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete)
           this.setIntervalIndex = 0
           this.setInterval = false
           this.guideSubmit()

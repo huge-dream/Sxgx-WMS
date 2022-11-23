@@ -122,8 +122,8 @@
           <q-btn color="white" text-color="black" style="margin-right: 25px"
                  @click="isEdit ? editDataCancel() : newDataCancel()">{{ $t('cancel') }}
           </q-btn>
-          <q-btn color="primary" @click="newDataSubmit('guide')" style="margin-right: 25px" :disable="isGuide===2" :loading="isGuide===1">开始光指引</q-btn>
-          <q-btn color="primary" @click="newDataSubmit()">{{ '出库' }}</q-btn>
+          <q-btn color="primary" @click="newDataSubmit('guide')" style="margin-right: 25px" :loading="isGuide===1">开始光指引</q-btn>
+          <q-btn color="primary" @click="newDataSubmit()" :disable="isGuide!==2">出库保存</q-btn>
         </div>
       </q-card>
     </q-dialog>
@@ -209,19 +209,15 @@ export default {
       let isGuide = 2
       for (let index = 0; index < this.tableFromNum; index++) {
         if (this.data[`goodsData${index + 1}`] && this.data[`goodsData${index + 1}`].bin_name) {
-          if (this.data[`goodsData${index + 1}`].bin_name.complete === 2) {
-            continue
+          if (this.data[`goodsData${index + 1}`].bin_name.complete !== 2 && this.data[`goodsData${index + 1}`].bin_name.complete !== 3) {
+            this.data[`goodsData${index + 1}`].bin_name.complete = 1
+            if (!this.setInterval) {
+              this.getResultsSerial(2)
+              this.setInterval = true
+              this.setIntervalIndex = index
+            }
+            isGuide = 1
           }
-          if (this.data[`goodsData${index + 1}`].bin_name.complete === 3) {
-            continue
-          }
-          this.data[`goodsData${index + 1}`].bin_name.complete = 1
-          if (!this.setInterval) {
-            this.getResultsSerial(2)
-            this.setInterval = true
-            this.setIntervalIndex = index
-          }
-          isGuide = 1
         }
       }
       this.isGuide = isGuide

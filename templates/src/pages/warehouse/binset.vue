@@ -63,6 +63,21 @@
             <q-td key="bin_property" :props="props">{{ props.row.bin_property }}</q-td>
             <q-td key="empty_label" :props="props">{{ props.row.empty_label }}</q-td>
             <template v-if="props.row.id === editid">
+              <q-td key="light_guide_sign_id" :props="props">
+                <q-input
+                  dense
+                  outlined
+                  square
+                  v-model="editFormData.light_guide_sign_id"
+                  :label="'光指引标识ID'"
+                  autofocus
+                />
+              </q-td>
+            </template>
+            <template v-else-if="props.row.id !== editid">
+              <q-td key="light_guide_sign_id" :props="props">{{ props.row.light_guide_sign_id }}</q-td>
+            </template>
+            <template v-if="props.row.id === editid">
               <q-td key="light_guide_sign" :props="props">
                 <q-input
                   dense
@@ -71,7 +86,6 @@
                   v-model="editFormData.light_guide_sign"
                   :label="'光指引标识'"
                   autofocus
-                  :rules="[val => (val && val.length > 0) || '光指引标识不能为空']"
                 />
               </q-td>
             </template>
@@ -305,6 +319,7 @@ export default {
         { name: 'bin_size', label: this.$t('warehouse.view_binset.bin_size'), field: 'bin_size', align: 'center' },
         { name: 'bin_property', label: this.$t('warehouse.view_binset.bin_property'), field: 'bin_property', align: 'center' },
         { name: 'empty_label', label: this.$t('warehouse.view_binset.empty_label'), field: 'empty_label', align: 'center' },
+        { name: 'light_guide_sign_id', label: '光指引标识ID', field: 'light_guide_sign_id', align: 'center' },
         { name: 'light_guide_sign', label: '光指引标识', field: 'light_guide_sign', align: 'center' },
         { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
@@ -321,6 +336,7 @@ export default {
         bin_name: '',
         bin_size: '',
         bin_property: '',
+        light_guide_sign_id: '',
         light_guide_sign: '',
         creater: ''
       },
@@ -618,6 +634,7 @@ export default {
       _this.editFormData = {
         bin_name: e.bin_name,
         bin_size: e.bin_size,
+        light_guide_sign_id: e.light_guide_sign_id,
         light_guide_sign: e.light_guide_sign,
         bin_property: e.bin_property,
         creater: _this.login_name
@@ -671,6 +688,7 @@ export default {
         bin_size: '',
         bin_property: '',
         empty_label: '',
+        light_guide_sign_id: '',
         light_guide_sign: '',
         creater: ''
       }

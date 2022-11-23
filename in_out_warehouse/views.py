@@ -169,6 +169,8 @@ class InOutWarehouseViewSet(ModelViewSet):
         try:
             with serial.Serial(port="COM3", baudrate=9200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE,
                                 timeout=2, rtscts=False) as ser:
+                ser.write(b'81')
+                time.sleep(0.5)
                 init_light_guide_sign = 'FF 01 00 07 00 01 09'  # 初始点位
                 print("light_guide_sign", light_guide_sign)
                 if light_guide_sign.isnumeric():  # 数字时执行
@@ -192,6 +194,8 @@ class InOutWarehouseViewSet(ModelViewSet):
                             # 接收到后，回归原点
                             ser.write(bytes.fromhex(init_light_guide_sign))
                             time.sleep(1)
+                            ser.write(b'80')
+                            time.sleep(0.5)
                             # 数据的接收
                             return Response(data={
                                 "state": 1  # 返回0不操作，返回1进行下一个判断
