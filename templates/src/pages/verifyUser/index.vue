@@ -23,9 +23,9 @@
     </q-dialog>
     <!--  入库  -->
     <in-library v-if="inDialog" :openid="openid" :login_name="username" :postauth="postauth" :getauth="getauth"
-                :putauth="putauth" @cancel="inDialog=false"></in-library>
+                :putauth="putauth" @cancel="inDialog=false" @cancelGetAxios="cancelGetAxios"></in-library>
     <out-library v-if="outDialog" :openid="openid" :login_name="username" :postauth="postauth" :getauth="getauth"
-                 :putauth="putauth" @cancel="outDialog=false"></out-library>
+                 :putauth="putauth" @cancel="outDialog=false" @cancelGetAxios="cancelGetAxios"></out-library>
 
   </q-page>
 </template>
@@ -63,7 +63,8 @@ export default {
       openid: '',
       postauth: '',
       getauth: '',
-      putauth: ''
+      putauth: '',
+      getCancel: null
     }
   },
   created () {
@@ -242,8 +243,15 @@ export default {
               return Promise.reject(error)
             }
           )
+          const CancelToken = axios.CancelToken
+          const _this = this
           this.getauth = function (url) {
-            return axiosVersion.get(url)
+            return axiosVersion.get(url, {
+              cancelToken: new CancelToken(function executor (c) {
+                _this.getCancel = c
+                // 这个参数 c 就是CancelToken构造函数里面自带的取消请求的函数，这里把该函数当参数用
+              })
+            })
           }
           this.postauth = function (url, data) {
             return axiosVersion.post(url, data)
@@ -293,7 +301,15 @@ export default {
       this.outDialog = false
       this.username = ''
       this.token = ''
+    },
+    // 取消get 请求
+    cancelGetAxios () {
+      this.getCancel()
     }
+  },
+  beforeDestroy () {
+    // 离开页面丢掉请求
+    this.getCancel()
   }
 
 }

@@ -246,7 +246,8 @@ export default {
       clearInterval(this.setInterval)
       this.setIntervalIndex = 0
       this.isGuide = 2
-      this.guideSubmit()
+      this.$emit('cancelGetAxios')
+      // this.guideSubmit()
     },
     newDataSubmit (type) {
       var _this = this
@@ -375,6 +376,7 @@ export default {
     },
     newDataCancel () {
       this.$emit('cancel', !this.value)
+      this.$emit('cancelGetAxios')
       var _this = this
       _this.newForm = false
       _this.newFormData = {
