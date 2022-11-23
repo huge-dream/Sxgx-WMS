@@ -193,26 +193,39 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="viewForm">
-      <div id="printMe" style="width: 400px;height:280px;background-color: white">
-        <q-card-section>
-          <div class="row" style="height: 50px">
-            <div class="col-3"><img src="statics/goods/logo.png" style="width: 60px;height: 50px;margin-top: 5px;margin-left: 5px" /></div>
-            <div class="col-9" style="height: 50px;float: contour;margin-top: 10px">
-              <p style="font-size: 20px;font-weight: 550">{{ $t('goods.view_goodslist.goods_code') + ':' + goods_code }}</p>
+      <div class="row" id="printMe" style="width: 800px;height:120px;background-color: white">
+        <div class="col-6">
+          <q-card-section>
+            <div class="row" style="height: 30px">
+              <div class="col-3"><img src="statics/goods/logo.png" style="width: 50px;height: 40px;margin-top: -10px;margin-left: 5px" /></div>
+              <div class="col-9" style="height: 40px;float: contour;margin-top: -10px">
+                <p style="font-size: 16px;font-weight: 500">
+                  {{ $t('goods.view_goodslist.goods_code') + ': ' + goods_code }}
+                  <br>
+                  {{ $t('goods.view_goodslist.goods_name') + ': ' }} {{ goods_desc }}
+                </p>
+              </div>
             </div>
-          </div>
-          <hr />
-          <div class="row">
-            <div class="col-8" style="margin-top: 30px;padding-left: 3%">
-              <p style="font-size: 20px;font-weight: 550">{{ $t('goods.view_goodslist.goods_name') + ':' }}</p>
-              <p style="font-size: 20px;font-weight: 550">{{ goods_desc }}</p>
+            <hr />
+            <canvas id="barCode" style="width: 100%;"/>
+          </q-card-section>
+        </div>
+        <div class="col-6">
+          <q-card-section>
+            <div class="row" style="height: 30px">
+              <div class="col-3"><img src="statics/goods/logo.png" style="width: 50px;height: 40px;margin-top: -10px;margin-left: 5px" /></div>
+              <div class="col-9" style="height: 40px;float: contour;margin-top: -10px">
+                <p style="font-size: 16px;font-weight: 500">
+                  {{ $t('goods.view_goodslist.goods_code') + ': ' + goods_code }}
+                  <br>
+                  {{ $t('goods.view_goodslist.goods_name') + ': ' }} {{ goods_desc }}
+                </p>
+              </div>
             </div>
-            <div class="col-8">
-              <canvas id="barCode" style="width: 100%;"/>
-<!--              <img :src="bar_code"  />-->
-            </div>
-          </div>
-        </q-card-section>
+            <hr />
+            <canvas id="barCode" style="width: 100%;"/>
+          </q-card-section>
+        </div>
       </div>
       <div style="float: right; padding: 15px 15px 15px 0"><q-btn color="primary" icon="print" v-print="printObj">print</q-btn></div>
     </q-dialog>
@@ -221,13 +234,13 @@
 <router-view />
 
 <script>
-import { getauth, postauth, putauth, deleteauth, getfile } from 'boot/axios_request';
-import { date, exportFile, LocalStorage } from 'quasar';
-import JsBarcode from 'jsbarcode';
+import { getauth, postauth, putauth, deleteauth, getfile } from 'boot/axios_request'
+import { date, exportFile, LocalStorage } from 'quasar'
+import JsBarcode from 'jsbarcode'
 
 export default {
   name: 'Pagegoodslist',
-  data() {
+  data () {
     return {
       goods_code: '',
       goods_desc: '',
@@ -297,145 +310,144 @@ export default {
       error15: this.$t('goods.view_goodslist.error8'),
       error16: this.$t('goods.view_goodslist.error9'),
       bindBarCode (data) {
-        console.log(111,data)
         JsBarcode('#barCode', data, {
           background: '#fff',
           displayValue: false,
           // width: 2, //
           height: 30, // 一维码的高度
-          margin: 5 // 一维码与容器的margin
+          margin: 0 // 一维码与容器的margin
         })
       }
-    };
+    }
   },
   methods: {
-    getList() {
-      var _this = this;
+    getList () {
+      var _this = this
       getauth(_this.pathname, {})
         .then(res => {
-          _this.table_list = res.results;
-          _this.goods_unit_list = res.goods_unit_list;
-          _this.goods_class_list = res.goods_class_list;
-          _this.goods_brand_list = res.goods_brand_list;
-          _this.goods_color_list = res.goods_color_list;
-          _this.goods_shape_list = res.goods_shape_list;
-          _this.goods_specs_list = res.goods_specs_list;
-          _this.goods_origin_list = res.goods_origin_list;
-          _this.supplier_list = res.supplier_list;
-          _this.pathname_previous = res.previous;
-          _this.pathname_next = res.next;
+          _this.table_list = res.results
+          _this.goods_unit_list = res.goods_unit_list
+          _this.goods_class_list = res.goods_class_list
+          _this.goods_brand_list = res.goods_brand_list
+          _this.goods_color_list = res.goods_color_list
+          _this.goods_shape_list = res.goods_shape_list
+          _this.goods_specs_list = res.goods_specs_list
+          _this.goods_origin_list = res.goods_origin_list
+          _this.supplier_list = res.supplier_list
+          _this.pathname_previous = res.previous
+          _this.pathname_next = res.next
         })
         .catch(err => {
           _this.$q.notify({
             message: err.detail,
             icon: 'close',
             color: 'negative'
-          });
-        });
+          })
+        })
     },
-    getSearchList() {
-      var _this = this;
+    getSearchList () {
+      var _this = this
       if (LocalStorage.has('auth')) {
         getauth(_this.pathname + '?goods_desc__icontains=' + _this.filter, {})
           .then(res => {
-            _this.table_list = res.results;
-            _this.goods_unit_list = res.goods_unit_list;
-            _this.goods_class_list = res.goods_class_list;
-            _this.goods_brand_list = res.goods_brand_list;
-            _this.goods_color_list = res.goods_color_list;
-            _this.goods_shape_list = res.goods_shape_list;
-            _this.goods_specs_list = res.goods_specs_list;
-            _this.goods_origin_list = res.goods_origin_list;
-            _this.supplier_list = res.supplier_list;
-            _this.pathname_previous = res.previous;
-            _this.pathname_next = res.next;
+            _this.table_list = res.results
+            _this.goods_unit_list = res.goods_unit_list
+            _this.goods_class_list = res.goods_class_list
+            _this.goods_brand_list = res.goods_brand_list
+            _this.goods_color_list = res.goods_color_list
+            _this.goods_shape_list = res.goods_shape_list
+            _this.goods_specs_list = res.goods_specs_list
+            _this.goods_origin_list = res.goods_origin_list
+            _this.supplier_list = res.supplier_list
+            _this.pathname_previous = res.previous
+            _this.pathname_next = res.next
           })
           .catch(err => {
             _this.$q.notify({
               message: err.detail,
               icon: 'close',
               color: 'negative'
-            });
-          });
+            })
+          })
       } else {
       }
     },
-    getListPrevious() {
-      var _this = this;
+    getListPrevious () {
+      var _this = this
       if (LocalStorage.has('auth')) {
         getauth(_this.pathname_previous, {})
           .then(res => {
-            _this.table_list = res.results;
-            _this.goods_unit_list = res.goods_unit_list;
-            _this.goods_class_list = res.goods_class_list;
-            _this.goods_brand_list = res.goods_brand_list;
-            _this.goods_color_list = res.goods_color_list;
-            _this.goods_shape_list = res.goods_shape_list;
-            _this.goods_specs_list = res.goods_specs_list;
-            _this.goods_origin_list = res.goods_origin_list;
-            _this.supplier_list = res.supplier_list;
-            _this.pathname_previous = res.previous;
-            _this.pathname_next = res.next;
+            _this.table_list = res.results
+            _this.goods_unit_list = res.goods_unit_list
+            _this.goods_class_list = res.goods_class_list
+            _this.goods_brand_list = res.goods_brand_list
+            _this.goods_color_list = res.goods_color_list
+            _this.goods_shape_list = res.goods_shape_list
+            _this.goods_specs_list = res.goods_specs_list
+            _this.goods_origin_list = res.goods_origin_list
+            _this.supplier_list = res.supplier_list
+            _this.pathname_previous = res.previous
+            _this.pathname_next = res.next
           })
           .catch(err => {
             _this.$q.notify({
               message: err.detail,
               icon: 'close',
               color: 'negative'
-            });
-          });
+            })
+          })
       } else {
       }
     },
-    getListNext() {
-      var _this = this;
+    getListNext () {
+      var _this = this
       if (LocalStorage.has('auth')) {
         getauth(_this.pathname_next, {})
           .then(res => {
-            _this.table_list = res.results;
-            _this.goods_unit_list = res.goods_unit_list;
-            _this.goods_class_list = res.goods_class_list;
-            _this.goods_brand_list = res.goods_brand_list;
-            _this.goods_color_list = res.goods_color_list;
-            _this.goods_shape_list = res.goods_shape_list;
-            _this.goods_specs_list = res.goods_specs_list;
-            _this.goods_origin_list = res.goods_origin_list;
-            _this.supplier_list = res.supplier_list;
-            _this.pathname_previous = res.previous;
-            _this.pathname_next = res.next;
+            _this.table_list = res.results
+            _this.goods_unit_list = res.goods_unit_list
+            _this.goods_class_list = res.goods_class_list
+            _this.goods_brand_list = res.goods_brand_list
+            _this.goods_color_list = res.goods_color_list
+            _this.goods_shape_list = res.goods_shape_list
+            _this.goods_specs_list = res.goods_specs_list
+            _this.goods_origin_list = res.goods_origin_list
+            _this.supplier_list = res.supplier_list
+            _this.pathname_previous = res.previous
+            _this.pathname_next = res.next
           })
           .catch(err => {
             _this.$q.notify({
               message: err.detail,
               icon: 'close',
               color: 'negative'
-            });
-          });
+            })
+          })
       } else {
       }
     },
-    reFresh() {
-      var _this = this;
-      _this.getList();
+    reFresh () {
+      var _this = this
+      _this.getList()
     },
-    newDataSubmit() {
-      var _this = this;
-      var goodscodes = [];
+    newDataSubmit () {
+      var _this = this
+      var goodscodes = []
       _this.table_list.forEach(i => {
-        goodscodes.push(i.goods_code);
-      });
+        goodscodes.push(i.goods_code)
+      })
       if (goodscodes.indexOf(_this.newFormData.goods_code) === -1 && _this.newFormData.goods_code.length !== 0) {
-        _this.newFormData.creater = _this.login_name;
+        _this.newFormData.creater = _this.login_name
         postauth(_this.pathname, _this.newFormData)
           .then(res => {
-            _this.getList();
-            _this.newDataCancel();
+            _this.getList()
+            _this.newDataCancel()
             if (res.status_code != 500) {
               _this.$q.notify({
                 message: 'Success Create',
                 icon: 'check',
                 color: 'green'
-              });
+              })
             }
           })
           .catch(err => {
@@ -443,37 +455,37 @@ export default {
               message: err.detail,
               icon: 'close',
               color: 'negative'
-            });
-          });
+            })
+          })
       } else if (goodscodes.indexOf(_this.newFormData.goods_code) !== -1) {
         _this.$q.notify({
           message: _this.$t('notice.goodserror.goods_listerror'),
           icon: 'close',
           color: 'negative'
-        });
+        })
       } else if (_this.newFormData.goods_code.length === 0) {
         _this.$q.notify({
           message: _this.$t('goods.view_goodslist.error1'),
           icon: 'close',
           color: 'negative'
-        });
+        })
       }
-      goodscodes = [];
+      goodscodes = []
     },
-    newDataCancel() {
-      var _this = this;
-      _this.newForm = false;
+    newDataCancel () {
+      var _this = this
+      _this.newForm = false
       _this.newFormData = {
         goods_code: '',
         goods_desc: '',
         light_guidance: false,
         creater: ''
-      };
+      }
     },
-    editData(e) {
-      var _this = this;
-      _this.editMode = true;
-      _this.editid = e.id;
+    editData (e) {
+      var _this = this
+      _this.editMode = true
+      _this.editid = e.id
       _this.editFormData = {
         goods_code: e.goods_code,
         goods_desc: e.goods_desc,
@@ -494,20 +506,20 @@ export default {
         goods_price: e.goods_price,
         creater: _this.login_name,
         bar_code: e.bar_code
-      };
+      }
     },
-    editDataSubmit() {
-      var _this = this;
+    editDataSubmit () {
+      var _this = this
       putauth(_this.pathname + _this.editid + '/', _this.editFormData)
         .then(res => {
-          _this.editDataCancel();
-          _this.getList();
-          if (res.status_code != 500) {
+          _this.editDataCancel()
+          _this.getList()
+          if (res.status_code !== 500) {
             _this.$q.notify({
               message: 'Success Edit Data',
               icon: 'check',
               color: 'green'
-            });
+            })
           }
         })
         .catch(err => {
@@ -515,13 +527,13 @@ export default {
             message: err.detail,
             icon: 'close',
             color: 'negative'
-          });
-        });
+          })
+        })
     },
-    editDataCancel() {
-      var _this = this;
-      _this.editMode = false;
-      _this.editid = 0;
+    editDataCancel () {
+      var _this = this
+      _this.editMode = false
+      _this.editid = 0
       _this.editFormData = {
         goods_code: '',
         goods_desc: '',
@@ -540,77 +552,77 @@ export default {
         goods_cost: '',
         goods_price: '',
         creater: ''
-      };
+      }
     },
-    deleteData(e) {
-      var _this = this;
-      _this.deleteForm = true;
-      _this.deleteid = e;
+    deleteData (e) {
+      var _this = this
+      _this.deleteForm = true
+      _this.deleteid = e
     },
-    deleteDataSubmit() {
-      var _this = this;
+    deleteDataSubmit () {
+      var _this = this
       deleteauth(_this.pathname + _this.deleteid + '/')
         .then(res => {
-          _this.deleteDataCancel();
-          _this.getList();
+          _this.deleteDataCancel()
+          _this.getList()
           _this.$q.notify({
             message: 'Success Edit Data',
             icon: 'check',
             color: 'green'
-          });
+          })
         })
         .catch(err => {
           _this.$q.notify({
             message: err.detail,
             icon: 'close',
             color: 'negative'
-          });
-        });
+          })
+        })
     },
-    deleteDataCancel() {
-      var _this = this;
-      _this.deleteForm = false;
-      _this.deleteid = 0;
+    deleteDataCancel () {
+      var _this = this
+      _this.deleteForm = false
+      _this.deleteid = 0
     },
-    viewData(e) {
+    viewData (e) {
       this.viewForm = true
       this.goods_code = e.goods_code
       this.goods_desc = e.goods_desc
       this.$nextTick(() => {
-          this.bindBarCode(e.goods_code)
-      });
+        this.bindBarCode(e.goods_code)
+      })
     }
   },
-  created() {
-    var _this = this;
+  created () {
+    var _this = this
     if (LocalStorage.has('openid')) {
-      _this.openid = LocalStorage.getItem('openid');
+      _this.openid = LocalStorage.getItem('openid')
     } else {
-      _this.openid = '';
-      LocalStorage.set('openid', '');
+      _this.openid = ''
+      LocalStorage.set('openid', '')
     }
     if (LocalStorage.has('login_name')) {
-      _this.login_name = LocalStorage.getItem('login_name');
+      _this.login_name = LocalStorage.getItem('login_name')
     } else {
-      _this.login_name = '';
-      LocalStorage.set('login_name', '');
+      _this.login_name = ''
+      LocalStorage.set('login_name', '')
     }
     if (LocalStorage.has('auth')) {
-      _this.authin = '1';
-      _this.getList();
+      _this.authin = '1'
+      _this.getList()
     } else {
-      _this.authin = '0';
+      _this.authin = '0'
     }
   },
-  mounted() {
-    var _this = this;
+  mounted () {
+    var _this = this
     if (_this.$q.platform.is.electron) {
-      _this.height = String(_this.$q.screen.height - 290) + 'px';
+      _this.height = String(_this.$q.screen.height - 290) + 'px'
     } else {
-      _this.height = _this.$q.screen.height - 290 + '' + 'px';
+      _this.height = _this.$q.screen.height - 290 + '' + 'px'
     }
   },
-  updated() {},
-  destroyed() {}
-};
+  updated () {},
+  destroyed () {}
+}
 </script>
