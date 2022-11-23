@@ -197,9 +197,9 @@
         <div>
           <q-card-section>
             <div class="row" style="height: 30px;width: 200px;">
-              <div class="col-3"><img src="statics/goods/logo.png" style="width: 30px;height: 30px;margin-top: -10px;margin-left: 5px" /></div>
-              <div class="col-9" style="height: 40px;float: contour;margin-top: -10px">
-                <p style="font-size: 10px;font-weight: 500">
+<!--              <div class="col-3"><img src="statics/goods/logo.png" style="width: 30px;height: 30px;margin-top: -10px;margin-left: 5px" /></div>-->
+              <div class="col-12" style="height: 40px;float: contour;margin-top: -10px;margin-right: 10px">
+                <p style="font-size: 16px;font-weight: 500">
                   {{ $t('goods.view_goodslist.goods_code') + ': ' + goods_code }}
                   <br>
                   {{ $t('goods.view_goodslist.goods_name') + ': ' }} {{ goods_desc }}
@@ -213,9 +213,9 @@
         <div>
           <q-card-section>
             <div class="row" style="height: 30px;width: 200px;">
-              <div class="col-3"><img src="statics/goods/logo.png" style="width: 30px;height: 30px;margin-top: -10px;margin-left: 5px" /></div>
-              <div class="col-9" style="height: 40px;float: contour;margin-top: -10px">
-                <p style="font-size: 10px;font-weight: 500">
+<!--              <div class="col-3"><img src="statics/goods/logo.png" style="width: 30px;height: 30px;margin-top: -10px;margin-left: 5px" /></div>-->
+              <div class="col-12" style="height: 40px;float: contour;margin-top: -10px">
+                <p style="font-size: 16px;font-weight: 500">
                   {{ $t('goods.view_goodslist.goods_code') + ': ' + goods_code }}
                   <br>
                   {{ $t('goods.view_goodslist.goods_name') + ': ' }} {{ goods_desc }}
