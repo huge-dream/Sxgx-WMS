@@ -172,7 +172,7 @@ export default {
       goodsListData: [],
       binSetOptions: [],
       isGuide: 0, // 是否指引完成 0 待进行；1 进行中；2完成
-      setInterval: null,
+      setInterval: false,
       setIntervalIndex: 0,
       optionsGoodsCode: []
     }
@@ -196,7 +196,7 @@ export default {
           this.data[`goodsData${index + 1}`].bin_name.complete = 1
           if (!this.setInterval) {
             this.getResultsSerial(1)
-            this.setInterval = setInterval(this.guideSubmit, 2000)
+            this.setInterval = true
             this.setIntervalIndex = index
           }
           isGuide = 1
@@ -216,8 +216,8 @@ export default {
       this.getauth('in_out_warehouse/in_out_warehouse/get_serial/?light_guide_sign=' + lightGuideSign + '&state=' + state).then(res => {
         if (res.state === -1) {
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 3
-          clearInterval(this.setInterval)
           this.setIntervalIndex = 0
+          this.setInterval = false
           this.guideSubmit()
           this.$q.notify({
             message: '光指引设备调用失败',
@@ -229,8 +229,14 @@ export default {
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 2
           clearInterval(this.setInterval)
           this.setIntervalIndex = 0
+          this.setInterval = false
           this.guideSubmit()
         }
+      }).catch((err) => {
+        console.log('err', err)
+        this.setIntervalIndex = 0
+        this.setInterval = false
+        this.guideSubmit()
       })
     },
     // 停止光指引
@@ -378,7 +384,6 @@ export default {
         goods_qty: [],
         creater: ''
       }
-      clearInterval(this.setInterval)
       this.setIntervalIndex = 0
       _this.goodsDataClear()
     },

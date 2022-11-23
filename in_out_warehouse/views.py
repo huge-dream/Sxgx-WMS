@@ -193,7 +193,7 @@ class InOutWarehouseViewSet(ModelViewSet):
             time.sleep(0.5)
             ser.flushInput()  # 清空缓冲区
             while True:
-                if ser.in_waiting():
+                if ser.in_waiting:
                     data = ser.read_all().decode('gbk')
                     print("data", data)
                     # 数据的接收

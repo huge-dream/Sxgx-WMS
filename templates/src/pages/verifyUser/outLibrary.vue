@@ -196,7 +196,7 @@ export default {
       isGuide: 0, // 是否指引完成 0 待进行；1 进行中；2完成
       scanInput: '',
       setIntervalIndex: 0,
-      setInterval: null
+      setInterval: false
     }
   },
   created () {
@@ -218,7 +218,7 @@ export default {
           this.data[`goodsData${index + 1}`].bin_name.complete = 1
           if (!this.setInterval) {
             this.getResultsSerial(1)
-            this.setInterval = setInterval(this.guideSubmit, 2000)
+            this.setInterval = true
             this.setIntervalIndex = index
           }
           isGuide = 1
@@ -240,6 +240,7 @@ export default {
         if (res.state === -1) {
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 3
           this.setIntervalIndex = 0
+          this.setInterval = false
           this.guideSubmit()
           this.$q.notify({
             message: '光指引设备调用失败',
@@ -251,8 +252,14 @@ export default {
           // 返回0不操作，返回1进行下一个判断
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 2
           this.setIntervalIndex = 0
+          this.setInterval = false
           this.guideSubmit()
         }
+      }).catch((err) => {
+        console.log('err', err)
+        this.setIntervalIndex = 0
+        this.setInterval = false
+        this.guideSubmit()
       })
     },
     goodsCodeEnter (index) {
@@ -280,7 +287,6 @@ export default {
     loopClick (index) {
       this.data[`goodsData${index + 1}`].bin_name.complete = 3
       console.log(1, this.data[`goodsData${index + 1}`].bin_name.complete)
-      clearInterval(this.setInterval)
       this.setIntervalIndex = 0
       this.isGuide = 2
       this.guideSubmit()
