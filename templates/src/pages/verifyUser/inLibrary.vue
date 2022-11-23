@@ -227,7 +227,6 @@ export default {
         } else if (res.state === 1) {
           // 返回0不操作，返回1进行下一个判断
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 2
-          clearInterval(this.setInterval)
           this.setIntervalIndex = 0
           this.setInterval = false
           this.guideSubmit()
