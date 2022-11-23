@@ -89,10 +89,10 @@
             <template v-slot:after>
               <span v-if="data[`goodsData${index+1}`] && data[`goodsData${index+1}`].bin_name && data[`goodsData${index+1}`].bin_name.light_guide_sign">
                 <!--  0 待指引；2指引完成；1指引中              -->
-                <q-icon name="sync" v-if="data[`goodsData${index+1}`].bin_name.complete === 1" style="color:#58BD6A;animation: spin 1s linear infinite;" @click="loopClick(index)" class="cursor-pointer"/>
-                <q-icon name="check_circle" v-else-if="data[`goodsData${index+1}`].bin_name.complete === 2" style="color:#58BD6A;" class="cursor-pointer"/>
-                <q-icon name="cancel" v-else-if="data[`goodsData${index+1}`].bin_name.complete === 3" style="color:red;" class="cursor-pointer"/>
-                <q-icon color="primary" name="hourglass_top" v-else class="cursor-pointer"/>
+                <q-icon name="sync" v-show="data[`goodsData${index+1}`].bin_name.complete === 1" style="color:#58BD6A;animation: spin 1s linear infinite;" @click="loopClick(index)" class="cursor-pointer"/>
+                <q-icon name="check_circle" v-show="data[`goodsData${index+1}`].bin_name.complete === 2" style="color:#58BD6A;" class="cursor-pointer"/>
+                <q-icon name="cancel" v-show="data[`goodsData${index+1}`].bin_name.complete === 3" style="color:red;" class="cursor-pointer"/>
+                <q-icon color="primary" v-show="!data[`goodsData${index+1}`].bin_name.complete" name="hourglass_top"  class="cursor-pointer"/>
               </span>
             </template>
           </q-input>
