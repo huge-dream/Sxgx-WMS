@@ -263,7 +263,7 @@ export default {
           if (_this.data[goodsData].qty < 1) {
             cancelRequest = true
             _this.$q.notify({
-              message: 'Total Quantity Must Be > 0',
+              message: '总数量必须大于0',
               icon: 'close',
               color: 'negative'
             })
@@ -285,7 +285,7 @@ export default {
       if (goodsDataCheck === 0) {
         cancelRequest = true
         _this.$q.notify({
-          message: 'Please Enter The Goods & Qty',
+          message: '请输入货物和数量',
           icon: 'close',
           color: 'negative'
         })

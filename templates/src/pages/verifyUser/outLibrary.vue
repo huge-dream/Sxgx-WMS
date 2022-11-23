@@ -123,7 +123,7 @@
                  @click="isEdit ? editDataCancel() : newDataCancel()">{{ $t('cancel') }}
           </q-btn>
           <q-btn color="primary" @click="newDataSubmit('guide')" style="margin-right: 25px" :disable="isGuide===2" :loading="isGuide===1">开始光指引</q-btn>
-          <q-btn color="primary" @click="newDataSubmit()">{{ $t('submit') }}</q-btn>
+          <q-btn color="primary" @click="newDataSubmit()">{{ '出库' }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
@@ -302,10 +302,10 @@ export default {
       let goodsDataCheck = 0
       for (let i = 0; i < 10; i++) {
         const goodsData = `goodsData${i + 1}`
-        if (_this.data[goodsData].qty < 1 && !type) {
+        if (type === undefined && _this.data[goodsData].qty !== '' && _this.data[goodsData].qty < 1) {
           cancelRequest = true
           _this.$q.notify({
-            message: 'Total Quantity Must Be > 0',
+            message: '总数量必须大于0',
             icon: 'close',
             color: 'negative'
           })
@@ -328,7 +328,7 @@ export default {
       if (goodsDataCheck === 0) {
         cancelRequest = true
         _this.$q.notify({
-          message: 'Please Enter The Goods & Qty',
+          message: '请输入货物和数量',
           icon: 'close',
           color: 'negative'
         })
