@@ -167,46 +167,47 @@ class InOutWarehouseViewSet(ModelViewSet):
         # 2. 如果状态为1，直接调用指定位置
         # 3. 如果状态为2，查询结果
         try:
-            ser = serial.Serial(port="COM3", baudrate=9200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE,
-                                timeout=2, rtscts=False)
+            with serial.Serial(port="COM3", baudrate=9200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE,
+                                timeout=2, rtscts=False) as ser:
+                init_light_guide_sign = 'FF 01 00 07 00 01 09'  # 初始点位
+                print("light_guide_sign", light_guide_sign)
+                if light_guide_sign.isnumeric():  # 数字时执行
+                    ser.write(light_guide_sign.encode())
+                    time.sleep(0.5)
+                    return Response(data={
+                        "state": 0  # 返回0不操作，返回1进行下一个判断
+                    }, status=status.HTTP_200_OK)
+                if state == 1:
+                    ser.write(bytes.fromhex(init_light_guide_sign))
+                    time.sleep(0.5)
+                    ser.write(bytes.fromhex(light_guide_sign))
+                elif state == 2:
+                    ser.write(bytes.fromhex(light_guide_sign))
+                    time.sleep(3)
+                    ser.flushInput()  # 清空缓冲区
+                    while True:
+                        if ser.in_waiting:
+                            data = ser.read_all().decode('gbk')
+                            print("data", data)
+                            # 接收到后，回归原点
+                            ser.write(bytes.fromhex(init_light_guide_sign))
+                            time.sleep(1)
+                            # 数据的接收
+                            return Response(data={
+                                "state": 1  # 返回0不操作，返回1进行下一个判断
+                            }, status=status.HTTP_200_OK)
+                elif state == 3:
+                    # 位置移动
+                    ser.write(bytes.fromhex(light_guide_sign))
+                    time.sleep(0.5)
+                    ser.write(bytes.fromhex('FF 01 00 00 00 00 01'))  # 停止移动
+                elif state == 4:
+                    ser.write(bytes.fromhex(light_guide_sign))  # 直接执行
+                return Response(data={
+                    "state": 0  # 返回0不操作，返回1进行下一个判断
+                }, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response(data={
                 "state": -1  # 返回0不操作，返回1进行下一个判断
             }, status=status.HTTP_200_OK)
-        init_light_guide_sign = 'FF 01 00 07 00 01 09'  # 初始点位
-        print("light_guide_sign", light_guide_sign)
-        if light_guide_sign.isnumeric(): # 数字时执行
-            ser.write(light_guide_sign.encode())
-            time.sleep(0.5)
-            return Response(data={
-                "state": 0  # 返回0不操作，返回1进行下一个判断
-            }, status=status.HTTP_200_OK)
-        if state == 1:
-            ser.write(bytes.fromhex(init_light_guide_sign))
-            time.sleep(0.5)
-            ser.write(bytes.fromhex(light_guide_sign))
-        elif state == 2:
-            ser.write(bytes.fromhex(init_light_guide_sign))
-            time.sleep(0.5)
-            ser.write(bytes.fromhex(light_guide_sign))
-            time.sleep(0.5)
-            ser.flushInput()  # 清空缓冲区
-            while True:
-                if ser.in_waiting:
-                    data = ser.read_all().decode('gbk')
-                    print("data", data)
-                    # 数据的接收
-                    return Response(data={
-                        "state": 1  # 返回0不操作，返回1进行下一个判断
-                    }, status=status.HTTP_200_OK)
-        elif state == 3:
-            # 位置移动
-            ser.write(bytes.fromhex(light_guide_sign))
-            time.sleep(0.5)
-            ser.write(bytes.fromhex('FF 01 00 00 00 00 01')) # 停止移动
-        elif state == 4:
-            ser.write(bytes.fromhex(light_guide_sign)) # 直接执行
-        return Response(data={
-            "state": 0  # 返回0不操作，返回1进行下一个判断
-        }, status=status.HTTP_200_OK)

@@ -103,7 +103,6 @@ export default {
           this.username = res.data.name
           this.openid = res.data.openid
           const axiosVersion = axios.create({
-            timeout: 60 * 1000,
             baseURL: baseurl
           })
           axiosVersion.interceptors.request.use(
