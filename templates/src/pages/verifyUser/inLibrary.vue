@@ -346,6 +346,7 @@ export default {
       })
     },
     filterFnBinName (val, update, abort) {
+      console.log('filterFnBinName', val, this.optionsBinName)
       if (val && this.optionsBinName && this.optionsBinName.indexOf(val) !== -1) {
         abort()
         return
@@ -353,7 +354,7 @@ export default {
       if (val) {
         let newAllOptions = []
         newAllOptions = this.allBinSetOptions.filter(res => {
-          return res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1 || res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1
+          return res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1
         })
         update(() => {
           this.binSetOptions = newAllOptions
@@ -412,6 +413,7 @@ export default {
           }
           this.optionsBinName = binNameList
           this.binSetOptions = []
+          console.log('res.results', res.results, binNameList)
           this.allBinSetOptions = res.results
         })
       } else {
