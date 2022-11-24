@@ -269,7 +269,7 @@ export default {
       }
       if (this.optionsGoodsCode.indexOf(data) !== -1) {
         this.$refs[`goodsData${index}BinName`][0].showPopup()
-        this.getauth('/binset/?page=999&empty_label=true&type=out&goods_code=' + data.toLowerCase()).then(res => {
+        this.getauth('/binset/?max_page=999&empty_label=true&type=out&goods_code=' + data.toLowerCase()).then(res => {
           const binNameList = []
           for (let i = 0; i < res.results.length; i++) {
             binNameList.push(res.results[i].bin_name)
