@@ -212,9 +212,9 @@ export default {
           if (this.data[`goodsData${index + 1}`].bin_name.complete !== 2 && this.data[`goodsData${index + 1}`].bin_name.complete !== 3) {
             this.data[`goodsData${index + 1}`].bin_name.complete = 1
             if (!this.setInterval) {
-              this.getResultsSerial(2)
               this.setInterval = true
               this.setIntervalIndex = index
+              this.getResultsSerial(2)
             }
             isGuide = 1
           }
