@@ -120,7 +120,9 @@ class APIViewSet(viewsets.ModelViewSet):
             serializer = StockBinGetSerializer(queryset,many=True)
         else:
             serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response(data={
+            "results": serializer.data
+        })
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve', 'destroy']:
             return serializers.BinsetGetSerializer
