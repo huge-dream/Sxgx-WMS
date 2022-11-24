@@ -117,14 +117,9 @@ class APIViewSet(viewsets.ModelViewSet):
             # 出库类型，只过滤有存在的
             goods_code = self.request.query_params.get('goods_code')
             queryset = StockBinModel.objects.filter(goods_code__icontains=goods_code, goods_qty__gt=0)
-            page = self.paginate_queryset(queryset)
-            serializer = StockBinGetSerializer(page,many=True)
+            serializer = StockBinGetSerializer(queryset,many=True)
         else:
-            page = self.paginate_queryset(queryset)
-            serializer = self.get_serializer(page, many=True)
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            return self.get_paginated_response(serializer.data)
+            serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve', 'destroy']:
