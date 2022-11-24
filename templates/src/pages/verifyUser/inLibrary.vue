@@ -400,7 +400,7 @@ export default {
     goodsCodeEnter (index) {
       if (!this.data[`goodsData${index + 1}`].code) return
       let data = this.data[`goodsData${index + 1}`].code
-      if (Object.prototype.toString.call(data) === '[object Object]') {
+      if (Object.prototype && Object.prototype.toString.call(data) === '[object Object]') {
         this.data[`goodsData${index + 1}`].code = data.goods_code
         data = data.goods_code
       }
