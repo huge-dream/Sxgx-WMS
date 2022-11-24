@@ -226,7 +226,6 @@ export default {
         } else if (res.state === 1) {
           // 返回0不操作，返回1进行下一个判断
           this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete = 2
-          console.log(111, this.setIntervalIndex, this.data[`goodsData${this.setIntervalIndex + 1}`].bin_name.complete)
           this.setIntervalIndex = 0
           this.setInterval = false
           this.guideSubmit()
@@ -241,7 +240,6 @@ export default {
     // 停止光指引
     loopClick (index) {
       this.data[`goodsData${index + 1}`].bin_name.complete = 3
-      console.log(1, this.data[`goodsData${index + 1}`].bin_name.complete)
       clearInterval(this.setInterval)
       this.setIntervalIndex = 0
       this.isGuide = 2
@@ -346,7 +344,6 @@ export default {
       })
     },
     filterFnBinName (val, update, abort) {
-      console.log('filterFnBinName', val, this.optionsBinName)
       if (val && this.optionsBinName && this.optionsBinName.indexOf(val) !== -1) {
         abort()
         return
@@ -413,7 +410,6 @@ export default {
           }
           this.optionsBinName = binNameList
           this.binSetOptions = []
-          console.log('res.results', res.results, binNameList)
           this.allBinSetOptions = res.results
         })
       } else {

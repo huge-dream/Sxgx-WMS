@@ -76,6 +76,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
+                @filter="filterFnBinName"
                 @focus="getFocus(index+1)"
                 autofocus
               >
@@ -290,7 +291,6 @@ export default {
     // 停止光指引
     loopClick (index) {
       this.data[`goodsData${index + 1}`].bin_name.complete = 3
-      console.log(1, this.data[`goodsData${index + 1}`].bin_name.complete)
       this.setIntervalIndex = 0
       this.isGuide = 2
       this.$emit('cancelGetAxios')
@@ -328,7 +328,6 @@ export default {
           submitForm.push(dict)
           goodsDataCheck += 1
         }
-        console.log(111, goodsDataCheck, _this.data[goodsData].code, _this.data[goodsData].qty)
       }
       if (goodsDataCheck === 0) {
         cancelRequest = true
@@ -402,7 +401,7 @@ export default {
       if (val) {
         let newAllOptions = []
         newAllOptions = this.allBinSetOptions.filter(res => {
-          return res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1 || res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1
+          return res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1
         })
         update(() => {
           this.binSetOptions = newAllOptions
@@ -434,7 +433,6 @@ export default {
       }
     },
     setModel (val, index) {
-      console.log(111, val)
       this.data[`goodsData${index + 1}`].qty = val ? 0 : ''
       this.data[`goodsData${index + 1}`].code = val
     },
@@ -475,7 +473,6 @@ export default {
               break
             }
           }
-          console.log(ele)
         }
         this.scanInput = ''
         if (goBeyond) {
