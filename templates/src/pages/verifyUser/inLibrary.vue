@@ -73,6 +73,7 @@
                 :options="binSetOptions"
                 option-label="bin_name"
                 option-value="id"
+                @filter="filterFnBinName"
                 @focus="getFocus(index+1)"
                 autofocus
               >
@@ -171,6 +172,8 @@ export default {
       options1: [],
       goodsListData: [],
       binSetOptions: [],
+      allBinSetOptions: [],
+      optionsBinName: [],
       isGuide: 0, // 是否指引完成 0 待进行；1 进行中；2完成
       setInterval: false,
       setIntervalIndex: 0,
@@ -342,6 +345,25 @@ export default {
         this.options = this.allOptions
       })
     },
+    filterFnBinName (val, update, abort) {
+      if (val && this.optionsBinName && this.optionsBinName.indexOf(val) !== -1) {
+        abort()
+        return
+      }
+      if (val) {
+        let newAllOptions = []
+        newAllOptions = this.allBinSetOptions.filter(res => {
+          return res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1 || res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1
+        })
+        update(() => {
+          this.binSetOptions = newAllOptions
+        })
+        return
+      }
+      update(() => {
+        this.binSetOptions = this.allBinSetOptions
+      })
+    },
     getAllGoodsCode () {
       this.getauth('goods/').then(res => {
         const goodscodelist = []
@@ -351,23 +373,6 @@ export default {
         this.optionsGoodsCode = goodscodelist
         this.options = []
         this.allOptions = res.results
-      })
-    },
-    setBinSetOptions (val) {
-      const _this = this
-      if (!val) {
-        this.data[`goodsData${this.listNumber}`].bin = ''
-      }
-      const needle = val.toLowerCase()
-      this.getauth('/binset/?empty_label=true&bin_name__icontains=' + needle).then(res => {
-        for (let i = 0; i < res.results.length; i++) {
-          if (this.listNumber) {
-            if (res.results[i].bin_name === val) {
-              this.data[`goodsData${this.listNumber}`].bin = res.results[i].id
-            }
-          }
-        }
-        _this.binSetOptions = res.results
       })
     },
     newDataCancel () {
@@ -401,7 +406,13 @@ export default {
       if (this.optionsGoodsCode.indexOf(data) !== -1) {
         this.$refs[`goodsData${index}BinName`][0].showPopup()
         this.getauth('/binset/?empty_label=true&goods_code=' + data.toLowerCase()).then(res => {
-          this.binSetOptions = res.results
+          const binNameList = []
+          for (let i = 0; i < res.results.length; i++) {
+            binNameList.push(res.results[i].bin_name)
+          }
+          this.optionsBinName = binNameList
+          this.binSetOptions = []
+          this.allBinSetOptions = res.results
         })
       } else {
         this.$refs[`goodsData${index}Code`][0].focus()

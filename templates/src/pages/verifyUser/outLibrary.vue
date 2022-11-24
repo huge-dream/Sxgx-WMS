@@ -190,6 +190,8 @@ export default {
       options1: [],
       goodsListData: [],
       binSetOptions: [],
+      allBinSetOptions: [],
+      optionsBinName: [],
       tableFromNum: 10,
       optionsGoodsCode: [],
       isWriteOff: false, // 是否核销
@@ -268,7 +270,13 @@ export default {
       if (this.optionsGoodsCode.indexOf(data) !== -1) {
         this.$refs[`goodsData${index}BinName`][0].showPopup()
         this.getauth('/binset/?empty_label=true&type=out&goods_code=' + data.toLowerCase()).then(res => {
-          this.binSetOptions = res.results
+          const binNameList = []
+          for (let i = 0; i < res.results.length; i++) {
+            binNameList.push(res.results[i].bin_name)
+          }
+          this.optionsBinName = binNameList
+          this.binSetOptions = []
+          this.allBinSetOptions = res.results
         })
       } else {
         this.$refs[`goodsData${index}Code`][0].focus()
@@ -384,6 +392,25 @@ export default {
       }
       update(() => {
         this.options = this.allOptions
+      })
+    },
+    filterFnBinName (val, update, abort) {
+      if (val && this.optionsBinName && this.optionsBinName.indexOf(val) !== -1) {
+        abort()
+        return
+      }
+      if (val) {
+        let newAllOptions = []
+        newAllOptions = this.allBinSetOptions.filter(res => {
+          return res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1 || res.bin_name.toLowerCase().indexOf(val.toLowerCase()) !== -1
+        })
+        update(() => {
+          this.binSetOptions = newAllOptions
+        })
+        return
+      }
+      update(() => {
+        this.binSetOptions = this.allBinSetOptions
       })
     },
     newDataCancel () {

@@ -308,7 +308,9 @@ export default {
   },
   beforeDestroy () {
     // 离开页面丢掉请求
-    this.getCancel()
+    if (this.getCancel) {
+      this.getCancel()
+    }
   }
 
 }
