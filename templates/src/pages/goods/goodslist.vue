@@ -52,6 +52,22 @@
               <q-td key="goods_code" :props="props">{{ props.row.goods_code }}</q-td>
             </template>
             <template v-if="props.row.id === editid">
+              <q-td key="goods_unit" :props="props">
+                <q-input
+                  dense
+                  outlined
+                  square
+                  v-model="editFormData.goods_unit"
+                  :label="'单位'"
+                  autofocus
+                  :rules="[val => (val && val.length > 0) || '单位不能为空']"
+                />
+              </q-td>
+            </template>
+            <template v-else-if="props.row.id !== editid">
+              <q-td key="goods_unit" :props="props">{{ props.row.goods_unit }}</q-td>
+            </template>
+            <template v-if="props.row.id === editid">
               <q-td key="goods_desc" :props="props">
                 <q-input
                   dense
@@ -269,6 +285,7 @@ export default {
       supplier_list: [],
       columns: [
         { name: 'goods_code', required: true, label: this.$t('goods.view_goodslist.goods_code'), align: 'left', field: 'goods_code' },
+        { name: 'goods_unit', label: this.$t('goods.view_goodslist.goods_unit'), field: 'goods_unit', align: 'center' },
         { name: 'goods_desc', label: this.$t('goods.view_goodslist.goods_desc'), field: 'goods_desc', align: 'center' },
         { name: 'light_guidance', label: this.$t('goods.view_goodslist.light_guidance'), field: 'light_guidance', align: 'center' },
         { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },

@@ -101,6 +101,11 @@
                 </template>
               </q-select>
             </template>
+            <template v-slot:append>
+              <span style="font-size: 14px;font-weight: 600">
+                {{ data[`goodsData${index + 1}`].goods_unit }}
+              </span>
+            </template>
             <template v-slot:after>
               <span v-if="data[`goodsData${index+1}`] && data[`goodsData${index+1}`].bin_name && data[`goodsData${index+1}`].bin_name.light_guide_sign">
                 <!--  0 待指引；2指引完成；1指引中              -->
@@ -112,6 +117,9 @@
             </template>
           </q-input>
         </q-card-section>
+        <div style="float: left; padding: 15px 15px 15px 20px">
+          当前操作用户：{{login_name}}
+        </div>
         <div style="float: left;left: 10px;" v-if="isGuide===2">
           <q-input v-model="scanInput" label="请使用条码枪进行扫码核验出库商品" autofocus :dense="false" ref="scanInput" style="width: 300px;height: 10px;margin-left: 20px;" @blur="scanInputBlur" @keyup.enter="scanInputEnter">
             <template v-slot:prepend>
@@ -432,9 +440,21 @@ export default {
         _this[`goodsData${i}`] = { code: '', qty: '' }
       }
     },
+    getGoodsUnit (code) {
+      let unit = ''
+      this.allOptions.map(res => {
+        if (res.goods_code === code) {
+          unit = res.goods_unit
+        }
+      })
+      return unit
+    },
     setModel (val, index) {
       this.data[`goodsData${index + 1}`].qty = val ? 0 : ''
       this.data[`goodsData${index + 1}`].code = val
+      if (val) {
+        this.data[`goodsData${index + 1}`].goods_unit = this.getGoodsUnit(val)
+      }
     },
     // 获取全部商品信息
     getAllGoodsCode () {

@@ -87,6 +87,11 @@
                 </template>
               </q-select>
             </template>
+            <template v-slot:append>
+              <span style="font-size: 14px;font-weight: 600">
+                {{ data[`goodsData${index + 1}`].goods_unit }}
+              </span>
+            </template>
             <template v-slot:after>
               <span v-if="data[`goodsData${index+1}`] && data[`goodsData${index+1}`].bin_name && data[`goodsData${index+1}`].bin_name.light_guide_sign">
                 <!--  0 待指引；2指引完成；1指引中              -->
@@ -98,6 +103,9 @@
             </template>
           </q-input>
         </q-card-section>
+         <div style="float: left; padding: 15px 15px 15px 20px">
+           当前操作用户：{{login_name}}
+         </div>
         <div style="float: right; padding: 15px 15px 15px 0">
           <q-btn color="white" text-color="black" style="margin-right: 25px"
                  @click="newDataCancel()">{{ $t('cancel') }}
@@ -421,8 +429,20 @@ export default {
         })
       }
     },
+    getGoodsUnit (code) {
+      let unit = ''
+      this.allOptions.map(res => {
+        if (res.goods_code === code) {
+          unit = res.goods_unit
+        }
+      })
+      return unit
+    },
     setModel (val, index) {
       this.data[`goodsData${index + 1}`].code = val
+      if (val) {
+        this.data[`goodsData${index + 1}`].goods_unit = this.getGoodsUnit(val)
+      }
     }
 
   }
