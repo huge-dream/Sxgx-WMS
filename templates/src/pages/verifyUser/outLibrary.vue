@@ -16,11 +16,10 @@
             square
             debounce="500"
             v-for="(item,index) in tableFromNum"
-            :readonly="isGuide!==2"
             v-model.number="data[`goodsData${index+1}`].qty"
             :key="index"
             type="number"
-            :label="isGuide===2?'已取货数量':'待找货'"
+            :label="'数量'"
             style="margin-bottom: 5px"
           >
             <template v-slot:before>
@@ -120,6 +119,9 @@
         <div style="float: left; padding: 15px 15px 15px 20px">
           当前操作用户：{{login_name}}
         </div>
+        <div style="float: left; padding: 15px 15px 15px 20px">
+          当前用户部门：{{dept}}
+        </div>
         <div style="float: left;left: 10px;" v-if="isGuide===2">
           <q-input v-model="scanInput" label="请使用条码枪进行扫码核验出库商品" autofocus :dense="false" ref="scanInput" style="width: 300px;height: 10px;margin-left: 20px;" @blur="scanInputBlur" @keyup.enter="scanInputEnter">
             <template v-slot:prepend>
@@ -147,6 +149,10 @@ export default {
   props: {
     // 滚动优化的选项
     login_name: {
+      type: String,
+      required: false
+    },
+    dept: {
       type: String,
       required: false
     },

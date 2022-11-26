@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ListModel, TypeListModel
+from .models import ListModel, TypeListModel, DeptListModel
 from utils import datasolve
 
 class StaffGetSerializer(serializers.ModelSerializer):
@@ -50,6 +50,15 @@ class FileRenderSerializer(serializers.ModelSerializer):
         model = ListModel
         ref_name = 'StaffFileRenderSerializer'
         exclude = ['openid', 'is_delete', ]
+
+class DeptSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(read_only=False, required=False)
+    create_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
+    update_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
+
+    class Meta:
+        model = DeptListModel
+        exclude = []
 
 class StaffTypeGetSerializer(serializers.ModelSerializer):
     staff_type = serializers.CharField(read_only=True, required=False)

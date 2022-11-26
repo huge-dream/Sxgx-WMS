@@ -133,4 +133,4 @@ def initcheck():
         with open(path, 'w') as f:
             f.write(str(baseurl))
         f.close()
-        webbrowser.open(baseurl)
+        # webbrowser.open(baseurl)

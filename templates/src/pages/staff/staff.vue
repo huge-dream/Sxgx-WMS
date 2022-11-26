@@ -15,6 +15,9 @@
         <transition appear enter-active-class="animated zoomIn">
           <q-route-tab name="stafftype" :label="$t('staff.view_staff.staff_type')" icon="img:statics/staff/stafftype.png" :to="{ name: 'stafftype' }" exact/>
         </transition>
+        <transition appear enter-active-class="animated zoomIn">
+          <q-route-tab name="staffdept" :label="'部门管理'" icon="img:statics/staff/stafftype.png" :to="{ name: 'staffdept' }" exact/>
+        </transition>
       </q-tabs>
     </div>
   </div>

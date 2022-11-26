@@ -106,6 +106,9 @@
          <div style="float: left; padding: 15px 15px 15px 20px">
            当前操作用户：{{login_name}}
          </div>
+        <div style="float: left; padding: 15px 15px 15px 20px">
+           当前用户部门：{{dept}}
+         </div>
         <div style="float: right; padding: 15px 15px 15px 0">
           <q-btn color="white" text-color="black" style="margin-right: 25px"
                  @click="newDataCancel()">{{ $t('cancel') }}
@@ -119,7 +122,6 @@
 </template>
 
 <script>
-import { getauth, putauth } from 'boot/axios_request'
 import { SessionStorage } from 'quasar'
 
 export default {
@@ -127,6 +129,10 @@ export default {
   props: {
     // 滚动优化的选项
     login_name: {
+      type: String,
+      required: false
+    },
+    dept: {
       type: String,
       required: false
     },

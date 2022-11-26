@@ -50,90 +50,25 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <template v-if="props.row.id === editid">
-              <q-td key="staff_name" :props="props">
+              <q-td key="name" :props="props">
                 <q-input
                   dense
                   outlined
                   square
-                  v-model="editFormData.staff_name"
-                  :label="$t('staff.view_staff.staff_name')"
+                  v-model="editFormData.name"
+                  :label="'部门名称'"
                   autofocus
                   :rules="[val => (val && val.length > 0) || error1]"
                 />
               </q-td>
             </template>
             <template v-else-if="props.row.id !== editid">
-              <q-td key="staff_name" :props="props">{{ props.row.staff_name }}</q-td>
-            </template>
-            <template v-if="props.row.id === editid">
-              <q-td key="staff_type" :props="props">
-                <q-select
-                  dense
-                  outlined
-                  square
-                  v-model="editFormData.staff_type"
-                  :options="staff_type_list"
-                  transition-show="scale"
-                  transition-hide="scale"
-                  :label="$t('staff.view_staff.staff_type')"
-                  :rules="[val => (val && val.length > 0) || error2]"
-                />
-              </q-td>
-            </template>
-            <template v-else-if="props.row.id !== editid">
-              <q-td key="staff_type" :props="props">{{ props.row.staff_type }}</q-td>
-            </template>
-            <template v-if="props.row.id === editid">
-              <q-td key="dept" :props="props">
-                <q-select
-                  dense
-                  outlined
-                  square
-                  v-model="editFormData.dept"
-                  :options="dept_list"
-                  transition-show="scale"
-                  transition-hide="scale"
-                  :label="'部门'"
-                  :rules="[val => (val && val.length > 0) || '部门不能为空']"
-                />
-              </q-td>
-            </template>
-            <template v-else-if="props.row.id !== editid">
-              <q-td key="dept" :props="props">{{ props.row.dept }}</q-td>
+              <q-td key="name" :props="props">{{ props.row.name }}</q-td>
             </template>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
             <q-td key="update_time" :props="props">{{ props.row.update_time }}</q-td>
             <template v-if="!editMode">
               <q-td key="action" :props="props" style="width: 175px">
-                <q-btn
-                  round
-                  flat
-                  push
-                  color="primary"
-                  icon="crop_free"
-                  @click="QRCode(props.row)"
-                >
-                  <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">{{ $t('qrcode') }}</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-show="
-                    $q.localStorage.getItem('staff_type') !== 'Supplier' &&
-                      $q.localStorage.getItem('staff_type') !== 'Customer' &&
-                      $q.localStorage.getItem('staff_type') !== 'Inbound' &&
-                      $q.localStorage.getItem('staff_type') !== 'Outbound' &&
-                      $q.localStorage.getItem('staff_type') !== 'StockControl'
-                  "
-                  round
-                  flat
-                  push
-                  color="purple"
-                  :icon="props.row.is_lock ? 'lock' : 'lock_open'"
-                  @click="unlock(props.row)"
-                >
-                  <q-tooltip content-class="bg-amber text-black shadow-4" :offset="[10, 10]" content-style="font-size: 12px">
-                    {{ props.row.is_lock ? $t('staff.view_staff.unlock') : $t('staff.view_staff.lock') }}
-                  </q-tooltip>
-                </q-btn>
                 <q-btn
                   v-show="
                     $q.localStorage.getItem('staff_type') !== 'Supplier' &&
@@ -212,37 +147,11 @@
             dense
             outlined
             square
-            v-model.trim="newFormData.staff_name"
-            :label="$t('staff.view_staff.staff_name')"
+            v-model.trim="newFormData.name"
+            label="部门名称"
             autofocus
             :rules="[val => (val && val.length > 0) || error1]"
             @keyup.enter="newDataSubmit()"
-          />
-          <q-select
-            dense
-            outlined
-            square
-            v-model="newFormData.staff_type"
-            :options="staff_type_list"
-            transition-show="scale"
-            transition-hide="scale"
-            :label="$t('staff.view_staff.staff_type')"
-            :rules="[val => (val && val.length > 0) || error2]"
-            @keyup.enter="newDataSubmit()"
-            style="margin-top: 5px"
-          />
-          <q-select
-            dense
-            outlined
-            square
-            v-model="newFormData.dept"
-            :options="dept_list"
-            transition-show="scale"
-            transition-hide="scale"
-            :label="'部门'"
-            :rules="[val => (val && val.length > 0) || '部门不能为空']"
-            @keyup.enter="newDataSubmit()"
-            style="margin-top: 5px"
           />
         </q-card-section>
         <div style="float: right; padding: 15px 15px 15px 0">
@@ -267,25 +176,6 @@
         </div>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="QRCodeForm">
-      <div id="printMe" style="width: 400px;height:220px;background-color: white">
-        <q-card-section>
-          <div class="row" style="height: 60px">
-            <div class="col-3"><img src="statics/goods/logo.png" style="width: 60px;height: 50px;margin-top: 5px;margin-left: 5px;" /></div>
-            <div class="col-9" style="height: 50px;float: contour;margin-top: 10px;">
-              <p style="font-size: 20px;font-weight: 550;position: absolute;right: 20px;">{{'员工姓名: ' + newFormData.staff_name }}</p>
-            </div>
-          </div>
-          <hr />
-          <div class="row">
-            <div class="col-12" style="text-align: center;margin-top: 30px;">
-              <canvas id="barCode" style="width: 100%;"/>
-            </div>
-          </div>
-        </q-card-section>
-      </div>
-      <div style="float: right; padding: 15px 15px 15px 0"><q-btn color="primary" icon="print" v-print="printObj">print</q-btn></div>
-    </q-dialog>
   </div>
 </template>
 <router-view />
@@ -302,7 +192,7 @@ export default {
       openid: '',
       login_name: '',
       authin: '0',
-      pathname: 'staff/',
+      pathname: 'staff/dept/',
       pathname_previous: '',
       pathname_next: '',
       separator: 'cell',
@@ -311,9 +201,7 @@ export default {
       table_list: [],
       staff_type_list: [],
       columns: [
-        { name: 'staff_name', required: true, label: this.$t('staff.view_staff.staff_name'), align: 'left', field: 'staff_name' },
-        { name: 'staff_type', label: this.$t('staff.view_staff.staff_type'), field: 'staff_type', align: 'center' },
-        { name: 'dept', label: '部门', field: 'dept', align: 'center' },
+        { name: 'name', required: true, label: this.$t('部门名称'), align: 'center', field: 'nacenterme' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
         { name: 'update_time', label: this.$t('updatetime'), field: 'update_time', align: 'center' },
         { name: 'action', label: this.$t('action'), align: 'right' }
@@ -324,16 +212,12 @@ export default {
       },
       newForm: false,
       newFormData: {
-        staff_name: '',
-        staff_type: '',
-        dept: '',
-        check_code: ''
+        name: ''
       },
       editid: 0,
       editFormData: {},
       editMode: false,
       deleteForm: false,
-      QRCodeForm: false,
       bindBarCode (data) {
         JsBarcode('#barCode', data, {
           background: '#fff',
@@ -349,9 +233,8 @@ export default {
       },
       deleteid: 0,
       filter: '',
-      error1: this.$t('staff.view_staff.error1'),
-      error2: this.$t('staff.view_staff.error2'),
-      dept_list: []
+      error1: '部门名称不能为空',
+      error2: this.$t('staff.view_staff.error2')
     }
   },
   methods: {
@@ -395,7 +278,7 @@ export default {
     getSearchList () {
       var _this = this
       _this.filter = _this.filter.replace(/\s+/g, '')
-      getauth(_this.pathname + '?staff_name__icontains=' + _this.filter, {})
+      getauth(_this.pathname + '?name__icontains=' + _this.filter, {})
         .then(res => {
           _this.table_list = res.results
           if (LocalStorage.getItem('lang') === 'zh-hans') {
@@ -472,27 +355,6 @@ export default {
       getauth(_this.pathname_next, {})
         .then(res => {
           _this.table_list = res.results
-          if (LocalStorage.getItem('lang') === 'zh-hans') {
-            _this.table_list.forEach((item, index) => {
-              if (item.staff_type === 'Admin') {
-                item.staff_type = '管理员'
-              } else if (item.staff_type === 'Customer') {
-                item.staff_type = '客户'
-              } else if (item.staff_type === 'Supplier') {
-                item.staff_type = '供应商'
-              } else if (item.staff_type === 'Manager') {
-                item.staff_type = '经理'
-              } else if (item.staff_type === 'Supervisor') {
-                item.staff_type = '主管'
-              } else if (item.staff_type === 'Inbound') {
-                item.staff_type = '收货组'
-              } else if (item.staff_type === 'Outbound') {
-                item.staff_type = '发货组'
-              } else if (item.staff_type === 'StockControl') {
-                item.staff_type = '库存管理'
-              }
-            })
-          }
           _this.pathname_previous = res.previous
           _this.pathname_next = res.next
         })
@@ -508,32 +370,6 @@ export default {
       var _this = this
       _this.getList()
     },
-    unlock (val) {
-      putauth(this.pathname + val.id + '/', {
-        is_lock: !val.is_lock,
-        staff_name: val.staff_name,
-        staff_type: val.staff_type
-      })
-        .then(res => {
-          this.getList()
-          let message = 'Success unlocked'
-          if (!val.is_lock) {
-            message = 'Success locked'
-          }
-          this.$q.notify({
-            message: message,
-            icon: 'check',
-            color: 'green'
-          })
-        })
-        .catch(err => {
-          this.$q.notify({
-            message: err.detail,
-            icon: 'close',
-            color: 'negative'
-          })
-        })
-    },
     RandomCheckCode () {
       var _this = this
       var code = ''
@@ -548,27 +384,12 @@ export default {
     newDataSubmit () {
       var _this = this
       var staffs = []
-      _this.newFormData.is_lock = false
-      _this.table_list.forEach(i => {
-        staffs.push(i.staff_name)
-      })
-      if (staffs.indexOf(_this.newFormData.staff_name) === -1 && _this.newFormData.staff_name.length !== 0 && _this.newFormData.staff_type) {
-        _this.RandomCheckCode()
-        if (_this.newFormData.staff_type === '经理') {
-          _this.newFormData.staff_type = 'Manager'
-        } else if (_this.newFormData.staff_type === '主管') {
-          _this.newFormData.staff_type = 'Supervisor'
-        } else if (_this.newFormData.staff_type === '收货组') {
-          _this.newFormData.staff_type = 'Inbound'
-        } else if (_this.newFormData.staff_type === '发货组') {
-          _this.newFormData.staff_type = 'Outbound'
-        } else if (_this.newFormData.staff_type === '库存控制') {
-          _this.newFormData.staff_type = 'StockControl'
-        } else if (_this.newFormData.staff_type === '客户') {
-          _this.newFormData.staff_type = 'Customer'
-        } else if (_this.newFormData.staff_type === '供应商') {
-          _this.newFormData.staff_type = 'Supplier'
-        }
+      if (_this.table_list) {
+        _this.table_list.forEach(i => {
+          staffs.push(i.name)
+        })
+      }
+      if (staffs.indexOf(_this.newFormData.name) === -1 && _this.newFormData.name.length !== 0) {
         postauth(_this.pathname, _this.newFormData)
           .then(res => {
             _this.getList()
@@ -586,21 +407,15 @@ export default {
               color: 'negative'
             })
           })
-      } else if (staffs.indexOf(_this.newFormData.staff_name) !== -1) {
+      } else if (staffs.indexOf(_this.newFormData.name) !== -1) {
         _this.$q.notify({
           message: _this.$t('notice.userererror'),
           icon: 'close',
           color: 'negative'
         })
-      } else if (_this.newFormData.staff_name.length === 0) {
+      } else if (_this.newFormData.name.length === 0) {
         _this.$q.notify({
           message: _this.$t('staff.view_staff.error1'),
-          icon: 'close',
-          color: 'negative'
-        })
-      } else if (!_this.newFormData.staff_type) {
-        _this.$q.notify({
-          message: _this.$t('staff.view_staff.error2'),
           icon: 'close',
           color: 'negative'
         })
@@ -610,8 +425,7 @@ export default {
       var _this = this
       _this.newForm = false
       _this.newFormData = {
-        staff_name: '',
-        staff_type: ''
+        name: ''
       }
     },
     editData (e) {
@@ -619,28 +433,11 @@ export default {
       _this.editMode = true
       _this.editid = e.id
       _this.editFormData = {
-        staff_name: e.staff_name,
-        staff_type: e.staff_type,
-        dept: e.dept
+        name: e.name
       }
     },
     editDataSubmit () {
       var _this = this
-      if (_this.editFormData.staff_type === '经理') {
-        _this.editFormData.staff_type = 'Manager'
-      } else if (_this.editFormData.staff_type === '主管') {
-        _this.editFormData.staff_type = 'Supervisor'
-      } else if (_this.editFormData.staff_type === '收货组') {
-        _this.editFormData.staff_type = 'Inbound'
-      } else if (_this.editFormData.staff_type === '发货组') {
-        _this.editFormData.staff_type = 'Outbound'
-      } else if (_this.editFormData.staff_type === '库存控制') {
-        _this.editFormData.staff_type = 'StockControl'
-      } else if (_this.editFormData.staff_type === '客户') {
-        _this.editFormData.staff_type = 'Customer'
-      } else if (_this.editFormData.staff_type === '供应商') {
-        _this.editFormData.staff_type = 'Supplier'
-      }
       putauth(_this.pathname + _this.editid + '/', _this.editFormData)
         .then(res => {
           _this.editDataCancel()
@@ -664,26 +461,13 @@ export default {
       _this.editMode = false
       _this.editid = 0
       _this.editFormData = {
-        staff_name: '',
-        staff_type: ''
+        name: ''
       }
     },
     deleteData (e) {
       var _this = this
       _this.deleteForm = true
       _this.deleteid = e
-    },
-    QRCode (e) {
-      var _this = this
-      _this.QRCodeForm = true
-      console.log('id:', `${e.id}_${e.check_code}`, this.Base64.encode(`${e.id}_${e.check_code}`))
-      _this.newFormData = {
-        staff_name: e.staff_name,
-        staff_type: e.staff_type
-      }
-      this.$nextTick(() => {
-        this.bindBarCode(this.Base64.encode(`${e.id}_${e.check_code}`))
-      })
     },
     deleteDataSubmit () {
       var _this = this
@@ -767,14 +551,6 @@ export default {
     } else {
       _this.staff_type_list = ['Manager', 'Supervisor', 'Inbount', 'Outbound', 'StockControl', 'Customer', 'Supplier']
     }
-    getauth('staff/dept/', { max_page: 999 })
-      .then(res => {
-        const deptList = []
-        res.results.map(val => {
-          deptList.push(val.name)
-        })
-        _this.dept_list = deptList
-      })
   },
   updated () {
   },

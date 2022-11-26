@@ -1,7 +1,7 @@
 import base64
 
-from rest_framework import viewsets
-from .models import ListModel, TypeListModel
+from rest_framework import viewsets, status
+from .models import ListModel, TypeListModel, DeptListModel
 from . import serializers
 from utils.page import MyPageNumberPagination
 from rest_framework.filters import OrderingFilter
@@ -9,7 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from .filter import Filter, TypeFilter
 from rest_framework.exceptions import APIException
-from .serializers import FileRenderSerializer
+from .serializers import FileRenderSerializer, DeptSerializer
 from django.http import StreamingHttpResponse
 from .files import FileRenderCN, FileRenderEN
 from rest_framework.settings import api_settings
@@ -199,7 +199,7 @@ class CodeLoginAPIViewSet(viewsets.ModelViewSet):
         obj = ListModel.objects.filter(id=code.split('_')[0], check_code=int(code.split('_')[1])).first()
         if not obj:
             raise APIException({"detail": "登录无效，请重试!"})
-        return Response(status=200, data={"status_code": 200, "name": obj.staff_name, "openid": obj.openid})
+        return Response(status=200, data={"status_code": 200, "name": obj.staff_name, "openid": obj.openid, "dept": obj.dept})
 
 
 class TypeAPIViewSet(viewsets.ModelViewSet):
@@ -279,3 +279,39 @@ class FileDownloadView(viewsets.ModelViewSet):
         response['Content-Disposition'] = "attachment; filename='staff_{}.csv'".format(
             str(dt.strftime('%Y%m%d%H%M%S%f')))
         return response
+
+class DeptViewSet(viewsets.ModelViewSet):
+    filter_backends = [DjangoFilterBackend, OrderingFilter, ]
+    ordering_fields = ["-create_time", "update_time", ]
+    serializer_class = DeptSerializer
+    queryset = DeptListModel.objects.all()
+    pagination_class = MyPageNumberPagination
+    def get_project(self):
+        try:
+            id = self.kwargs.get('pk')
+            return id
+        except:
+            return None
+
+    def create(self, request, *args, **kwargs):
+        request.data['openid'] = self.request.auth.openid
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(status=200, data=serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        request.data['openid'] = self.request.auth.openid
+        return super().update(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(status=200, data=serializer.data)
+
+

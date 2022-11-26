@@ -302,6 +302,11 @@ const routes = [{
             path: 'stafftype',
             name: 'stafftype',
             component: () => import('pages/staff/stafftype.vue')
+          },
+          {
+            path: 'staffdept',
+            name: 'staffdept',
+            component: () => import('pages/staff/staffdept.vue')
           }
           ]
         },

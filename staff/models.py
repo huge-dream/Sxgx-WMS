@@ -3,6 +3,7 @@ from django.db import models
 class ListModel(models.Model):
     staff_name = models.CharField(max_length=255, verbose_name="Staff Name")
     staff_type = models.CharField(max_length=255, verbose_name="Staff Type")
+    dept = models.CharField(max_length=255, verbose_name="部门",blank=True, null=True, )
     check_code = models.IntegerField(default=8888, verbose_name="Check Code")
     openid = models.CharField(max_length=255, verbose_name="Openid")
     is_delete = models.BooleanField(default=False, verbose_name='Delete Label')
@@ -28,3 +29,15 @@ class TypeListModel(models.Model):
         verbose_name = 'Staff Type'
         verbose_name_plural = "Staff Type"
         ordering = ['staff_type']
+
+class DeptListModel(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Staff Type")
+    openid = models.CharField(max_length=255, verbose_name="Openid")
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="Create Time")
+    update_time = models.DateTimeField(auto_now=True, blank=True, null=True, verbose_name="Update Time")
+
+    class Meta:
+        db_table = 'staffdept'
+        verbose_name = '部门管理'
+        verbose_name_plural = "Staff Dept"
+        ordering = ['-create_time']

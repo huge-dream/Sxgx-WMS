@@ -1,5 +1,11 @@
 from django.urls import path, re_path
+from rest_framework import routers
+
 from . import views
+from .views import DeptViewSet
+
+url = routers.SimpleRouter()
+url.register(r'dept', DeptViewSet)
 
 urlpatterns = [
 path(r'', views.APIViewSet.as_view({"get": "list", "post": "create"}), name="staff"),
@@ -13,3 +19,5 @@ re_path(r'^(?P<pk>\d+)/$', views.APIViewSet.as_view({
     'delete': 'destroy'
 }), name="staff_1")
 ]
+
+urlpatterns += url.urls

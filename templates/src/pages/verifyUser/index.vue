@@ -22,9 +22,9 @@
       </q-card>
     </q-dialog>
     <!--  入库  -->
-    <in-library v-if="inDialog" :openid="openid" :login_name="username" :postauth="postauth" :getauth="getauth"
+    <in-library v-if="inDialog" :openid="openid" :login_name="username" :dept="dept" :postauth="postauth" :getauth="getauth"
                 :putauth="putauth" @cancel="inDialog=false" @cancelGetAxios="cancelGetAxios"></in-library>
-    <out-library v-if="outDialog" :openid="openid" :login_name="username" :postauth="postauth" :getauth="getauth"
+    <out-library v-if="outDialog" :openid="openid" :login_name="username" :dept="dept" :postauth="postauth" :getauth="getauth"
                  :putauth="putauth" @cancel="outDialog=false" @cancelGetAxios="cancelGetAxios"></out-library>
 
   </q-page>
@@ -64,7 +64,8 @@ export default {
       postauth: '',
       getauth: '',
       putauth: '',
-      getCancel: null
+      getCancel: null,
+      dept: ''
     }
   },
   created () {
@@ -101,6 +102,7 @@ export default {
             this.outDialog = true
           }
           this.username = res.data.name
+          this.dept = res.data.dept
           this.openid = res.data.openid
           const axiosVersion = axios.create({
             baseURL: baseurl
