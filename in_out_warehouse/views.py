@@ -20,6 +20,7 @@ from goods.models import ListModel as goodsmodel
 
 from rest_framework.exceptions import APIException
 from binset.models import ListModel as BinsetModel
+from staff.models import ListModel as staff
 
 class InOutWarehouseSerializer(ModelSerializer):
     """
@@ -27,6 +28,14 @@ class InOutWarehouseSerializer(ModelSerializer):
     """
     goods_desc = serializers.SerializerMethodField()
     type_label = serializers.CharField(read_only=True, source='get_type_display')
+    dept_name = serializers.SerializerMethodField()
+
+    def get_dept_name(self,instance):
+        staff_name = instance.creater
+        staff_detail = staff.objects.filter(staff_name=staff_name).first()
+        if staff_detail:
+            return staff_detail.dept
+        return None
 
     def get_goods_desc(self,instance):
         goods_code = instance.goods_code

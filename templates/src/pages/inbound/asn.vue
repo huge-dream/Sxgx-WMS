@@ -55,6 +55,7 @@
             <q-td key="bin_name" :props="props">{{ props.row.bin_name }}</q-td>
             <q-td key="number" :props="props">{{ props.row.number }}</q-td>
             <q-td key="creater" :props="props">{{ props.row.creater }}</q-td>
+            <q-td key="dept_name" :props="props">{{ props.row.dept_name }}</q-td>
             <q-td key="create_time" :props="props">{{ props.row.create_time }}</q-td>
             <q-td key="update_time" :props="props">{{ props.row.update_time }}</q-td>
 <!--            <q-td key="action" :props="props" style="width: 100px">-->
@@ -895,6 +896,7 @@ export default {
         { name: 'bin_name', label: this.$t('inbound.view_asn.bin_name'), align: 'left', field: 'bin_name' },
         { name: 'number', label: this.$t('inbound.view_asn.number'), field: 'number', align: 'center' },
         { name: 'creater', label: this.$t('creater'), field: 'creater', align: 'center' },
+        { name: 'dept_name', label: '部门', field: 'dept_name', align: 'center' },
         { name: 'create_time', label: this.$t('createtime'), field: 'create_time', align: 'center' },
         { name: 'update_time', label: this.$t('updatetime'), field: 'update_time', align: 'center' }
         // { name: 'action', label: this.$t('action'), align: 'right' }
